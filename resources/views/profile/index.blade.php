@@ -2,11 +2,37 @@
 @section('title') @lang('translation.Profile') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/choices.js/choices.js.min.css') }}" rel="stylesheet">
+<style>
+    .profile-users {
+        background-image: url('{{URL::asset("assets/images/fasyankes/".$fasyankes->image)}}');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin: -24px -24px 23px -24px;
+        padding: 140px 0px;
+        position: relative;
+    }
+
+    .profile-users:after {
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(30%, rgba(43, 57, 64, 0.5)), to(#2b3940));
+        background: linear-gradient(to bottom, rgba(43, 57, 64, 0.5) 30%, #2b3940 100%);
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        top: 0;
+        opacity: 0.5;
+        content: "";
+    }
+</style>
 @endsection
 @section('content')
 <div class="row">
     <div class="col-xl-12">
-        <div class="profile-user"></div>
+        <div class="profile-users" style="height: 300px">
+        </div>
     </div>
 </div>
 
@@ -17,14 +43,14 @@
                 <div class="d-flex align-items-end mt-3 mt-sm-0">
                     <div class="flex-shrink-0">
                         <div class="avatar-xxl me-3">
-                            <img src="@if ($user->avatar != ''){{ URL::asset('images/'. $user->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
+                            <img src="@if ($user->avatar != ''){{ URL::asset('images/'. $user->avatar) }} @else {{ URL::asset('assets/images/users/avatar-1.png') }} @endif"
                                 alt="profile-image" class="img-fluid rounded-circle d-block img-thumbnail">
                         </div>
                     </div>
                     <div class="flex-grow-1">
                         <div>
                             <h5 class="font-size-16 mb-1">{{ $user->name }}</h5>
-                            <p class="text-muted font-size-13 mb-2 pb-2">Full Stack Developer</p>
+                            <p class="text-muted font-size-13 mb-2 pb-2">{{ $user->email }}</p>
                         </div>
                     </div>
                 </div>
@@ -32,9 +58,9 @@
             <div class="col-sm-auto">
                 <div class="d-flex align-items-start justify-content-end gap-2 mb-2">
                     <div>
-                        <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button>
+                        {{-- <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button> --}}
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target=".update-profile"><i class="me-1"></i> Edit Profile</button>
+                            data-bs-target=".update-profile"><i class="me-1"></i> Ubah Profile</button>
 
                     </div>
                     <div>
@@ -64,9 +90,9 @@
                     <li class="nav-item">
                         <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Overview</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Post</a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>
@@ -77,87 +103,80 @@
     <div class="col-xl-8 col-lg-8">
         <div class="tab-content">
             <div class="tab-pane active" id="overview" role="tabpanel">
-                <div class="card">
+                <livewire:profile.body />
+                {{-- <div class="card">
                     <div class="card-header">
                         <div class="d-flex flex-row justify-content-between">
-                            <h5 class="card-title mb-0">About</h5>
+                            <h4 class="card-title text-uppercase mb-0">{{ $fasyankes->nama ?? 'Data Fasyankes Kosong' }}
+                            </h4>
                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i> Edit
-                                Fasyankes</button>
+                                data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i>@if(empty($fasyankes))
+                                Tambah Fasyankes @else Ubah
+                                Fasyankes @endif</button>
                         </div>
                     </div>
 
                     <div class="card-body">
+                        @if(!empty($fasyankes))
                         <div>
                             <div class="pb-3">
-                                <h5 class="font-size-15">Bio :</h5>
+                                <h5 class="font-size-15">Kode :</h5>
                                 <div class="text-muted">
-                                    <p class="mb-2">Hi I'm Phyllis Gatlin, Lorem Ipsum is simply dummy text of the
-                                        printing and typesetting industry. Lorem Ipsum has been the industry's standard
-                                        dummy text ever since the 1500s, when an unknown printer took a galley of type
-                                        and scrambled it to make a type specimen book. It has survived not only five
-                                        centuries, but also the leap into electronic typesetting, remaining essentially
-                                        unchanged. It was popularised in the 1960s with the release of Letraset sheets
-                                        containing Lorem Ipsum passages</p>
-                                    <p class="mb-2">It is a long established fact that a reader will be distracted by
-                                        the readable content of a page when looking at it has a more-or-less normal
-                                        distribution of letters</p>
-                                    <p>It will be as simple as Occidental; in fact, it will be Occidental. To an English
-                                        person, it will seem like simplified English, as a skeptical Cambridge friend of
-                                        mine told me what Occidental is. The European languages are members of the same
-                                        family. Their separate existence is a myth.</p>
-
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec
-                                            vitae sapien ut libero venenatis faucibus</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque
-                                            rutrum aenean imperdiet</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer
-                                            ante a consectetuer eget</li>
-                                    </ul>
+                                    <p class="mb-2">{{ $fasyankes->kode }}</p>
                                 </div>
                             </div>
 
                             <div class="pt-3">
-                                <h5 class="font-size-15">Experience :</h5>
+                                <h5 class="font-size-15">Jenis Fasyankes :</h5>
                                 <div class="text-muted">
-                                    <p>If several languages coalesce, the grammar of the resulting language is more
-                                        simple and regular than that of the individual languages. The new common
-                                        language will be more simple and regular than the existing European languages.
-                                        It will be as simple as Occidental; in fact, it will be Occidental. To an
-                                        English person, it will seem like simplified English, as a skeptical Cambridge
-                                        friend of mine told me what Occidental is. The European languages are members of
-                                        the same family. Their separate existence is a myth. For science, music, sport,
-                                        etc</p>
+                                    <p>{{ $fasyankes->jenis }}</p>
+                                </div>
+                            </div>
 
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec
-                                            vitae sapien ut libero venenatis faucibus</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque
-                                            rutrum aenean imperdiet</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer
-                                            ante a consectetuer eget</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Phasellus
-                                            nec sem in justo pellentesque</li>
-                                    </ul>
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Kelas :</h5>
+                                <div class="text-muted">
+                                    <p>{{ $fasyankes->kelas }}</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Telp :</h5>
+                                <div class="text-muted">
+                                    <p>{{ $fasyankes->telp }}</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Email :</h5>
+                                <div class="text-muted">
+                                    <p>{{ $fasyankes->email }}</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Direktur :</h5>
+                                <div class="text-muted">
+                                    <p>{{ $fasyankes->direktur }}</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Alamat :</h5>
+                                <div class="text-muted">
+                                    <p>{{ $fasyankes->alamat }}</p>
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
                     <!-- end card body -->
                 </div>
-                <!-- end card -->
+                <!-- end card --> --}}
             </div>
             <!-- end tab pane -->
 
-            <div class="tab-pane" id="post" role="tabpanel">
+            {{-- <div class="tab-pane" id="post" role="tabpanel">
                 <div class="card">
                     <div class="card-body">
                         <div class="blog-post">
@@ -438,7 +457,7 @@
                     <!-- end card body -->
                 </div>
                 <!-- end card -->
-            </div>
+            </div> --}}
             <!-- end tab pane -->
         </div>
         <!-- end tab content -->
@@ -529,7 +548,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myLargeModalLabel">Edit Profile</h5>
+                <h5 class="modal-title" id="myLargeModalLabel">Ubah Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -588,52 +607,62 @@
                     <input type="hidden" value="{{ Auth::user()->id }}" id="data_id">
                     <div class="mb-3">
                         <label for="kode">Kode Fasyankes</label>
-                        <input type="text" class="form-control @error('kode') is-invalid @enderror" id='kode'
-                            name="kode" autofocus>
+                        <input type="text" value="{{$fasyankes->kode ?? ''}}"
+                            class="form-control @error('kode') is-invalid @enderror" id='kode' name="kode" autofocus>
                         <div class="text-danger" id="kodeError" data-ajax-feedback="kode"></div>
                     </div>
                     <div class="mb-3">
                         <label for="nama">Nama Fasyankes</label>
-                        <input type="text" class="form-control @error('nama') is-invalid @enderror" id='nama'
-                            name="nama">
+                        <input type="text" value="{{$fasyankes->nama ?? ''}}" class=" form-control @error('nama') is-invalid
+                            @enderror" id='nama' name="nama">
                         <div class="text-danger" id="namaError" data-ajax-feedback="nama"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="jenis">Jenis</label>
-                        <input type="text" class="form-control @error('jenis') is-invalid @enderror" id='jenis'
-                            name="jenis">
+                        <label for="jenis" class="form-label font-size-13 text-muted">Jenis</label>
+                        <select class="form-control @error('jenis') is-invalid @enderror" data-trigger name="jenis"
+                            id="jenis" placeholder="Jenis Fasyankes">
+                            <option value="">Pilih jenis</option>
+                            @foreach($jenis as $j)
+                            <option value="{{$j}}" @if($fasyankes->jenis == $j) selected @endif>{{$j}}</option>
+                            @endforeach
+                        </select>
                         <div class="text-danger" id="jenisError" data-ajax-feedback="jenis"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="kelas">Kelas</label>
-                        <input type="text" class="form-control @error('kelas') is-invalid @enderror" id='kelas'
+                        <select type="text" value="{{$fasyankes->kelas ?? ''}}"
+                            class="form-control @error('kelas') is-invalid @enderror" data-trigger id='kelas'
                             name="kelas">
+                            <option value="">Pilih kelas</option>
+                            @foreach($kelas as $k)
+                            <option value="{{$k}}" @if($fasyankes->kelas == $k) selected @endif>{{$k}}</option>
+                            @endforeach
+                        </select>
                         <div class="text-danger" id="kelasError" data-ajax-feedback="kelas"></div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="telp">telp</label>
-                        <input type="text" class="form-control @error('telp') is-invalid @enderror" id='telp'
-                            name="telp">
+                        <label for="telp">Telp</label>
+                        <input type="text" value="{{$fasyankes->telp ?? ''}}"
+                            class="form-control @error('telp') is-invalid @enderror" id='telp' name="telp">
                         <div class="text-danger" id="telpError" data-ajax-feedback="telp"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id='email'
-                            name="email">
+                        <input type="email" value="{{$fasyankes->email ?? ''}}"
+                            class="form-control @error('email') is-invalid @enderror" id='email' name="email">
                         <div class="text-danger" id="emailError" data-ajax-feedback="email"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="direktur">Nama Direktur</label>
-                        <input type="text" class="form-control @error('direktur') is-invalid @enderror" id='direktur'
-                            name="direktur">
+                        <input type="text" value="{{$fasyankes->direktur ?? ''}}" class="form-control @error('direktur') is-invalid
+                        @enderror" id='direktur' name="direktur">
                         <div class="text-danger" id="direkturError" data-ajax-feedback="telp"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="alamat">Alamat Fasyankes</label>
-                        <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" id='alamat'
-                            name="alamat" cols="3"></textarea>
-                        <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
-                    </div>
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="provinsi" class="form-label font-size-13 text-muted">Provinsi</label>
@@ -644,18 +673,44 @@
                                 <option value="{{ $province->id }}">{{ $province->name }}</option>
                                 @endforeach
                             </select>
+                            <div class="text-danger" id="provinsiError" data-ajax-feedback="provinsi"></div>
                         </div>
                     </div>
+
                     <div class="col-12 kabupaten-form">
                         <div class="mb-3">
                             <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten / Kota</label>
                             <select class="form-control" name="kabupaten" id="kabupaten" placeholder="Cari Kabupaten">
                             </select>
+                            <div class="text-danger" id="kabupatenError" data-ajax-feedback="kabupaten"></div>
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="alamat">Alamat Fasyankes</label>
+                        <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" id='alamat'
+                            name="alamat" cols="3">{{$fasyankes->alamat ?? ''}}
+                        </textarea>
+                        <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image">Profile Fasyankes</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
+                                name="image" autofocus>
+                            <label class="input-group-text" for="image">Upload</label>
+                        </div>
+                        <div class="text-start mt-2">
+                            <img src="@if (!empty($fasyankes->image)){{ URL::asset('assets/images/fasyankes/'. $fasyankes->image) }}@else{{ URL::asset('assets/images/profile-bg-1.jpg') }}@endif"
+                                alt="" class="rounded me-2" width="200" data-holder-rendered="true">
+                        </div>
+                        <div class="text-danger" role="alert" id="imageError" data-ajax-feedback="image"></div>
+                    </div>
+
                     <div class="mt-3 d-grid">
                         <button class="btn btn-primary waves-effect waves-light UpdateProfile"
-                            data-id="{{ Auth::user()->id }}" type="submit">Update</button>
+                            data-id="{{ Auth::user()->id }}" type="submit">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -669,7 +724,7 @@
 <script src="{{ URL::asset('assets/js/pages/profile.init.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/form-advanced.init.js') }}"></script>
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
-<script>
+<script type="text/javascript">
     $('#update-profile').on('submit', function(event) {
         event.preventDefault();
         var Id = $('#data_id').val();
@@ -703,6 +758,52 @@
         });
     });
 
+    $('#update-fasyankes').on('submit', function(event) {
+        event.preventDefault();
+        var Id = $('#data_id').val();
+        let formData = new FormData(this);
+        $('#kodeError').text('');
+        $('#namaError').text('');
+        $('#jenisError').text('');
+        $('#kelasError').text('');
+        $('#telpError').text('');
+        $('#emailError').text('');
+        $('#direkturError').text('');
+        $('#alamatError').text('');
+        $('#provinsiError').text('');
+        $('#kabupatenError').text('');
+        $('#imageError').text('');
+        $.ajax({
+            url: "{{ url('update-fasyankes') }}" + "/" + Id,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.isSuccess == false) {
+                    alert(response.Message);
+                } else if (response.isSuccess == true) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function(response) {
+                $('#nameError').text(response.responseJSON.errors.name);
+                $('#kodeError').text(response.responseJSON.errors.kode);
+                $('#jenisError').text(response.responseJSON.errors.jenis);
+                $('#kelasError').text(response.responseJSON.errors.kelas);
+                $('#telpError').text(response.responseJSON.errors.telp);
+                $('#emailError').text(response.responseJSON.errors.email);
+                $('#direkturError').text(response.responseJSON.errors.direktur);
+                $('#alamatError').text(response.responseJSON.errors.alamat);
+                $('#provinsiError').text(response.responseJSON.errors.provinsi);
+                $('#kabupatenError').text(response.responseJSON.errors.kabupaten);
+                $('#imageError').text(response.responseJSON.errors.image);
+            }
+        });
+    });
+
     const query_task = new Choices('#kabupaten', {
             removeItemButton: true,
             searchPlaceholderValue: 'Pilih Kabupaten / Kota', 
@@ -731,35 +832,7 @@
         $("#provinsi").on('change', function() {
             let id = $(this).val();
             query_task.removeActiveItems();
-            let data = '1,1,2,3,3';
-            let selected_values = data.split(',')
-            $.each(selected_values, function(key, value) {
-            query_task.setChoiceByValue(value);
             reset(id);
-            });
         });
-
-    // $('#provinsi').on('change', function() {
-    //     let id = $(this).val();
-    //     var singleFetch = new Choices('#kabupaten', {
-    //         removeItemButton: true,
-    //         searchPlaceholderValue: 'Pilih Kabupaten / Kota', 
-    //         placeholder: true,
-    //         }).clearChoices()
-    //         .setChoices(function() { 
-    //             return fetch( 
-    //                 "{{ url('get-kabupaten') }}" + "/" + id
-    //             ) 
-    //             .then(function(response) { 
-    //                 return response.json(); 
-    //             }) 
-    //             .then(function(data) { 
-    //                 return data.map(function(response) { 
-    //                     return { label: response.name, value: response.id }; 
-    //                 }); 
-    //             }); 
-    //         }) 
-
-    //     });
 </script>
 @endsection

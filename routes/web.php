@@ -31,6 +31,7 @@ Route::resource('sub-users', App\Http\Controllers\SubUserController::class);
 
 //profile
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+Route::post('/update-fasyankes/{id}', [App\Http\Controllers\ProfileController::class, 'updateFasyankes'])->name('updateFasyankes');
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
 
 Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');

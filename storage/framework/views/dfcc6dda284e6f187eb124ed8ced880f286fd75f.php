@@ -1,11 +1,37 @@
 <?php $__env->startSection('title'); ?> <?php echo app('translator')->get('translation.Profile'); ?> <?php $__env->stopSection(); ?>
 <?php $__env->startSection('css'); ?>
 <link href="<?php echo e(URL::asset('assets/libs/choices.js/choices.js.min.css')); ?>" rel="stylesheet">
+<style>
+    .profile-users {
+        background-image: url('<?php echo e(URL::asset("assets/images/fasyankes/".$fasyankes->image)); ?>');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin: -24px -24px 23px -24px;
+        padding: 140px 0px;
+        position: relative;
+    }
+
+    .profile-users:after {
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(30%, rgba(43, 57, 64, 0.5)), to(#2b3940));
+        background: linear-gradient(to bottom, rgba(43, 57, 64, 0.5) 30%, #2b3940 100%);
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        top: 0;
+        opacity: 0.5;
+        content: "";
+    }
+</style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="row">
     <div class="col-xl-12">
-        <div class="profile-user"></div>
+        <div class="profile-users" style="height: 300px">
+        </div>
     </div>
 </div>
 
@@ -16,14 +42,14 @@
                 <div class="d-flex align-items-end mt-3 mt-sm-0">
                     <div class="flex-shrink-0">
                         <div class="avatar-xxl me-3">
-                            <img src="<?php if($user->avatar != ''): ?><?php echo e(URL::asset('images/'. $user->avatar)); ?><?php else: ?><?php echo e(URL::asset('assets/images/users/avatar-1.png')); ?><?php endif; ?>"
+                            <img src="<?php if($user->avatar != ''): ?><?php echo e(URL::asset('images/'. $user->avatar)); ?> <?php else: ?> <?php echo e(URL::asset('assets/images/users/avatar-1.png')); ?> <?php endif; ?>"
                                 alt="profile-image" class="img-fluid rounded-circle d-block img-thumbnail">
                         </div>
                     </div>
                     <div class="flex-grow-1">
                         <div>
                             <h5 class="font-size-16 mb-1"><?php echo e($user->name); ?></h5>
-                            <p class="text-muted font-size-13 mb-2 pb-2">Full Stack Developer</p>
+                            <p class="text-muted font-size-13 mb-2 pb-2"><?php echo e($user->email); ?></p>
                         </div>
                     </div>
                 </div>
@@ -31,9 +57,9 @@
             <div class="col-sm-auto">
                 <div class="d-flex align-items-start justify-content-end gap-2 mb-2">
                     <div>
-                        <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button>
+                        
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target=".update-profile"><i class="me-1"></i> Edit Profile</button>
+                            data-bs-target=".update-profile"><i class="me-1"></i> Ubah Profile</button>
 
                     </div>
                     <div>
@@ -63,9 +89,7 @@
                     <li class="nav-item">
                         <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Overview</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Post</a>
-                    </li>
+                    
                 </ul>
             </div>
         </div>
@@ -76,368 +100,26 @@
     <div class="col-xl-8 col-lg-8">
         <div class="tab-content">
             <div class="tab-pane active" id="overview" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex flex-row justify-content-between">
-                            <h5 class="card-title mb-0">About</h5>
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i> Edit
-                                Fasyankes</button>
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-                        <div>
-                            <div class="pb-3">
-                                <h5 class="font-size-15">Bio :</h5>
-                                <div class="text-muted">
-                                    <p class="mb-2">Hi I'm Phyllis Gatlin, Lorem Ipsum is simply dummy text of the
-                                        printing and typesetting industry. Lorem Ipsum has been the industry's standard
-                                        dummy text ever since the 1500s, when an unknown printer took a galley of type
-                                        and scrambled it to make a type specimen book. It has survived not only five
-                                        centuries, but also the leap into electronic typesetting, remaining essentially
-                                        unchanged. It was popularised in the 1960s with the release of Letraset sheets
-                                        containing Lorem Ipsum passages</p>
-                                    <p class="mb-2">It is a long established fact that a reader will be distracted by
-                                        the readable content of a page when looking at it has a more-or-less normal
-                                        distribution of letters</p>
-                                    <p>It will be as simple as Occidental; in fact, it will be Occidental. To an English
-                                        person, it will seem like simplified English, as a skeptical Cambridge friend of
-                                        mine told me what Occidental is. The European languages are members of the same
-                                        family. Their separate existence is a myth.</p>
-
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec
-                                            vitae sapien ut libero venenatis faucibus</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque
-                                            rutrum aenean imperdiet</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer
-                                            ante a consectetuer eget</li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Experience :</h5>
-                                <div class="text-muted">
-                                    <p>If several languages coalesce, the grammar of the resulting language is more
-                                        simple and regular than that of the individual languages. The new common
-                                        language will be more simple and regular than the existing European languages.
-                                        It will be as simple as Occidental; in fact, it will be Occidental. To an
-                                        English person, it will seem like simplified English, as a skeptical Cambridge
-                                        friend of mine told me what Occidental is. The European languages are members of
-                                        the same family. Their separate existence is a myth. For science, music, sport,
-                                        etc</p>
-
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec
-                                            vitae sapien ut libero venenatis faucibus</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque
-                                            rutrum aenean imperdiet</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer
-                                            ante a consectetuer eget</li>
-                                        <li class="py-1"><i
-                                                class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Phasellus
-                                            nec sem in justo pellentesque</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end card body -->
-                </div>
-                <!-- end card -->
+                <?php
+if (! isset($_instance)) {
+    $html = \Livewire\Livewire::mount('profile.body', [])->html();
+} elseif ($_instance->childHasBeenRendered('ZzqpALc')) {
+    $componentId = $_instance->getRenderedChildComponentId('ZzqpALc');
+    $componentTag = $_instance->getRenderedChildComponentTagName('ZzqpALc');
+    $html = \Livewire\Livewire::dummyMount($componentId, $componentTag);
+    $_instance->preserveRenderedChild('ZzqpALc');
+} else {
+    $response = \Livewire\Livewire::mount('profile.body', []);
+    $html = $response->html();
+    $_instance->logRenderedChild('ZzqpALc', $response->id(), \Livewire\Livewire::getRootElementTagName($html));
+}
+echo $html;
+?>
+                
             </div>
             <!-- end tab pane -->
 
-            <div class="tab-pane" id="post" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="blog-post">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-lg me-3">
-                                    <img src="<?php echo e(URL::asset('assets/images/users/avatar-6.jpg')); ?>" alt=""
-                                        class="img-fluid rounded-circle d-block">
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="font-size-15 text-truncate"><a href="#" class="text-dark">Richard
-                                            Johnson</a></h5>
-                                    <p class="font-size-13 text-muted mb-0">24 Mar, 2021</p>
-                                </div>
-                            </div>
-                            <div class="pt-3">
-                                <ul class="list-inline">
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-purchase-tag-alt align-middle text-muted me-1"></i>
-                                            Development
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-comment-dots align-middle text-muted me-1"></i> 08 Comments
-                                        </a>
-                                    </li>
-                                </ul>
-                                <p class="text-muted">Aenean ornare mauris velit. Donec imperdiet, massa sit amet porta
-                                    maximus, massa justo faucibus nisi,
-                                    eget accumsan nunc ipsum nec lacus. Etiam dignissim turpis sit amet lectus porttitor
-                                    eleifend. Maecenas ornare molestie metus eget feugiat.
-                                    Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
-
-                            </div>
-                            <div class="position-relative mt-3">
-                                <img src="<?php echo e(URL::asset('assets/images/profile-bg.jpg')); ?>" alt=""
-                                    class="img-thumbnail">
-                            </div>
-                            <div class="pt-3">
-                                <div class="d-flex align-items-center justify-content-between border-bottom pb-3">
-                                    <div>
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-purchase-tag-alt text-muted me-1"></i> Project
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-like align-middle text-muted me-1"></i> 12 Like
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-group">
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-4.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-5.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="ms-2">
-                                                <button type="button"
-                                                    class="btn btn-outline-primary btn-sm waves-effect">Share <i
-                                                        class="bx bx-share-alt align-middle ms-1"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-muted mt-4">Praesent fringilla neque vestibulum, consectetur arcu quis,
-                                    rutrum arcu. Vivamus vitae pulvinar dolor,
-                                    sit amet lacinia dolor. Mauris tincidunt lacinia nisi, non molestie leo consequat a.
-                                    Sed varius lobortis leo, vitae venenatis tortor ullamcorper condimentum.</p>
-
-                                <div class="mt-4 pt-2">
-                                    <h5 class="f-18">2 Comments</h5>
-
-                                    <div class="mt-4 pt-2">
-                                        <div class="comment-section border-bottom pb-4">
-                                            <div class="d-flex">
-                                                <img src="<?php echo e(URL::asset('assets/images/users/avatar-2.jpg')); ?>"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Natasha Andrews</h5>
-                                                    <p class="text-muted w-75 mb-0">Temporibus autem quibusdam et aut
-                                                        officiis debitis aut rerum necessitatibus saepe eveniet ut et
-                                                        voluptates repudiandae sint et molestiae non recusandae.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="comment-section pt-4">
-                                            <div class="d-flex">
-                                                <img src="<?php echo e(URL::asset('assets/images/users/avatar-4.jpg')); ?>"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Pranav Gamewala</h5>
-                                                    <p class="text-muted w-75">Donec non nisl dui. Integer pellentesque
-                                                        nibh mi, elementum pellentesque purus tincidunt ut. Suspendisse
-                                                        venenatis feugiat elit sed risus ornare laoreet.</p>
-                                                    <div class="mt-4">
-                                                        <a href="" class="btn btn-primary btn-sm"><i
-                                                                class="mdi mdi-reply me-1"></i> Reply</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end blog post -->
-                    </div>
-                    <!-- end card body -->
-                </div>
-                <!-- end card -->
-
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="blog-post">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-lg me-3">
-                                    <img src="<?php echo e(URL::asset('assets/images/users/avatar-9.jpg')); ?>" alt=""
-                                        class="img-fluid rounded-circle d-block">
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="font-size-15 text-truncate"><a href="#" class="text-dark">Michael
-                                            Smith</a></h5>
-                                    <p class="font-size-13 text-muted mb-0">08 Mar, 2021</p>
-                                </div>
-                            </div>
-                            <div class="pt-3">
-                                <ul class="list-inline">
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-purchase-tag-alt align-middle text-muted me-1"></i>
-                                            Development
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-comment-dots align-middle text-muted me-1"></i> 08 Comments
-                                        </a>
-                                    </li>
-                                </ul>
-                                <p class="text-muted">Aenean ornare mauris velit. Donec imperdiet, massa sit amet porta
-                                    maximus, massa justo faucibus nisi,
-                                    eget accumsan nunc ipsum nec lacus. Etiam dignissim turpis sit amet lectus porttitor
-                                    eleifend. Maecenas ornare molestie metus eget feugiat.
-                                    Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
-
-                            </div>
-                            <div class="position-relative mt-3">
-                                <img src="<?php echo e(URL::asset('assets/images/profile-bg-2.jpg')); ?>" alt=""
-                                    class="img-thumbnail">
-                            </div>
-                            <div class="pt-3">
-                                <div class="d-flex align-items-center justify-content-between border-bottom pb-3">
-                                    <div>
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-purchase-tag-alt text-muted me-1"></i> Project
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-like align-middle text-muted me-1"></i> 12 Like
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-group">
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-4.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-5.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-7.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="<?php echo e(URL::asset('assets/images/users/avatar-6.jpg')); ?>"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="ms-2">
-                                                <button type="button"
-                                                    class="btn btn-outline-primary btn-sm waves-effect">Share <i
-                                                        class="bx bx-share-alt align-middle ms-1"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-muted mt-4">Praesent fringilla neque vestibulum, consectetur arcu quis,
-                                    rutrum arcu. Vivamus vitae pulvinar dolor,
-                                    sit amet lacinia dolor. Mauris tincidunt lacinia nisi, non molestie leo consequat a.
-                                    Sed varius lobortis leo, vitae venenatis tortor ullamcorper condimentum.</p>
-
-                                <div class="mt-4 pt-2">
-                                    <h5 class="f-18">2 Comments</h5>
-
-                                    <div class="mt-4 pt-2">
-                                        <div class="comment-section border-bottom pb-4">
-                                            <div class="d-flex">
-                                                <img src="<?php echo e(URL::asset('assets/images/users/avatar-2.jpg')); ?>"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Natasha Andrews</h5>
-                                                    <p class="text-muted w-75 mb-0">Temporibus autem quibusdam et aut
-                                                        officiis debitis aut rerum necessitatibus saepe eveniet ut et
-                                                        voluptates repudiandae sint et molestiae non recusandae.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="comment-section pt-4 ps-5 ms-4">
-                                            <div class="d-flex">
-                                                <img src="<?php echo e(URL::asset('assets/images/users/avatar-4.jpg')); ?>"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Pranav Gamewala</h5>
-                                                    <p class="text-muted w-75">Donec non nisl dui. Integer pellentesque
-                                                        nibh mi, elementum pellentesque purus tincidunt ut. Suspendisse
-                                                        venenatis feugiat elit sed risus ornare laoreet.</p>
-                                                    <div class="mt-4">
-                                                        <a href="" class="btn btn-primary btn-sm"><i
-                                                                class="mdi mdi-reply me-1"></i> Reply</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end blog post -->
-                    </div>
-                    <!-- end card body -->
-                </div>
-                <!-- end card -->
-            </div>
+            
             <!-- end tab pane -->
         </div>
         <!-- end tab content -->
@@ -527,7 +209,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myLargeModalLabel">Edit Profile</h5>
+                <h5 class="modal-title" id="myLargeModalLabel">Ubah Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -607,108 +289,111 @@ unset($__errorArgs, $__bag); ?>" id="avatar"
                     <input type="hidden" value="<?php echo e(Auth::user()->id); ?>" id="data_id">
                     <div class="mb-3">
                         <label for="kode">Kode Fasyankes</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['kode'];
+                        <input type="text" value="<?php echo e($fasyankes->kode ?? ''); ?>"
+                            class="form-control <?php $__errorArgs = ['kode'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='kode'
-                            name="kode" autofocus>
+unset($__errorArgs, $__bag); ?>" id='kode' name="kode" autofocus>
                         <div class="text-danger" id="kodeError" data-ajax-feedback="kode"></div>
                     </div>
                     <div class="mb-3">
                         <label for="nama">Nama Fasyankes</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['nama'];
+                        <input type="text" value="<?php echo e($fasyankes->nama ?? ''); ?>" class=" form-control <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid
+                            <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='nama'
-                            name="nama">
+unset($__errorArgs, $__bag); ?>" id='nama' name="nama">
                         <div class="text-danger" id="namaError" data-ajax-feedback="nama"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="jenis">Jenis</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['jenis'];
+                        <label for="jenis" class="form-label font-size-13 text-muted">Jenis</label>
+                        <select class="form-control <?php $__errorArgs = ['jenis'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='jenis'
-                            name="jenis">
+unset($__errorArgs, $__bag); ?>" data-trigger name="jenis"
+                            id="jenis" placeholder="Jenis Fasyankes">
+                            <option value="">Pilih jenis</option>
+                            <?php $__currentLoopData = $jenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($j); ?>" <?php if($fasyankes->jenis == $j): ?> selected <?php endif; ?>><?php echo e($j); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
                         <div class="text-danger" id="jenisError" data-ajax-feedback="jenis"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="kelas">Kelas</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['kelas'];
+                        <select type="text" value="<?php echo e($fasyankes->kelas ?? ''); ?>"
+                            class="form-control <?php $__errorArgs = ['kelas'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='kelas'
+unset($__errorArgs, $__bag); ?>" data-trigger id='kelas'
                             name="kelas">
+                            <option value="">Pilih kelas</option>
+                            <?php $__currentLoopData = $kelas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($k); ?>" <?php if($fasyankes->kelas == $k): ?> selected <?php endif; ?>><?php echo e($k); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
                         <div class="text-danger" id="kelasError" data-ajax-feedback="kelas"></div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="telp">telp</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['telp'];
+                        <label for="telp">Telp</label>
+                        <input type="text" value="<?php echo e($fasyankes->telp ?? ''); ?>"
+                            class="form-control <?php $__errorArgs = ['telp'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='telp'
-                            name="telp">
+unset($__errorArgs, $__bag); ?>" id='telp' name="telp">
                         <div class="text-danger" id="telpError" data-ajax-feedback="telp"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control <?php $__errorArgs = ['email'];
+                        <input type="email" value="<?php echo e($fasyankes->email ?? ''); ?>"
+                            class="form-control <?php $__errorArgs = ['email'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='email'
-                            name="email">
+unset($__errorArgs, $__bag); ?>" id='email' name="email">
                         <div class="text-danger" id="emailError" data-ajax-feedback="email"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="direktur">Nama Direktur</label>
-                        <input type="text" class="form-control <?php $__errorArgs = ['direktur'];
+                        <input type="text" value="<?php echo e($fasyankes->direktur ?? ''); ?>" class="form-control <?php $__errorArgs = ['direktur'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid
+                        <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id='direktur'
-                            name="direktur">
+unset($__errorArgs, $__bag); ?>" id='direktur' name="direktur">
                         <div class="text-danger" id="direkturError" data-ajax-feedback="telp"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="alamat">Alamat Fasyankes</label>
-                        <textarea type="text" class="form-control <?php $__errorArgs = ['alamat'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" id='alamat'
-                            name="alamat" cols="3"></textarea>
-                        <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
-                    </div>
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="provinsi" class="form-label font-size-13 text-muted">Provinsi</label>
@@ -719,18 +404,59 @@ unset($__errorArgs, $__bag); ?>" id='alamat'
                                 <option value="<?php echo e($province->id); ?>"><?php echo e($province->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
+                            <div class="text-danger" id="provinsiError" data-ajax-feedback="provinsi"></div>
                         </div>
                     </div>
+
                     <div class="col-12 kabupaten-form">
                         <div class="mb-3">
                             <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten / Kota</label>
                             <select class="form-control" name="kabupaten" id="kabupaten" placeholder="Cari Kabupaten">
                             </select>
+                            <div class="text-danger" id="kabupatenError" data-ajax-feedback="kabupaten"></div>
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="alamat">Alamat Fasyankes</label>
+                        <textarea type="text" class="form-control <?php $__errorArgs = ['alamat'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id='alamat'
+                            name="alamat" cols="3"><?php echo e($fasyankes->alamat ?? ''); ?>
+
+                        </textarea>
+                        <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image">Profile Fasyankes</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="image"
+                                name="image" autofocus>
+                            <label class="input-group-text" for="image">Upload</label>
+                        </div>
+                        <div class="text-start mt-2">
+                            <img src="<?php if(!empty($fasyankes->image)): ?><?php echo e(URL::asset('assets/images/fasyankes/'. $fasyankes->image)); ?><?php else: ?><?php echo e(URL::asset('assets/images/profile-bg-1.jpg')); ?><?php endif; ?>"
+                                alt="" class="rounded me-2" width="200" data-holder-rendered="true">
+                        </div>
+                        <div class="text-danger" role="alert" id="imageError" data-ajax-feedback="image"></div>
+                    </div>
+
                     <div class="mt-3 d-grid">
                         <button class="btn btn-primary waves-effect waves-light UpdateProfile"
-                            data-id="<?php echo e(Auth::user()->id); ?>" type="submit">Update</button>
+                            data-id="<?php echo e(Auth::user()->id); ?>" type="submit">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -744,7 +470,7 @@ unset($__errorArgs, $__bag); ?>" id='alamat'
 <script src="<?php echo e(URL::asset('assets/js/pages/profile.init.js')); ?>"></script>
 <script src="<?php echo e(URL::asset('assets/js/pages/form-advanced.init.js')); ?>"></script>
 <script src="<?php echo e(URL::asset('/assets/js/app.min.js')); ?>"></script>
-<script>
+<script type="text/javascript">
     $('#update-profile').on('submit', function(event) {
         event.preventDefault();
         var Id = $('#data_id').val();
@@ -778,6 +504,52 @@ unset($__errorArgs, $__bag); ?>" id='alamat'
         });
     });
 
+    $('#update-fasyankes').on('submit', function(event) {
+        event.preventDefault();
+        var Id = $('#data_id').val();
+        let formData = new FormData(this);
+        $('#kodeError').text('');
+        $('#namaError').text('');
+        $('#jenisError').text('');
+        $('#kelasError').text('');
+        $('#telpError').text('');
+        $('#emailError').text('');
+        $('#direkturError').text('');
+        $('#alamatError').text('');
+        $('#provinsiError').text('');
+        $('#kabupatenError').text('');
+        $('#imageError').text('');
+        $.ajax({
+            url: "<?php echo e(url('update-fasyankes')); ?>" + "/" + Id,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.isSuccess == false) {
+                    alert(response.Message);
+                } else if (response.isSuccess == true) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function(response) {
+                $('#nameError').text(response.responseJSON.errors.name);
+                $('#kodeError').text(response.responseJSON.errors.kode);
+                $('#jenisError').text(response.responseJSON.errors.jenis);
+                $('#kelasError').text(response.responseJSON.errors.kelas);
+                $('#telpError').text(response.responseJSON.errors.telp);
+                $('#emailError').text(response.responseJSON.errors.email);
+                $('#direkturError').text(response.responseJSON.errors.direktur);
+                $('#alamatError').text(response.responseJSON.errors.alamat);
+                $('#provinsiError').text(response.responseJSON.errors.provinsi);
+                $('#kabupatenError').text(response.responseJSON.errors.kabupaten);
+                $('#imageError').text(response.responseJSON.errors.image);
+            }
+        });
+    });
+
     const query_task = new Choices('#kabupaten', {
             removeItemButton: true,
             searchPlaceholderValue: 'Pilih Kabupaten / Kota', 
@@ -806,36 +578,8 @@ unset($__errorArgs, $__bag); ?>" id='alamat'
         $("#provinsi").on('change', function() {
             let id = $(this).val();
             query_task.removeActiveItems();
-            let data = '1,1,2,3,3';
-            let selected_values = data.split(',')
-            $.each(selected_values, function(key, value) {
-            query_task.setChoiceByValue(value);
             reset(id);
-            });
         });
-
-    // $('#provinsi').on('change', function() {
-    //     let id = $(this).val();
-    //     var singleFetch = new Choices('#kabupaten', {
-    //         removeItemButton: true,
-    //         searchPlaceholderValue: 'Pilih Kabupaten / Kota', 
-    //         placeholder: true,
-    //         }).clearChoices()
-    //         .setChoices(function() { 
-    //             return fetch( 
-    //                 "<?php echo e(url('get-kabupaten')); ?>" + "/" + id
-    //             ) 
-    //             .then(function(response) { 
-    //                 return response.json(); 
-    //             }) 
-    //             .then(function(data) { 
-    //                 return data.map(function(response) { 
-    //                     return { label: response.name, value: response.id }; 
-    //                 }); 
-    //             }); 
-    //         }) 
-
-    //     });
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Users/hardiko/Documents/Developer/LARAVEL/Dason-Laravel_v1.0.0/Admin/resources/views/profile/index.blade.php ENDPATH**/ ?>
