@@ -17,7 +17,7 @@ class ProfileController extends Controller
         $fasyankes = Fasyankes::where('user_id', $user->id)->first();
         $jenis = ['Praktik Mandiri', 'Rumah Sakit', 'Klinik', 'Puskesmas', 'Apotek'];
         $kelas = ['-', 'A', 'B', 'C', 'D', 'D Pratama'];
-        return view('profile.index', compact('user', 'subUsers', 'provinces', 'fasyankes', 'jenis', 'kelas'));
+        return view('profile.index', compact('user', 'subUsers', 'provinces', 'jenis', 'kelas', 'fasyankes'));
     }
 
     public function getKabupaten($id)

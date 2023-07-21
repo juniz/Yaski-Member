@@ -1,8 +1,7 @@
-@extends('layouts.master-without-nav')
-@section('title')
-@lang('translation.Login')
-@endsection
-@section('content')
+<?php $__env->startSection('title'); ?>
+<?php echo app('translator')->get('translation.Login'); ?>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="auth-page">
     <div class="container-fluid p-0">
@@ -12,8 +11,8 @@
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
-                                <a href="{{ url('/') }}" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="50"> <span
+                                <a href="<?php echo e(url('/')); ?>" class="d-block auth-logo">
+                                    <img src="<?php echo e(URL::asset('assets/images/logo-sm.svg')); ?>" alt="" height="50"> <span
                                         class="logo-txt">YASKI</span>
                                 </a>
                             </div>
@@ -21,17 +20,31 @@
                                 <div class="text-center">
                                     <h5 class="mb-0">Selamat Datang</h5>
                                 </div>
-                                <form class="mt-4 pt-2" action="{{ route('login') }}" method="POST">
-                                    @csrf
+                                <form class="mt-4 pt-2" action="<?php echo e(route('login')); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
                                     <div class="form-floating form-floating-custom mb-4">
-                                        <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ old('email', 'admin@themesdesign.com') }}" id="input-username"
+                                        <input type="text" class="form-control <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            value="<?php echo e(old('email', 'admin@themesdesign.com')); ?>" id="input-username"
                                             placeholder="Enter User Name" name="email">
-                                        @error('email')
+                                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
+                                            <strong><?php echo e($message); ?></strong>
                                         </span>
-                                        @enderror
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                         <label for="input-username">Username</label>
                                         <div class="form-floating-icon">
                                             <i data-feather="users"></i>
@@ -40,14 +53,28 @@
 
                                     <div class="form-floating form-floating-custom mb-4 auth-pass-inputgroup">
                                         <input type="password"
-                                            class="form-control pe-5 @error('password') is-invalid @enderror"
+                                            class="form-control pe-5 <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             name="password" id="password-input" placeholder="Enter Password"
                                             value="123456">
-                                        @error('password')
+                                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
+                                            <strong><?php echo e($message); ?></strong>
                                         </span>
-                                        @enderror
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                         <button type="button" class="btn btn-link position-absolute h-100 end-0 top-0"
                                             id="password-addon">
                                             <i class="mdi mdi-eye-outline font-size-18 text-muted"></i>
@@ -75,43 +102,15 @@
                                     </div>
                                 </form>
 
-                                {{-- <div class="mt-4 pt-2 text-center">
-                                    <div class="signin-other-title">
-                                        <h5 class="font-size-14 mb-3 text-muted fw-medium">- Sign in with -</h5>
-                                    </div>
-
-                                    <ul class="list-inline mb-0">
-                                        <li class="list-inline-item">
-                                            <a href="javascript:void()"
-                                                class="social-list-item bg-primary text-white border-primary">
-                                                <i class="mdi mdi-facebook"></i>
-                                            </a>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <a href="javascript:void()"
-                                                class="social-list-item bg-info text-white border-info">
-                                                <i class="mdi mdi-twitter"></i>
-                                            </a>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <a href="javascript:void()"
-                                                class="social-list-item bg-danger text-white border-danger">
-                                                <i class="mdi mdi-google"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div> --}}
+                                
 
                                 <div class="mt-5 text-center">
-                                    <p class="text-muted mb-0">Belum punya akun ? <a href="{{ url('register') }}"
+                                    <p class="text-muted mb-0">Belum punya akun ? <a href="<?php echo e(url('register')); ?>"
                                             class="text-primary fw-semibold"> Daftar sekarang </a> </p>
                                 </div>
                             </div>
                             <div class="mt-4 mt-md-5 text-center">
-                                {{-- <p class="mb-0">© <script>
-                                        document.write(new Date().getFullYear())
-                                    </script> Dason . Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                                    Themesdesign</p> --}}
+                                
                             </div>
                         </div>
                     </div>
@@ -144,17 +143,17 @@
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="0" class="active" aria-current="true"
                                             aria-label="Slide 1">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-1.jpg') }}"
+                                            <img src="<?php echo e(URL::asset('assets/images/users/avatar-1.jpg')); ?>"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="1" aria-label="Slide 2">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-2.jpg') }}"
+                                            <img src="<?php echo e(URL::asset('assets/images/users/avatar-2.jpg')); ?>"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="2" aria-label="Slide 3">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-3.jpg') }}"
+                                            <img src="<?php echo e(URL::asset('assets/images/users/avatar-3.jpg')); ?>"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                     </div>
@@ -226,8 +225,9 @@
     </div>
     <!-- end container fluid -->
 </div>
-@endsection
-@section('script')
-<script src="{{ URL::asset('assets/js/pages/pass-addon.init.js') }}"></script>
-<script src="{{ URL::asset('assets/js/pages/feather-icon.init.js') }}"></script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('script'); ?>
+<script src="<?php echo e(URL::asset('assets/js/pages/pass-addon.init.js')); ?>"></script>
+<script src="<?php echo e(URL::asset('assets/js/pages/feather-icon.init.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.master-without-nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Users/hardiko/Documents/Developer/LARAVEL/Dason-Laravel_v1.0.0/Admin/resources/views/auth/login.blade.php ENDPATH**/ ?>

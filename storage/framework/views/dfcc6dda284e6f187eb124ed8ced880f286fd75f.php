@@ -43,7 +43,8 @@
                     <div class="flex-shrink-0">
                         <div class="avatar-xxl me-3">
                             <img src="<?php if($user->avatar != ''): ?><?php echo e(URL::asset('images/'. $user->avatar)); ?> <?php else: ?> <?php echo e(URL::asset('assets/images/users/avatar-1.png')); ?> <?php endif; ?>"
-                                alt="profile-image" class="img-fluid rounded-circle d-block img-thumbnail">
+                                alt="profile-image" class="img-fluid rounded-circle img-thumbnail"
+                                style="max-height: 8.5rem; width:7.2rem">
                         </div>
                     </div>
                     <div class="flex-grow-1">
@@ -87,7 +88,8 @@
             <div class="card-body">
                 <ul class="nav nav-tabs-custom card-header-tabs border-top mt-2" id="pills-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Overview</a>
+                        <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Profile
+                            Fasyankes</a>
                     </li>
                     
                 </ul>
@@ -100,22 +102,77 @@
     <div class="col-xl-8 col-lg-8">
         <div class="tab-content">
             <div class="tab-pane active" id="overview" role="tabpanel">
-                <?php
-if (! isset($_instance)) {
-    $html = \Livewire\Livewire::mount('profile.body', [])->html();
-} elseif ($_instance->childHasBeenRendered('ZzqpALc')) {
-    $componentId = $_instance->getRenderedChildComponentId('ZzqpALc');
-    $componentTag = $_instance->getRenderedChildComponentTagName('ZzqpALc');
-    $html = \Livewire\Livewire::dummyMount($componentId, $componentTag);
-    $_instance->preserveRenderedChild('ZzqpALc');
-} else {
-    $response = \Livewire\Livewire::mount('profile.body', []);
-    $html = $response->html();
-    $_instance->logRenderedChild('ZzqpALc', $response->id(), \Livewire\Livewire::getRootElementTagName($html));
-}
-echo $html;
-?>
                 
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <h4 class="card-title text-uppercase mb-0"><?php echo e($fasyankes->nama ?? 'Data Fasyankes Kosong'); ?>
+
+                            </h4>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i><?php if(empty($fasyankes)): ?>
+                                Tambah Fasyankes <?php else: ?> Ubah
+                                Fasyankes <?php endif; ?></button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <?php if(!empty($fasyankes)): ?>
+                        <div>
+                            <div class="pb-3">
+                                <h5 class="font-size-15">Kode :</h5>
+                                <div class="text-muted">
+                                    <p class="mb-2"><?php echo e($fasyankes->kode); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Jenis Fasyankes :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->jenis); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Kelas :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->kelas); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Telp :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->telp); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Email :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->email); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Direktur :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->direktur); ?></p>
+                                </div>
+                            </div>
+
+                            <div class="pt-3">
+                                <h5 class="font-size-15">Alamat :</h5>
+                                <div class="text-muted">
+                                    <p><?php echo e($fasyankes->alamat); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <!-- end card body -->
+                </div>
+                <!-- end card -->
             </div>
             <!-- end tab pane -->
 
@@ -274,6 +331,7 @@ unset($__errorArgs, $__bag); ?>" id="avatar"
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <!--  Update Fasyankes -->
 <div class="modal fade update-fasyankes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
@@ -307,7 +365,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid
-                            <?php unset($message);
+                <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" id='nama' name="nama">
@@ -387,7 +445,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid
-                        <?php unset($message);
+            <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" id='direktur' name="direktur">
@@ -410,7 +468,8 @@ unset($__errorArgs, $__bag); ?>" id='direktur' name="direktur">
 
                     <div class="col-12 kabupaten-form">
                         <div class="mb-3">
-                            <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten / Kota</label>
+                            <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten /
+                                Kota</label>
                             <select class="form-control" name="kabupaten" id="kabupaten" placeholder="Cari Kabupaten">
                             </select>
                             <div class="text-danger" id="kabupatenError" data-ajax-feedback="kabupaten"></div>
@@ -429,7 +488,7 @@ endif;
 unset($__errorArgs, $__bag); ?>" id='alamat'
                             name="alamat" cols="3"><?php echo e($fasyankes->alamat ?? ''); ?>
 
-                        </textarea>
+            </textarea>
                         <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
                     </div>
 
@@ -463,6 +522,7 @@ unset($__errorArgs, $__bag); ?>" id="image"
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('script'); ?>
 <script src="<?php echo e(URL::asset('assets/libs/apexcharts/apexcharts.min.js')); ?>"></script>

@@ -44,7 +44,8 @@
                     <div class="flex-shrink-0">
                         <div class="avatar-xxl me-3">
                             <img src="@if ($user->avatar != ''){{ URL::asset('images/'. $user->avatar) }} @else {{ URL::asset('assets/images/users/avatar-1.png') }} @endif"
-                                alt="profile-image" class="img-fluid rounded-circle d-block img-thumbnail">
+                                alt="profile-image" class="img-fluid rounded-circle img-thumbnail"
+                                style="max-height: 8.5rem; width:7.2rem">
                         </div>
                     </div>
                     <div class="flex-grow-1">
@@ -88,7 +89,8 @@
             <div class="card-body">
                 <ul class="nav nav-tabs-custom card-header-tabs border-top mt-2" id="pills-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Overview</a>
+                        <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Profile
+                            Fasyankes</a>
                     </li>
                     {{-- <li class="nav-item">
                         <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Post</a>
@@ -103,8 +105,9 @@
     <div class="col-xl-8 col-lg-8">
         <div class="tab-content">
             <div class="tab-pane active" id="overview" role="tabpanel">
-                <livewire:profile.body />
-                {{-- <div class="card">
+                {{--
+                <livewire:profile.body /> --}}
+                <div class="card">
                     <div class="card-header">
                         <div class="d-flex flex-row justify-content-between">
                             <h4 class="card-title text-uppercase mb-0">{{ $fasyankes->nama ?? 'Data Fasyankes Kosong' }}
@@ -172,7 +175,7 @@
                     </div>
                     <!-- end card body -->
                 </div>
-                <!-- end card --> --}}
+                <!-- end card -->
             </div>
             <!-- end tab pane -->
 
@@ -592,6 +595,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <!--  Update Fasyankes -->
 <div class="modal fade update-fasyankes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
@@ -614,7 +618,7 @@
                     <div class="mb-3">
                         <label for="nama">Nama Fasyankes</label>
                         <input type="text" value="{{$fasyankes->nama ?? ''}}" class=" form-control @error('nama') is-invalid
-                            @enderror" id='nama' name="nama">
+                @enderror" id='nama' name="nama">
                         <div class="text-danger" id="namaError" data-ajax-feedback="nama"></div>
                     </div>
                     <div class="mb-3">
@@ -659,7 +663,7 @@
                     <div class="mb-3">
                         <label for="direktur">Nama Direktur</label>
                         <input type="text" value="{{$fasyankes->direktur ?? ''}}" class="form-control @error('direktur') is-invalid
-                        @enderror" id='direktur' name="direktur">
+            @enderror" id='direktur' name="direktur">
                         <div class="text-danger" id="direkturError" data-ajax-feedback="telp"></div>
                     </div>
 
@@ -679,7 +683,8 @@
 
                     <div class="col-12 kabupaten-form">
                         <div class="mb-3">
-                            <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten / Kota</label>
+                            <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten /
+                                Kota</label>
                             <select class="form-control" name="kabupaten" id="kabupaten" placeholder="Cari Kabupaten">
                             </select>
                             <div class="text-danger" id="kabupatenError" data-ajax-feedback="kabupaten"></div>
@@ -690,7 +695,7 @@
                         <label for="alamat">Alamat Fasyankes</label>
                         <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" id='alamat'
                             name="alamat" cols="3">{{$fasyankes->alamat ?? ''}}
-                        </textarea>
+            </textarea>
                         <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
                     </div>
 
@@ -717,6 +722,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 @endsection
 @section('script')
 <script src="{{ URL::asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
