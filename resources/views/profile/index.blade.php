@@ -2,6 +2,7 @@
 @section('title') @lang('translation.Profile') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/choices.js/choices.js.min.css') }}" rel="stylesheet">
+<link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
 <style>
     .profile-users {
         background-image: url('{{URL::asset("assets/images/fasyankes/".$fasyankes->image)}}');
@@ -58,12 +59,12 @@
             </div>
             <div class="col-sm-auto">
                 <div class="d-flex align-items-start justify-content-end gap-2 mb-2">
-                    <div>
-                        {{-- <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button> --}}
+                    {{-- <div>
+                        <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target=".update-profile"><i class="me-1"></i> Ubah Profile</button>
 
-                    </div>
+                    </div> --}}
                     <div>
                         <div class="dropdown">
                             <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle"
@@ -71,8 +72,10 @@
                                 <i class="bx bx-dots-horizontal-rounded font-size-20"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target=".update-profile"
+                                        href="#">Profile</a></li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target=".update-fasyankes"
+                                        href="#">Fasyankes</a></li>
                                 <li><a class="dropdown-item" href="#">Something else here</a></li>
                             </ul>
                         </div>
@@ -92,9 +95,9 @@
                         <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Profile
                             Fasyankes</a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Post</a>
-                    </li> --}}
+                    <li class="nav-item">
+                        <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Pakelaring</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -112,10 +115,10 @@
                         <div class="d-flex flex-row justify-content-between">
                             <h4 class="card-title text-uppercase mb-0">{{ $fasyankes->nama ?? 'Data Fasyankes Kosong' }}
                             </h4>
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                            {{-- <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                 data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i>@if(empty($fasyankes))
                                 Tambah Fasyankes @else Ubah
-                                Fasyankes @endif</button>
+                                Fasyankes @endif</button> --}}
                         </div>
                     </div>
 
@@ -179,288 +182,30 @@
             </div>
             <!-- end tab pane -->
 
-            {{-- <div class="tab-pane" id="post" role="tabpanel">
+            <div class="tab-pane" id="post" role="tabpanel">
                 <div class="card">
-                    <div class="card-body">
-                        <div class="blog-post">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-lg me-3">
-                                    <img src="{{ URL::asset('assets/images/users/avatar-6.jpg') }}" alt=""
-                                        class="img-fluid rounded-circle d-block">
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="font-size-15 text-truncate"><a href="#" class="text-dark">Richard
-                                            Johnson</a></h5>
-                                    <p class="font-size-13 text-muted mb-0">24 Mar, 2021</p>
-                                </div>
-                            </div>
-                            <div class="pt-3">
-                                <ul class="list-inline">
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-purchase-tag-alt align-middle text-muted me-1"></i>
-                                            Development
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-comment-dots align-middle text-muted me-1"></i> 08 Comments
-                                        </a>
-                                    </li>
-                                </ul>
-                                <p class="text-muted">Aenean ornare mauris velit. Donec imperdiet, massa sit amet porta
-                                    maximus, massa justo faucibus nisi,
-                                    eget accumsan nunc ipsum nec lacus. Etiam dignissim turpis sit amet lectus porttitor
-                                    eleifend. Maecenas ornare molestie metus eget feugiat.
-                                    Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
-
-                            </div>
-                            <div class="position-relative mt-3">
-                                <img src="{{ URL::asset('assets/images/profile-bg.jpg') }}" alt=""
-                                    class="img-thumbnail">
-                            </div>
-                            <div class="pt-3">
-                                <div class="d-flex align-items-center justify-content-between border-bottom pb-3">
-                                    <div>
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-purchase-tag-alt text-muted me-1"></i> Project
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-like align-middle text-muted me-1"></i> 12 Like
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-group">
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-4.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-5.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="ms-2">
-                                                <button type="button"
-                                                    class="btn btn-outline-primary btn-sm waves-effect">Share <i
-                                                        class="bx bx-share-alt align-middle ms-1"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-muted mt-4">Praesent fringilla neque vestibulum, consectetur arcu quis,
-                                    rutrum arcu. Vivamus vitae pulvinar dolor,
-                                    sit amet lacinia dolor. Mauris tincidunt lacinia nisi, non molestie leo consequat a.
-                                    Sed varius lobortis leo, vitae venenatis tortor ullamcorper condimentum.</p>
-
-                                <div class="mt-4 pt-2">
-                                    <h5 class="f-18">2 Comments</h5>
-
-                                    <div class="mt-4 pt-2">
-                                        <div class="comment-section border-bottom pb-4">
-                                            <div class="d-flex">
-                                                <img src="{{ URL::asset('assets/images/users/avatar-2.jpg') }}"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Natasha Andrews</h5>
-                                                    <p class="text-muted w-75 mb-0">Temporibus autem quibusdam et aut
-                                                        officiis debitis aut rerum necessitatibus saepe eveniet ut et
-                                                        voluptates repudiandae sint et molestiae non recusandae.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="comment-section pt-4">
-                                            <div class="d-flex">
-                                                <img src="{{ URL::asset('assets/images/users/avatar-4.jpg') }}"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Pranav Gamewala</h5>
-                                                    <p class="text-muted w-75">Donec non nisl dui. Integer pellentesque
-                                                        nibh mi, elementum pellentesque purus tincidunt ut. Suspendisse
-                                                        venenatis feugiat elit sed risus ornare laoreet.</p>
-                                                    <div class="mt-4">
-                                                        <a href="" class="btn btn-primary btn-sm"><i
-                                                                class="mdi mdi-reply me-1"></i> Reply</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <h4 class="card-title text-uppercase mb-0">Paklaring
+                            </h4>
+                            {{-- <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                data-bs-target=".update-paklaring"><i class="bx bx-plus me-1"></i>@if(empty($paklaring))
+                                Tambah Paklaring @else Ubah
+                                Paklaring @endif</button> --}}
                         </div>
-                        <!-- end blog post -->
+                    </div>
+                    <div class="card-body">
+                        @if(empty($paklaring))
+                        <h6 class="text-center">Data Kosong</h6>
+                        @else
+                        <iframe src="{{ URL::asset('assets/files/paklaring/'. $paklaring->file) }}" frameborder="0"
+                            width="300vw" height="500vh"></iframe>
+                        @endif
                     </div>
                     <!-- end card body -->
                 </div>
                 <!-- end card -->
-
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="blog-post">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-lg me-3">
-                                    <img src="{{ URL::asset('assets/images/users/avatar-9.jpg') }}" alt=""
-                                        class="img-fluid rounded-circle d-block">
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="font-size-15 text-truncate"><a href="#" class="text-dark">Michael
-                                            Smith</a></h5>
-                                    <p class="font-size-13 text-muted mb-0">08 Mar, 2021</p>
-                                </div>
-                            </div>
-                            <div class="pt-3">
-                                <ul class="list-inline">
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-purchase-tag-alt align-middle text-muted me-1"></i>
-                                            Development
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item me-3">
-                                        <a href="javascript: void(0);" class="text-muted">
-                                            <i class="bx bx-comment-dots align-middle text-muted me-1"></i> 08 Comments
-                                        </a>
-                                    </li>
-                                </ul>
-                                <p class="text-muted">Aenean ornare mauris velit. Donec imperdiet, massa sit amet porta
-                                    maximus, massa justo faucibus nisi,
-                                    eget accumsan nunc ipsum nec lacus. Etiam dignissim turpis sit amet lectus porttitor
-                                    eleifend. Maecenas ornare molestie metus eget feugiat.
-                                    Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
-
-                            </div>
-                            <div class="position-relative mt-3">
-                                <img src="{{ URL::asset('assets/images/profile-bg-2.jpg') }}" alt=""
-                                    class="img-thumbnail">
-                            </div>
-                            <div class="pt-3">
-                                <div class="d-flex align-items-center justify-content-between border-bottom pb-3">
-                                    <div>
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-purchase-tag-alt text-muted me-1"></i> Project
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item me-3">
-                                                <a href="javascript: void(0);" class="text-muted">
-                                                    <i class="bx bx-like align-middle text-muted me-1"></i> 12 Like
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-group">
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-4.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-5.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-7.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                                <div class="avatar-group-item">
-                                                    <a href="javascript: void(0);" class="d-inline-block">
-                                                        <img src="{{ URL::asset('assets/images/users/avatar-6.jpg') }}"
-                                                            alt="" class="rounded-circle avatar-sm">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="ms-2">
-                                                <button type="button"
-                                                    class="btn btn-outline-primary btn-sm waves-effect">Share <i
-                                                        class="bx bx-share-alt align-middle ms-1"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-muted mt-4">Praesent fringilla neque vestibulum, consectetur arcu quis,
-                                    rutrum arcu. Vivamus vitae pulvinar dolor,
-                                    sit amet lacinia dolor. Mauris tincidunt lacinia nisi, non molestie leo consequat a.
-                                    Sed varius lobortis leo, vitae venenatis tortor ullamcorper condimentum.</p>
-
-                                <div class="mt-4 pt-2">
-                                    <h5 class="f-18">2 Comments</h5>
-
-                                    <div class="mt-4 pt-2">
-                                        <div class="comment-section border-bottom pb-4">
-                                            <div class="d-flex">
-                                                <img src="{{ URL::asset('assets/images/users/avatar-2.jpg') }}"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Natasha Andrews</h5>
-                                                    <p class="text-muted w-75 mb-0">Temporibus autem quibusdam et aut
-                                                        officiis debitis aut rerum necessitatibus saepe eveniet ut et
-                                                        voluptates repudiandae sint et molestiae non recusandae.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="comment-section pt-4 ps-5 ms-4">
-                                            <div class="d-flex">
-                                                <img src="{{ URL::asset('assets/images/users/avatar-4.jpg') }}"
-                                                    class="rounded-circle avatar-md" alt="img-missing">
-                                                <div class="flex-1 ms-4">
-                                                    <div class="post-meta float-end">
-                                                        <span><i class="mdi mdi-calendar me-2"></i>Feb 13, 2021</span>
-                                                    </div>
-                                                    <h5 class="font-size-15">Pranav Gamewala</h5>
-                                                    <p class="text-muted w-75">Donec non nisl dui. Integer pellentesque
-                                                        nibh mi, elementum pellentesque purus tincidunt ut. Suspendisse
-                                                        venenatis feugiat elit sed risus ornare laoreet.</p>
-                                                    <div class="mt-4">
-                                                        <a href="" class="btn btn-primary btn-sm"><i
-                                                                class="mdi mdi-reply me-1"></i> Reply</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end blog post -->
-                    </div>
-                    <!-- end card body -->
-                </div>
-                <!-- end card -->
-            </div> --}}
+            </div>
             <!-- end tab pane -->
         </div>
         <!-- end tab content -->
@@ -501,8 +246,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i>
-                                    Online
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-secondary"><i
+                                                class="bx bx-edit "></i></button>
+                                        <button id="sa-warning" type="button" class="btn btn-sm btn-danger"><i
+                                                class="bx bx-trash "></i></button>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -512,35 +261,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Weekly Hours</h5>
-            </div>
-            <div class="card-body">
-                <div id="overview-chart" data-colors='["#1c84ee"]' class="apex-charts" dir="ltr"></div>
-            </div>
-        </div>
-
-
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Skills</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-2 font-size-16">
-                    <a href="#" class="badge badge-soft-primary">Photoshop</a>
-                    <a href="#" class="badge badge-soft-primary">illustrator</a>
-                    <a href="#" class="badge badge-soft-primary">HTML</a>
-                    <a href="#" class="badge badge-soft-primary">CSS</a>
-                    <a href="#" class="badge badge-soft-primary">Javascript</a>
-                    <a href="#" class="badge badge-soft-primary">Php</a>
-                    <a href="#" class="badge badge-soft-primary">Python</a>
-                </div>
-            </div>
-            <!-- end card body -->
-        </div>
-        <!-- end card -->
     </div>
     <!-- end col -->
 </div>
@@ -723,14 +443,113 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!--  Tambah team modal -->
+<div class="modal fade tambah-team" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel">Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST" enctype="multipart/form-data" id="tambah-team">
+                    @csrf
+                    <input type="hidden" value="{{ Auth::user()->id }}" id="data_id">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nama</label>
+                        <input type="text" class="form-control @error('nameTeam') is-invalid @enderror" id="nameTeam"
+                            value="" name="nameTeam" placeholder="Masukkan Nama" autofocus>
+                        <div class="text-danger" id="nameTeamError" data-ajax-feedback="nameTeam"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="useremail" class="form-label">Email</label>
+                        <input type="email" class="form-control @error('emailTeam') is-invalid @enderror" id="emailTeam"
+                            value="" name="emailTeam" placeholder="Masukkan Email" autofocus>
+                        <div class="text-danger" id="emailTeamError" data-ajax-feedback="emailTeam"></div>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="avatarTeam">Foto Profile</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control @error('avatarTeam') is-invalid @enderror"
+                                id="avatarTeam" name="avatarTeam" autofocus>
+                            <label class="input-group-text" for="avatarTeam">Upload</label>
+                        </div>
+                        <div class="text-start mt-2">
+                            <img src="@if (Auth::user()->avatar != ''){{ URL::asset('images/'. Auth::user()->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
+                                alt="" class="rounded-circle avatar-lg">
+                        </div>
+                        <div class="text-danger" role="alert" id="avatarTeamError" data-ajax-feedback="avatarTeam">
+                        </div>
+                    </div>
+
+                    <div class="mt-3 d-grid">
+                        <button class="btn btn-primary waves-effect waves-light TambahTeam"
+                            data-id="{{ Auth::user()->id }}" type="submit">Tambahkan</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--  Update Profile example -->
+<div class="modal fade update-paklaring" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel">Paklaring</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST" enctype="multipart/form-data" id="update-paklaring">
+                    @csrf
+                    <input type="hidden" value="{{ Auth::user()->id }}" id="data_id">
+                    <div class="mb-3">
+                        <label for="tanggal" class="form-label">Tanggal</label>
+                        <input type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal"
+                            value="{{ $paklaring->tgl_pakai ?? '' }}" name="tanggal" placeholder="Enter tanggal"
+                            autofocus>
+                        <div class="text-danger" id="tanggalError" data-ajax-feedback="tanggal"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="file">Dokumen paklaring</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control @error('dokumen') is-invalid @enderror" id="dokumen"
+                                name="dokumen" autofocus>
+                            <label class="input-group-text" for="dokumen">Upload</label>
+                        </div>
+                        <div class="text-danger" role="alert" id="dokumenError" data-ajax-feedback="dokumen"></div>
+                    </div>
+
+                    <div class="mt-3 d-grid">
+                        <button class="btn btn-primary waves-effect waves-light UpdatePaklaring"
+                            data-id="{{ Auth::user()->id }}" type="submit">Unggah</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 @endsection
 @section('script')
+<script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/pages/sweetalert.init.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/choices.js/choices.js.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/profile.init.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/form-advanced.init.js') }}"></script>
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
 <script type="text/javascript">
+    function hapusTeam(id){
+        
+    }
+
     $('#update-profile').on('submit', function(event) {
         event.preventDefault();
         var Id = $('#data_id').val();
@@ -760,6 +579,70 @@
                 $('#emailError').text(response.responseJSON.errors.email);
                 $('#nameError').text(response.responseJSON.errors.name);
                 $('#avatarError').text(response.responseJSON.errors.avatar);
+            }
+        });
+    });
+
+    $('#tambah-team').on('submit', function(event) {
+        event.preventDefault();
+        var Id = $('#data_id').val();
+        let formData = new FormData(this);
+        $('#emailTeamError').text('');
+        $('#nameTeamError').text('');
+        $('#avatarTeamError').text('');
+        $.ajax({
+            url: "{{ url('update-team') }}" + "/" + Id,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                $('#emailTeamError').text('');
+                $('#nameTeamError').text('');
+                $('#avatarTeamError').text('');
+                if (response.isSuccess == false) {
+                    alert(response.Message);
+                } else if (response.isSuccess == true) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function(response) {
+                $('#emailTeamError').text(response.responseJSON.errors.emailTeam);
+                $('#nameTeamError').text(response.responseJSON.errors.nameTeam);
+                $('#avatarTeamError').text(response.responseJSON.errors.avatarTeam);
+            }
+        });
+    });
+
+    $('#update-paklaring').on('submit', function(event) {
+        event.preventDefault();
+        var Id = $('#data_id').val();
+        let formData = new FormData(this);
+        $('#tanggalError').text('');
+        $('#dokumenError').text('');
+        $.ajax({
+            url: "{{ url('update-paklaring') }}" + "/" + Id,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                $('#tanggalError').text('');
+                $('#dokumenError').text('');
+                if (response.isSuccess == false) {
+                    alert(response.Message);
+                } else if (response.isSuccess == true) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function(response) {
+                // console.log(response);
+                $('#tanggalError').text(response.responseJSON.errors.tanggal);
+                $('#dokumenError').text(response.responseJSON.errors.dokumen);
             }
         });
     });

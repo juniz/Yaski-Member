@@ -26,13 +26,15 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="ecommerce-products" key="t-products">@lang('translation.Products')</a></li>
-                        <li><a href="ecommerce-product-detail" data-key="t-product-detail">@lang('translation.Product_Detail')</a></li>
+                        <li><a href="ecommerce-product-detail"
+                                data-key="t-product-detail">@lang('translation.Product_Detail')</a></li>
                         <li><a href="ecommerce-orders" data-key="t-orders">@lang('translation.Orders')</a></li>
                         <li><a href="ecommerce-customers" data-key="t-customers">@lang('translation.Customers')</a></li>
                         <li><a href="ecommerce-cart" data-key="t-cart">@lang('translation.Cart')</a></li>
                         <li><a href="ecommerce-checkout" data-key="t-checkout">@lang('translation.Checkout')</a></li>
                         <li><a href="ecommerce-shops" data-key="t-shops">@lang('translation.Shops')</a></li>
-                        <li><a href="ecommerce-add-product" data-key="t-add-product">@lang('translation.Add_Product')</a></li>
+                        <li><a href="ecommerce-add-product"
+                                data-key="t-add-product">@lang('translation.Add_Product')</a></li>
                     </ul>
                 </li>
 
@@ -95,12 +97,17 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="auth-login" data-key="t-login">@lang('translation.Login')</a></li>
                         <li><a href="auth-register" data-key="t-register">@lang('translation.Register')</a></li>
-                        <li><a href="auth-recoverpw" data-key="t-recover-password">@lang('translation.Recover_Password')</a></li>
-                        <li><a href="auth-lock-screen" data-key="t-lock-screen">@lang('translation.Lock_Screen')</a></li>
+                        <li><a href="auth-recoverpw"
+                                data-key="t-recover-password">@lang('translation.Recover_Password')</a></li>
+                        <li><a href="auth-lock-screen" data-key="t-lock-screen">@lang('translation.Lock_Screen')</a>
+                        </li>
                         <li><a href="auth-logout" data-key="t-logout">@lang('translation.Logout')</a></li>
-                        <li><a href="auth-confirm-mail" data-key="t-confirm-mail">@lang('translation.Confirm_Mail')</a></li>
-                        <li><a href="auth-email-verification" data-key="t-email-verification">@lang('translation.Email_verification')</a></li>
-                        <li><a href="auth-two-step-verification" data-key="t-two-step-verification">@lang('translation.Two_step_verification')</a></li>
+                        <li><a href="auth-confirm-mail" data-key="t-confirm-mail">@lang('translation.Confirm_Mail')</a>
+                        </li>
+                        <li><a href="auth-email-verification"
+                                data-key="t-email-verification">@lang('translation.Email_verification')</a></li>
+                        <li><a href="auth-two-step-verification"
+                                data-key="t-two-step-verification">@lang('translation.Two_step_verification')</a></li>
                     </ul>
                 </li>
 
@@ -147,7 +154,8 @@
                         <li><a href="ui-offcanvas" key="t-offcanvas">@lang('translation.Offcanvas')</a></li>
                         <li><a href="ui-progressbars" key="t-progress-bars">@lang('translation.Progress_Bars')</a></li>
                         <li><a href="ui-placeholders" key="t-placeholders">@lang('translation.Placeholders')</a></li>
-                        <li><a href="ui-tabs-accordions" key="t-tabs-accordions">@lang('translation.Tabs_&_Accordions')</a></li>
+                        <li><a href="ui-tabs-accordions"
+                                key="t-tabs-accordions">@lang('translation.Tabs_&_Accordions')</a></li>
                         <li><a href="ui-typography" key="t-typography">@lang('translation.Typography')</a></li>
                         <li><a href="ui-video" key="t-video">@lang('translation.Video')</a></li>
                         <li><a href="ui-general" key="t-general">@lang('translation.General')</a></li>
@@ -162,11 +170,15 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="extended-lightbox" data-key="t-lightbox">@lang('translation.Lightbox')</a></li>
-                        <li><a href="extended-rangeslider" data-key="t-range-slider">@lang('translation.Range_Slider')</a></li>
-                        <li><a href="extended-sweet-alert" data-key="t-sweet-alert">@lang('translation.Sweet_Alert') 2</a></li>
-                        <li><a href="extended-session-timeout" data-key="t-session-timeout">@lang('translation.Session_Timeout')</a></li>
+                        <li><a href="extended-rangeslider"
+                                data-key="t-range-slider">@lang('translation.Range_Slider')</a></li>
+                        <li><a href="extended-sweet-alert" data-key="t-sweet-alert">@lang('translation.Sweet_Alert')
+                                2</a></li>
+                        <li><a href="extended-session-timeout"
+                                data-key="t-session-timeout">@lang('translation.Session_Timeout')</a></li>
                         <li><a href="extended-rating" data-key="t-rating">@lang('translation.Rating')</a></li>
-                        <li><a href="extended-notifications" data-key="t-notifications">@lang('translation.Notifications')</a></li>
+                        <li><a href="extended-notifications"
+                                data-key="t-notifications">@lang('translation.Notifications')</a></li>
                     </ul>
                 </li>
 
@@ -177,9 +189,12 @@
                         <span data-key="t-forms">@lang('translation.Forms')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="form-elements" data-key="t-form-elements">@lang('translation.Basic_Elements')</a></li>
-                        <li><a href="form-validation" data-key="t-form-validation">@lang('translation.Validation')</a></li>
-                        <li><a href="form-advanced" data-key="t-form-advanced">@lang('translation.Advanced_Plugins')</a></li>
+                        <li><a href="form-elements" data-key="t-form-elements">@lang('translation.Basic_Elements')</a>
+                        </li>
+                        <li><a href="form-validation" data-key="t-form-validation">@lang('translation.Validation')</a>
+                        </li>
+                        <li><a href="form-advanced" data-key="t-form-advanced">@lang('translation.Advanced_Plugins')</a>
+                        </li>
                         <li><a href="form-editors" data-key="t-form-editors">@lang('translation.Editors')</a></li>
                         <li><a href="form-uploads" data-key="t-form-upload">@lang('translation.File_Upload')</a></li>
                         <li><a href="form-wizard" data-key="t-form-wizard">@lang('translation.Wizard')</a></li>
@@ -193,10 +208,14 @@
                         <span data-key="t-tables">@lang('translation.Tables')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="tables-basic" data-key="t-basic-tables">@lang('translation.Bootstrap_Basic')</a></li>
-                        <li><a href="tables-datatable" data-key="t-data-tables">@lang('translation.Data_Tables')</a></li>
-                        <li><a href="tables-responsive" data-key="t-responsive-table">@lang('translation.Responsive')</a></li>
-                        <li><a href="tables-editable" data-key="t-editable-table">@lang('translation.Editable_Table')</a></li>
+                        <li><a href="tables-basic" data-key="t-basic-tables">@lang('translation.Bootstrap_Basic')</a>
+                        </li>
+                        <li><a href="tables-datatable" data-key="t-data-tables">@lang('translation.Data_Tables')</a>
+                        </li>
+                        <li><a href="tables-responsive"
+                                data-key="t-responsive-table">@lang('translation.Responsive')</a></li>
+                        <li><a href="tables-editable"
+                                data-key="t-editable-table">@lang('translation.Editable_Table')</a></li>
                     </ul>
                 </li>
 
@@ -210,7 +229,8 @@
                         <li><a href="charts-echart" data-key="t-e-charts">@lang('translation.E_Charts')</a></li>
                         <li><a href="charts-chartjs" data-key="t-chartjs-charts">@lang('translation.Chartjs')</a></li>
                         <li><a href="charts-knob" data-key="t-knob-charts">@lang('translation.Jquery_Knob')</a></li>
-                        <li><a href="charts-sparkline" data-key="t-sparkline-charts">@lang('translation.Sparkline')</a></li>
+                        <li><a href="charts-sparkline" data-key="t-sparkline-charts">@lang('translation.Sparkline')</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -222,9 +242,11 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="icons-feather" data-key="t-feather">@lang('translation.Feather')</a></li>
                         <li><a href="icons-boxicons" data-key="t-boxicons">@lang('translation.Boxicons')</a></li>
-                        <li><a href="icons-materialdesign" data-key="t-material-design">@lang('translation.Material_Design')</a></li>
+                        <li><a href="icons-materialdesign"
+                                data-key="t-material-design">@lang('translation.Material_Design')</a></li>
                         <li><a href="icons-dripicons" data-key="t-dripicons">@lang('translation.Dripicons')</a></li>
-                        <li><a href="icons-fontawesome" data-key="t-font-awesome">@lang('translation.Font_awesome') 5</a></li>
+                        <li><a href="icons-fontawesome" data-key="t-font-awesome">@lang('translation.Font_awesome')
+                                5</a></li>
                     </ul>
                 </li>
 
@@ -246,12 +268,16 @@
                         <span data-key="t-multi-level">@lang('translation.Multi_Level')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="javascript: void(0);" data-key="t-level-1-1">@lang('translation.Level_1.1')</a></li>
+                        <li><a href="javascript: void(0);" data-key="t-level-1-1">@lang('translation.Level_1.1')</a>
+                        </li>
                         <li>
-                            <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1-2">@lang('translation.Level_1.2')</a>
+                            <a href="javascript: void(0);" class="has-arrow"
+                                data-key="t-level-1-2">@lang('translation.Level_1.2')</a>
                             <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="javascript: void(0);" data-key="t-level-2-1">@lang('translation.Level_2.1')</a></li>
-                                <li><a href="javascript: void(0);" data-key="t-level-2-2">@lang('translation.Level_2.2')</a></li>
+                                <li><a href="javascript: void(0);"
+                                        data-key="t-level-2-1">@lang('translation.Level_2.1')</a></li>
+                                <li><a href="javascript: void(0);"
+                                        data-key="t-level-2-2">@lang('translation.Level_2.2')</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -259,7 +285,7 @@
 
             </ul>
 
-            <div class="card sidebar-alert shadow-none text-center mx-4 mb-0 mt-5">
+            {{-- <div class="card sidebar-alert shadow-none text-center mx-4 mb-0 mt-5">
                 <div class="card-body">
                     <img src="assets/images/giftbox.png" alt="">
                     <div class="mt-4">
@@ -268,7 +294,7 @@
                         <a href="#!" class="btn btn-primary mt-2">Upgrade Now</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
         <!-- Sidebar -->
     </div>

@@ -67,7 +67,7 @@ class HomeController extends Controller
         if ($request->file('avatar')) {
             $avatar = $request->file('avatar');
             $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
-            $avatarPath = public_path('/images/');
+            $avatarPath = public_path('/images/avatars/');
             $avatar->move($avatarPath, $avatarName);
             $user->avatar =  $avatarName;
         }

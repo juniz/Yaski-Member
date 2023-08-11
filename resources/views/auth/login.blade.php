@@ -7,13 +7,13 @@
 <div class="auth-page">
     <div class="container-fluid p-0">
         <div class="row g-0">
-            <div class="col-xxl-3 col-lg-4 col-md-5">
+            <div class="col-xxl-4 col-lg-4 col-md-5">
                 <div class="auth-full-page-content d-flex p-sm-5 p-4">
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
                                 <a href="{{ url('/') }}" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="50"> <span
+                                    <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="50"> <span
                                         class="logo-txt">YASKI</span>
                                 </a>
                             </div>
@@ -119,7 +119,7 @@
                 <!-- end auth full page content -->
             </div>
             <!-- end col -->
-            <div class="col-xxl-9 col-lg-8 col-md-7">
+            <div class="col-xxl-8 col-lg-8 col-md-7">
                 <div class="auth-bg pt-md-5 p-4 d-flex">
                     <div class="bg-overlay"></div>
                     <ul class="bg-bubbles">
@@ -135,7 +135,7 @@
                         <li></li>
                     </ul>
                     <!-- end bubble effect -->
-                    <div class="row justify-content-center align-items-end">
+                    {{-- <div class="row justify-content-center align-items-end">
                         <div class="col-xl-7">
                             <div class="p-0 p-sm-4 px-xl-0">
                                 <div id="reviewcarouselIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -217,7 +217,7 @@
                                 <!-- end review carousel -->
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <!-- end col -->

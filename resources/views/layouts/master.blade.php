@@ -10,6 +10,7 @@
     @livewireStyles
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::asset('assets/images/favicon.ico') }}">
+    <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
     @include('layouts.head-css')
 </head>
 

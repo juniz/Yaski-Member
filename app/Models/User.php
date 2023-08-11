@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles; // add this line
+use HttpOz\Roles\Traits\HasRole as HasRoleTrait;
+use HttpOz\Roles\Contracts\HasRole as HasRoleContract;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasRoleContract
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoleTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -47,5 +48,10 @@ class User extends Authenticatable
     public function hasTeams()
     {
         return $this->hasMany(Team::class);
+    }
+
+    public function fasyankes()
+    {
+        return $this->hasOne(Fasyankes::class);
     }
 }

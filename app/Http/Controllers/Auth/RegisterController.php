@@ -69,7 +69,7 @@ class RegisterController extends Controller
         if (request()->has('avatar')) {
             $avatar = request()->file('avatar');
             $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
-            $avatarPath = public_path('/images/');
+            $avatarPath = public_path('/images/avatars/');
             $avatar->move($avatarPath, $avatarName);
         }
 
