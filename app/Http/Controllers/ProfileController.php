@@ -13,13 +13,12 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $subUsers = $user->hasTeams;
         $provinces = Province::all();
         $fasyankes = Fasyankes::where('user_id', $user->id)->first();
         $paklaring = Paklaring::where('user_id', $user->id)->first();
         $jenis = ['Praktik Mandiri', 'Rumah Sakit', 'Klinik', 'Puskesmas', 'Apotek'];
         $kelas = ['-', 'A', 'B', 'C', 'D', 'D Pratama'];
-        return view('profile.index', compact('user', 'subUsers', 'provinces', 'jenis', 'kelas', 'fasyankes', 'paklaring'));
+        return view('profile.index', compact('user', 'provinces', 'jenis', 'kelas', 'fasyankes', 'paklaring'));
     }
 
     public function getKabupaten($id)

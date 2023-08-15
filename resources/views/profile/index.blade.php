@@ -214,53 +214,7 @@
 
     <div class="col-xl-4 col-lg-4">
 
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex flex-row justify-content-between">
-                    <h5 class="card-title mb-0">Team Members</h5>
-                    <a href="{{ route('sub-users.create') }}" class="btn btn-sm btn-secondary"><i
-                            class="bx bx-plus me-1"></i> Tambah </a>
-                </div>
-
-            </div>
-
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table align-middle table-nowrap">
-                        <tbody>
-                            @foreach ($subUsers as $subUser)
-                            <tr>
-
-                                <td style="width: 50px;"><img src="{{ URL::asset('images/avatar/'. $subUser->avatar) }}"
-                                        class="rounded-circle avatar-sm" alt=""></td>
-                                <td>
-                                    <h5 class="font-size-14 m-0"><a href="javascript: void(0);" class="text-dark">{{
-                                            $subUser->name }}</a></h5>
-                                </td>
-                                <td>
-                                    <div>
-                                        <a href="javascript: void(0);"
-                                            class="badge bg-soft-primary text-primary font-size-11">Frontend</a>
-                                        <a href="javascript: void(0);"
-                                            class="badge bg-soft-primary text-primary font-size-11">UI</a>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-secondary"><i
-                                                class="bx bx-edit "></i></button>
-                                        <button id="sa-warning" type="button" class="btn btn-sm btn-danger"><i
-                                                class="bx bx-trash "></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <livewire:profile.member :user="$user" />
     </div>
     <!-- end col -->
 </div>
@@ -436,58 +390,6 @@
                     <div class="mt-3 d-grid">
                         <button class="btn btn-primary waves-effect waves-light UpdateProfile"
                             data-id="{{ Auth::user()->id }}" type="submit">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!--  Tambah team modal -->
-<div class="modal fade tambah-team" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="myLargeModalLabel">Team</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="form-horizontal" method="POST" enctype="multipart/form-data" id="tambah-team">
-                    @csrf
-                    <input type="hidden" value="{{ Auth::user()->id }}" id="data_id">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nama</label>
-                        <input type="text" class="form-control @error('nameTeam') is-invalid @enderror" id="nameTeam"
-                            value="" name="nameTeam" placeholder="Masukkan Nama" autofocus>
-                        <div class="text-danger" id="nameTeamError" data-ajax-feedback="nameTeam"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="useremail" class="form-label">Email</label>
-                        <input type="email" class="form-control @error('emailTeam') is-invalid @enderror" id="emailTeam"
-                            value="" name="emailTeam" placeholder="Masukkan Email" autofocus>
-                        <div class="text-danger" id="emailTeamError" data-ajax-feedback="emailTeam"></div>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="avatarTeam">Foto Profile</label>
-                        <div class="input-group">
-                            <input type="file" class="form-control @error('avatarTeam') is-invalid @enderror"
-                                id="avatarTeam" name="avatarTeam" autofocus>
-                            <label class="input-group-text" for="avatarTeam">Upload</label>
-                        </div>
-                        <div class="text-start mt-2">
-                            <img src="@if (Auth::user()->avatar != ''){{ URL::asset('images/'. Auth::user()->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
-                                alt="" class="rounded-circle avatar-lg">
-                        </div>
-                        <div class="text-danger" role="alert" id="avatarTeamError" data-ajax-feedback="avatarTeam">
-                        </div>
-                    </div>
-
-                    <div class="mt-3 d-grid">
-                        <button class="btn btn-primary waves-effect waves-light TambahTeam"
-                            data-id="{{ Auth::user()->id }}" type="submit">Tambahkan</button>
                     </div>
                 </form>
             </div>
@@ -723,5 +625,15 @@
             query_task.removeActiveItems();
             reset(id);
         });
+
+        window.addEventListener('openModalTeam', e => {
+            $('.tambah-team').modal('show');
+        })
+
+        window.addEventListener('closeModalTeam', e => {
+            $('.tambah-team').modal('hide').then(function() {
+                
+            });
+        })
 </script>
 @endsection

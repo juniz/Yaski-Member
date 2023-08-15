@@ -19,7 +19,9 @@ Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang'
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
 
-
+Route::get('kwitansi', function () {
+    return view('pdf.kwitansi');
+});
 
 //workshop
 Route::resource('workshops', App\Http\Controllers\WorkshopController::class);

@@ -5,21 +5,21 @@
             <div class="navbar-brand-box">
                 <a href="index" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="30">
+                        <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="30" alt="yaski">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span
-                            class="logo-txt">Dason</span>
+                        <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="24" alt="yaski"> <span
+                            class="logo-txt">YASKI</span>
                     </span>
                 </a>
 
                 <a href="index" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="30">
+                        <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="30" alt="yaski">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span
-                            class="logo-txt">Dason</span>
+                        <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="24" alt="yaski"> <span
+                            class="logo-txt">YASKI</span>
                     </span>
                 </a>
             </div>
