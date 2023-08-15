@@ -41,7 +41,6 @@
 <!-- Right Sidebar -->
 @include('layouts.right-sidebar')
 <!-- /Right-bar -->
-@livewireScripts
 <!-- JAVASCRIPT -->
 @include('layouts.vendor-scripts')
 </body>

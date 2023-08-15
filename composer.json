@@ -9,6 +9,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "httpoz/roles": "^v9.0",
+        "jantinnerezo/livewire-alert": "^2.2",
         "laravel/framework": "^9.19.0",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",

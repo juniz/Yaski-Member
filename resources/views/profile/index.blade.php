@@ -631,9 +631,37 @@
         })
 
         window.addEventListener('closeModalTeam', e => {
-            $('.tambah-team').modal('hide').then(function() {
-                
-            });
+            $('.tambah-team').modal('hide');
+            Livewire.emit('getTeam');
+        })
+
+        window.addEventListener('confirmDelete', e => {
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Anda tidak dapat mengembalikan data yang telah dihapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#536de6',
+                cancelButtonColor: '#f46a6a',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.emit('deleteTeam', e.detail.id);
+                }
+            })
+        })
+
+        window.addEventListener('message', e => {
+            Swal.fire(
+                e.detail.title,
+                e.detail.message,
+                e.detail.type
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.emit(e.detail.event);
+                }
+            })
         })
 </script>
 @endsection

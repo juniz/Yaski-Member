@@ -5,8 +5,6 @@
                 <h5 class="card-title mb-0">Team Members</h5>
                 <button wire:click='openModal' class="btn btn-sm btn-secondary"><i class="bx bx-plus me-1"></i> Tambah
                 </button>
-                <button wire:click='getTeam' class="btn btn-sm btn-secondary"><i class="bx bx-plus me-1"></i> Refresh
-                </button>
             </div>
 
         </div>
@@ -31,10 +29,12 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button wire:click='editTeam("{{$subUser->id}}")' type="button"
-                                        class="btn btn-sm btn-secondary"><i class="bx bx-edit "></i></button>
-                                    <button wire:click='deleteTeam("{{$subUser->id}}")' id="sa-warning" type="button"
-                                        class="btn btn-sm btn-danger"><i class="bx bx-trash "></i></button>
+                                    <button wire:key='{{$subUser->id}}' wire:click='editTeam("{{$subUser->id}}")'
+                                        type="button" class="btn btn-sm btn-secondary"><i
+                                            class="bx bx-edit "></i></button>
+                                    <button wire:key='{{$subUser->id}}' wire:click='confirmDelete("{{$subUser->id}}")'
+                                        id="sa-warning" type="button" class="btn btn-sm btn-danger"><i
+                                            class="bx bx-trash "></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -84,15 +84,13 @@
                                     class="form-control @error('avatarTeam') is-invalid @enderror" id="avatarTeam"
                                     name="avatarTeam" autofocus>
                             </div>
-                            @error('avatar') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             <div class="text-start mt-2">
                                 @if($avatar)
                                 <img src="{{ $modeEdit ? URL::asset('storage/'. $avatar) : $avatar->temporaryUrl() }}"
                                     alt="" class="rounded-circle avatar-lg">
                                 @endif
                             </div>
-                            <div class="text-danger" role="alert" id="avatarTeamError" data-ajax-feedback="avatarTeam">
-                            </div>
+                            @error('avatar') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mt-3 d-grid">

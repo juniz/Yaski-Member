@@ -5,12 +5,13 @@ namespace App\Http\Livewire\Profile;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 use Illuminate\Support\Facades\Storage;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class Member extends Component
 {
-    use WithFileUploads;
-    public $members, $user, $name, $email, $avatar, $modeEdit = false;
-    protected $listeners = ['getTeam'];
+    use WithFileUploads, LivewireAlert;
+    public $members, $idMember, $user, $name, $email, $avatar, $modeEdit = false;
+    protected $listeners = ['getTeam', 'deleteTeam'];
     public function mount($user)
     {
         $this->user = $user;
@@ -35,6 +36,7 @@ class Member extends Component
     public function editTeam($id)
     {
         $this->modeEdit = true;
+        $this->idMember = $id;
         $user = $this->user->hasTeams()->find($id);
         $this->name = $user->name;
         $this->email = $user->email;
@@ -46,7 +48,7 @@ class Member extends Component
         $this->validate([
             'name' => 'required',
             'email' => 'required|email',
-            'avatar' => 'image|max:1024',
+            'avatar' => 'image|max:1024|nullable',
         ], [
             'name.required' => 'Nama tidak boleh kosong',
             'email.required' => 'Email tidak boleh kosong',
@@ -57,11 +59,11 @@ class Member extends Component
 
         try {
             if ($this->modeEdit) {
-                $user = $this->user->hasTeams()->find($this->user->id);
+                $user = $this->user->hasTeams()->find($this->idMember);
                 $user->update([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'avatar' => $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
+                    // 'avatar' => $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
                 ]);
                 $this->modeEdit = false;
             } else {
@@ -73,16 +75,45 @@ class Member extends Component
             }
             $this->reset(['name', 'email', 'avatar']);
             $this->dispatchBrowserEvent('closeModalTeam');
+            $this->alert('success', 'Berhasil menyimpan data', [
+                'position' =>  'center',
+                'toast' =>  false,
+                'onConfirmed' => 'getTeam'
+            ]);
         } catch (\Exception $e) {
-            dd($e);
+            $this->dispatchBrowserEvent('closeModalTeam');
+            $this->alert('error', 'Data gagal dihapus', [
+                'position' =>  'center',
+                'toast' =>  false,
+            ]);
         }
     }
 
-    public function deleteTeam($id)
+    public function confirmDelete($id)
     {
-        $user = $this->user->hasTeams()->find($id);
-        Storage::delete('public/' . $user->avatar);
-        $user->delete();
-        $this->getTeam();
+        $this->confirm('Apakah anda yakin ingin menghapus data ini?', [
+            'onConfirmed' => 'deleteTeam',
+            'inputAttributes' => ['id' => $id],
+        ]);
+    }
+
+    public function deleteTeam($data)
+    {
+        $id = $data['data']['inputAttributes']['id'];
+        try {
+            $user = $this->user->hasTeams()->find($id);
+            Storage::delete('public/' . $user->avatar);
+            $user->delete();
+            $this->alert('success', 'Berhasil menghapus data', [
+                'position' =>  'center',
+                'toast' =>  false,
+                'onConfirmed' => 'getTeam'
+            ]);
+        } catch (\Exception $e) {
+            $this->alert('error', 'Gagal menghapus data', [
+                'position' =>  'center',
+                'toast' =>  false,
+            ]);
+        }
     }
 }
