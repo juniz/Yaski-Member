@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
 
     //members
     Route::resource('members', App\Http\Controllers\MemberController::class);
+
+    Route::get('permissions', [App\Http\Controllers\PermissionController::class, 'index'])->name('permissions.index');
+
+    Route::get('roles', function () {
+        return view('admin.roles.index');
+    })->name('roles.index');
 });
 
 Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');

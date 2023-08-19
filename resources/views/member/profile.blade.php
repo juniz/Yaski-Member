@@ -2,9 +2,9 @@
 @section('title') @lang('translation.Profile') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/choices.js/choices.js.min.css') }}" rel="stylesheet">
-<style>
+{{-- <style>
     .profile-users {
-        background-image: url('{{URL::asset("assets/images/fasyankes/".$fasyankes->image)}}');
+        background-image: url('{{URL::asset("assets/images/fasyankes/".$fasyankes->image ?? "-")}}');
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -26,12 +26,12 @@
         opacity: 0.5;
         content: "";
     }
-</style>
+</style> --}}
 @endsection
 @section('content')
 <div class="row">
     <div class="col-xl-12">
-        <div class="profile-users" style="height: 300px">
+        <div class="profile-users bg-white" style="height: 300px">
         </div>
     </div>
 </div>
@@ -43,7 +43,7 @@
                 <div class="d-flex align-items-end mt-3 mt-sm-0">
                     <div class="flex-shrink-0">
                         <div class="avatar-xxl me-3">
-                            <img src="@if ($user->avatar != ''){{ URL::asset('images/avatars/'. $user->avatar) }} @else {{ URL::asset('assets/images/users/avatar-1.png') }} @endif"
+                            <img src="@if ($user->avatar != ''){{ URL::asset('storage/'. $user->avatar) }} @else {{ URL::asset('assets/images/users/avatar-1.png') }} @endif"
                                 alt="profile-image" class="img-fluid rounded-circle img-thumbnail"
                                 style="max-height: 8.5rem; width:7.2rem">
                         </div>

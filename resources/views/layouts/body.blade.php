@@ -1,1 +1,1 @@
-<body data-topbar="dark">
+<body data-topbar="light">

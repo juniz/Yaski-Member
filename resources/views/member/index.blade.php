@@ -6,6 +6,8 @@
 @slot('title') User Grid @endslot
 @endcomponent
 <livewire:profile.gride-members />
+<livewire:profile.create-user />
+<livewire:profile.edit-user />
 @endsection
 @section('script')
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
@@ -17,6 +19,18 @@
     })
     window.addEventListener('closeModalPakelaring', event => {
         $('#pakelaring-modal').modal('hide');
+    })
+    window.addEventListener('openModalUser', event => {
+        $('.tambah-user').modal('show');
+    })
+    window.addEventListener('closeModalUser', event => {
+        $('.tambah-user').modal('hide');
+    })
+    window.addEventListener('openModalEditUser', event => {
+        $('.edit-user').modal('show');
+    })
+    window.addEventListener('closeModalEditUser', event => {
+        $('.edit-user').modal('hide');
     })
 </script>
 @endsection

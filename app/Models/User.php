@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use HttpOz\Roles\Traits\HasRole as HasRoleTrait;
-use HttpOz\Roles\Contracts\HasRole as HasRoleContract;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasRoleContract
+class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoleTrait;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.

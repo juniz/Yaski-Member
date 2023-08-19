@@ -7,36 +7,78 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Livewire\WithPagination;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class GrideMembers extends Component
 {
-    use WithFileUploads;
-    public $members, $pakelaring, $file, $idUser;
+    use WithFileUploads, WithPagination, LivewireAlert;
+    public $pakelaring, $file, $idUser, $search;
+    protected $queryString = ['search'];
+    protected $paginationTheme = 'bootstrap';
+    protected $listeners = ['refreshMembers' => '$refresh', 'delete'];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        return view('livewire.profile.gride-members');
+        return view('livewire.profile.gride-members', [
+            'members' => User::where('name', 'like', '%' . $this->search . '%')->paginate(10)
+        ]);
     }
 
     public function mount()
     {
-        $this->getMembers();
+        // $this->getMembers();
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->confirm('Apakah anda yakin ingin menghapus data ini?', [
+            'onConfirmed' => 'delete',
+            'inputAttributes' => ['id' => $id],
+        ]);
+    }
+
+    public function delete($data)
+    {
+        $id = $data['data']['inputAttributes']['id'];
+        try {
+            $user = User::find($id);
+            $user->delete();
+            $this->emit('refreshMembers');
+            $this->alert('success', 'Berhasil menghapus data', [
+                'position' =>  'center',
+                'toast' =>  false,
+            ]);
+        } catch (\Exception $e) {
+            $this->alert('error', 'Gagal menghapus data', [
+                'position' =>  'center',
+                'toast' =>  false,
+            ]);
+        }
     }
 
     public function modalPakelaring($id)
     {
         $this->idUser = $id;
         $this->getPakelaring($id);
-        $this->dispatchBrowserEvent('modalPakelaring');
+        if ($this->pakelaring) {
+            $this->dispatchBrowserEvent('modalPakelaring');
+        } else {
+            $this->alert('warning', 'Pakelaring belum diupload', [
+                'position' =>  'center',
+                'toast' =>  false,
+            ]);
+        }
     }
 
     public function getPakelaring($id)
     {
         $this->pakelaring = Paklaring::where('user_id', $id)->first();
-    }
-
-    public function getMembers()
-    {
-        $this->members = User::all();
     }
 
     public function simpan()
@@ -60,7 +102,7 @@ class GrideMembers extends Component
             $this->getPakelaring($this->idUser);
             $this->dispatchBrowserEvent('swal', ['title' => 'Berhasil', 'type' => 'success', 'text' => 'Pakelaring berhasil diupload']);
         } catch (\Exception $e) {
-            $this->dispatchBrowserEvent('swal', ['title' => 'Gagal', 'type' => 'error', 'text' => 'Pakelaring gagal diupload']);
+            $this->dispatchBrowserEvent('swal', ['title' => 'Gagal', 'type' => 'error', 'text' => 'Pakelaring gagal diupload' . $e->getMessage()]);
         }
     }
 }
