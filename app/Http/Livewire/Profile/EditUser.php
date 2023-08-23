@@ -49,7 +49,8 @@ class EditUser extends Component
             $user = \App\Models\User::find($this->idUser);
             if ($this->avatar) {
                 Storage::disk('public')->delete($user->avatar);
-                $avatar = $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public');
+                $avatar = $this->name . '-' . time() . '.' . $this->avatar->extension();
+                $this->avatar->storeAs('public/avatar', $avatar);
             } else {
                 $avatar = $user->avatar;
             }

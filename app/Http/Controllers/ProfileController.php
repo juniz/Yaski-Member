@@ -7,9 +7,15 @@ use App\Models\Province;
 use App\Models\Fasyankes;
 use App\Models\Paklaring;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $user = auth()->user();
@@ -44,11 +50,11 @@ class ProfileController extends Controller
 
             if ($request->has('dokumen')) {
                 $file = $request->file('dokumen');
-                $name = time() . '.' . $file->getClientOriginalExtension();
+                $name = 'PF-' . time() . '.' . $file->getClientOriginalExtension();
                 if ($paklaring) {
-                    unlink(public_path('assets/files/paklaring/' . $paklaring->file));
+                    Storage::delete('public/pakelaring/' . $paklaring->file);
                 }
-                $file->move(public_path('assets/files/paklaring/'), $name);
+                $file->storeAs('public/pakelaring', $name);
             }
 
             if ($paklaring) {
@@ -114,11 +120,11 @@ class ProfileController extends Controller
 
             if ($request->has('image')) {
                 $image = $request->file('image');
-                $name = time() . '.' . $image->getClientOriginalExtension();
+                $name = 'Fasyankes-' . time() . '.' . $image->getClientOriginalExtension();
                 if ($fasyankes->image != null) {
-                    unlink(public_path('assets/images/fasyankes/' . $fasyankes->image));
+                    Storage::delete('public/fasyankes' . $fasyankes->image);
                 }
-                $image->move(public_path('assets/images/fasyankes/'), $name);
+                $image->storeAs('public/fasyankes', $name);
                 $fasyankes->image = $name;
             }
 

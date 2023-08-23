@@ -9,6 +9,9 @@ use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithPagination;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use LaravelDaily\Invoices\Invoice;
+use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 class GrideMembers extends Component
 {
@@ -35,6 +38,31 @@ class GrideMembers extends Component
         // $this->getMembers();
     }
 
+    public function kwitansi($id)
+    {
+        $customer = new Buyer([
+            'name'          => 'John Doe',
+            'custom_fields' => [
+                'email' => 'test@example.com',
+            ],
+        ]);
+
+        $item = (new InvoiceItem())->title('Service 1')->pricePerUnit(2);
+
+        $invoice = Invoice::make()
+            ->buyer($customer)
+            ->discountByPercent(10)
+            ->taxRate(15)
+            ->shipping(1.99)
+            ->addItem($item);
+
+        $link = $invoice->url();
+
+        return response()->streamDownload(function () use ($invoice) {
+            echo  $invoice->stream();
+        }, 'invoice.pdf');
+    }
+
     public function confirmDelete($id)
     {
         $this->confirm('Apakah anda yakin ingin menghapus data ini?', [
@@ -49,6 +77,7 @@ class GrideMembers extends Component
         try {
             $user = User::find($id);
             $user->delete();
+            Storage::delete('public/avatar/' . $user->avatar);
             $this->emit('refreshMembers');
             $this->alert('success', 'Berhasil menghapus data', [
                 'position' =>  'center',

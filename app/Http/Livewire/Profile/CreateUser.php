@@ -48,7 +48,8 @@ class CreateUser extends Component
         ]);
 
         try {
-            $avatar = $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public');
+            $avatar = $this->name . '-' . time() . '.' . $this->avatar->extension();
+            $this->avatar->storeAs('public/avatar', $avatar);
             \App\Models\User::create([
                 'name' => $this->name,
                 'email' => $this->email,

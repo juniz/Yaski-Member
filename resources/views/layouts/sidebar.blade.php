@@ -7,38 +7,28 @@
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
-                <li class="menu-title" data-key="t-menu">@lang('translation.Menu')</li>
-
                 <li>
                     <a href="index">
-                        <i data-feather="home"></i>
-                        <span class="badge rounded-pill bg-soft-success text-success float-end">9+</span>
-                        <span data-key="t-dashboard">@lang('translation.Dashboards')</span>
+                        <i data-feather="user"></i>
+                        <span data-key="t-dashboard">Profile</span>
                     </a>
                 </li>
 
-                <li class="menu-title" data-key="t-apps">@lang('translation.Apps')</li>
+                <li class="menu-title" data-key="t-apps">Pengaturan</li>
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
-                        <i data-feather="shopping-cart"></i>
-                        <span data-key="t-ecommerce">@lang('translation.Ecommerce')</span>
+                        <i data-feather="lock"></i>
+                        <span data-key="t-ecommerce">Admin</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="ecommerce-products" key="t-products">@lang('translation.Products')</a></li>
-                        <li><a href="ecommerce-product-detail"
-                                data-key="t-product-detail">@lang('translation.Product_Detail')</a></li>
-                        <li><a href="ecommerce-orders" data-key="t-orders">@lang('translation.Orders')</a></li>
-                        <li><a href="ecommerce-customers" data-key="t-customers">@lang('translation.Customers')</a></li>
-                        <li><a href="ecommerce-cart" data-key="t-cart">@lang('translation.Cart')</a></li>
-                        <li><a href="ecommerce-checkout" data-key="t-checkout">@lang('translation.Checkout')</a></li>
-                        <li><a href="ecommerce-shops" data-key="t-shops">@lang('translation.Shops')</a></li>
-                        <li><a href="ecommerce-add-product"
-                                data-key="t-add-product">@lang('translation.Add_Product')</a></li>
+                        <li><a href="members" key="t-products">Pengguna</a></li>
+                        <li><a href="roles" data-key="t-product-detail">Role</a></li>
+                        <li><a href="permissions" data-key="t-orders">Permission</a></li>
                     </ul>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="apps-chat">
                         <i data-feather="message-square"></i>
                         <span data-key="t-chat">@lang('translation.Chat')</span>
@@ -281,7 +271,7 @@
                             </ul>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
             </ul>
 

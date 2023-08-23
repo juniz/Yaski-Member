@@ -17,7 +17,8 @@ Auth::routes();
 //Language Translation
 Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('root');
 
 Route::get('kwitansi', function () {
     return view('pdf.kwitansi');
@@ -50,4 +51,4 @@ Route::middleware('auth')->group(function () {
     })->name('roles.index');
 });
 
-Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+// Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');

@@ -1,6 +1,6 @@
 @extends('layouts.master-without-nav')
 @section('title')
-@lang('translation.Login')
+Login
 @endsection
 @section('content')
 
@@ -25,7 +25,7 @@
                                     @csrf
                                     <div class="form-floating form-floating-custom mb-4">
                                         <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ old('email', 'admin@themesdesign.com') }}" id="input-username"
+                                            value="{{ old('email', 'admin@admin.com') }}" id="input-username"
                                             placeholder="Enter User Name" name="email">
                                         @error('email')
                                         <span class="invalid-feedback" role="alert">

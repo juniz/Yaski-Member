@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title') @lang('translation.User_Grid') @endsection
+@section('title') Pengguan @endsection
 @section('content')
 @component('components.breadcrumb')
-@slot('li_1') Contacts @endslot
-@slot('title') User Grid @endslot
+@slot('li_1') Admin @endslot
+@slot('title') Pengguna @endslot
 @endcomponent
 <livewire:profile.gride-members />
 <livewire:profile.create-user />

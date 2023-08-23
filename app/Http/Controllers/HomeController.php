@@ -36,7 +36,7 @@ class HomeController extends Controller
 
     public function root()
     {
-        return view('index');
+        return view('profile.index');
     }
 
     /*Language Translation*/
@@ -66,9 +66,8 @@ class HomeController extends Controller
 
         if ($request->file('avatar')) {
             $avatar = $request->file('avatar');
-            $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
-            $avatarPath = public_path('/images/avatars/');
-            $avatar->move($avatarPath, $avatarName);
+            $avatarName = $user->name . '-' . time() . '.' . $avatar->getClientOriginalExtension();
+            $avatar->storeAs('public/avatar', $avatarName);
             $user->avatar =  $avatarName;
         }
 

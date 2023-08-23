@@ -1,6 +1,6 @@
 @extends('layouts.master-without-nav')
 @section('title')
-@lang('translation.Register')
+Register
 @endsection
 @section('content')
 <div class="auth-page">
