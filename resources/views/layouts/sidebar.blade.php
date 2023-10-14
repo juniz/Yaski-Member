@@ -8,10 +8,12 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li>
-                    <a href="index">
+                    @can('view profile')
+                    <a href="">
                         <i data-feather="user"></i>
                         <span data-key="t-dashboard">Profile</span>
                     </a>
+                    @endcan
                 </li>
 
                 <li class="menu-title" data-key="t-apps">Pengaturan</li>
@@ -22,9 +24,15 @@
                         <span data-key="t-ecommerce">Admin</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
+                        @can('view member')
                         <li><a href="members" key="t-products">Pengguna</a></li>
+                        @endcan
+                        @can('view role')
                         <li><a href="roles" data-key="t-product-detail">Role</a></li>
+                        @endcan
+                        @can('view permission')
                         <li><a href="permissions" data-key="t-orders">Permission</a></li>
+                        @endcan
                     </ul>
                 </li>
 
@@ -33,20 +41,24 @@
                         <i data-feather="message-square"></i>
                         <span data-key="t-chat">@lang('translation.Chat')</span>
                     </a>
-                </li>
+                </li> --}}
+
+                <li class="menu-title" data-key="t-apps">Permintaan</li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow">
+                    @can('view paklaring')
+                    <a href="/paklaring">
                         <i data-feather="mail"></i>
-                        <span data-key="t-email">@lang('translation.Email')</span>
+                        <span data-key="t-email">Paklaring</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
+                    @endcan
+                    {{-- <ul class="sub-menu" aria-expanded="false">
                         <li><a href="apps-email-inbox" data-key="t-inbox">@lang('translation.Inbox')</a></li>
                         <li><a href="apps-email-read" data-key="t-read-email">@lang('translation.Read_Email')</a></li>
-                    </ul>
+                    </ul> --}}
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="apps-calendar">
                         <i data-feather="calendar"></i>
                         <span data-key="t-calendar">@lang('translation.Calendars')</span>

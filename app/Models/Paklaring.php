@@ -12,10 +12,13 @@ class Paklaring extends Model
     protected $fillable = [
         'user_id',
         'file',
-        'stts'
+        'stts',
+        'no_surat',
+        'file_verif',
+        'alasan'
     ];
-    // public function belongUser()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
+    public function fasyankes()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

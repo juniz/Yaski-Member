@@ -16,8 +16,10 @@
                         @foreach ($members as $subUser)
                         <tr>
 
-                            <td style="width: 50px;"><img src="{{ URL::asset('storage/'. $subUser->avatar) }}"
-                                    class="rounded-circle avatar-sm" alt=""></td>
+                            <td style="width: 50px;">@if(empty($subUser->avatar)) <img
+                                    src="{{ URL::asset('storage/avatar/blank.png') }}" class="rounded-circle avatar-sm"
+                                    alt=""> @else <img src="{{ URL::asset('storage/'. $subUser->avatar) }}"
+                                    class="rounded-circle avatar-sm" alt="">@endif</td>
                             <td>
                                 <h5 class="font-size-12 m-0"><a href="javascript: void(0);" class="text-dark">{{
                                         $subUser->name }}</a></h5>

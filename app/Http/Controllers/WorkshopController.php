@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Workshop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class WorkshopController extends Controller
 {
@@ -39,33 +40,42 @@ class WorkshopController extends Controller
         $this->validate(
             $request,
             [
-                'title' => 'required',
-                'start' => 'required',
-                'end' => 'required',
-                'image' => 'required',
+                'nama' => 'required',
+                'deskripsi' => 'required',
+                'kuota' => 'required',
+                'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'lokasi' => 'required',
+                'tgl_mulai' => 'required|date',
+                'tgl_selesai' => 'required|date',
             ],
             [
-                'title.required' => 'Judul tidak boleh kosong',
-                'start.required' => 'Start date is required',
-                'end.required' => 'End date is required',
-                'image.required' => 'Image is required',
+                'nama.required' => 'Nama tidak boleh kosong',
+                'deskripsi.required' => 'Deskripsi tidak boleh kosong',
+                'kuota.required' => 'Kuota tidak boleh kosong',
+                'gambar.required' => 'File tidak boleh kosong',
+                'gambar.image' => 'File harus berupa gambar',
+                'gambar.mimes' => 'File harus berupa gambar',
+                'lokasi.required' => 'Lokasi tidak boleh kosong',
+                'tgl_mulai.required' => 'Tanggal mulai tidak boleh kosong',
+                'tgl_selesai.required' => 'Tanggal selesai tidak boleh kosong',
             ]
         );
 
         try {
-            if (request()->has('image')) {
-                $image = request()->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $imagePath = public_path('/images/workshops/');
-                $image->move($imagePath, $imageName);
+            if (request()->has('gambar')) {
+                $image = request()->file('gambar');
+                $imageName = $request->nama . '-' . time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/workshop', $imageName);
             }
 
             $workshop = new Workshop();
-            $workshop->title = $request->title;
-            $workshop->description = $request->description;
-            $workshop->start = $request->start;
-            $workshop->end = $request->end;
-            $workshop->image = $imageName;
+            $workshop->nama = $request->nama;
+            $workshop->deskripsi = $request->deskripsi;
+            $workshop->kuota = $request->kuota;
+            $workshop->gambar = $imageName;
+            $workshop->lokasi = $request->lokasi;
+            $workshop->tgl_mulai = $request->tgl_mulai;
+            $workshop->tgl_selesai = $request->tgl_selesai;
             $workshop->save();
 
             return redirect()->route('workshops.index')->with(['message' => 'Workshop berhasil ditambahkan', 'type' => 'success']);

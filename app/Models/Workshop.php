@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Workshop extends Model
 {
     use HasFactory;
+
+    protected $table = 'workshop';
+    protected $fillable = [
+        'nama',
+        'gambar',
+        'tgl_mulai',
+        'tgl_selesai',
+        'lat',
+        'lng',
+    ];
 }

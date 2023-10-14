@@ -78,7 +78,7 @@ Register
                                             <i data-feather="lock"></i>
                                         </div>
                                     </div>
-                                    <div class="form-floating form-floating-custom mb-4">
+                                    {{-- <div class="form-floating form-floating-custom mb-4">
                                         <input type="file" class="form-control @error('avatar') is-invalid @enderror"
                                             name="avatar" id="input-avatar" required>
                                         @error('avatar')
@@ -89,7 +89,7 @@ Register
                                         <div class="form-floating-icon">
                                             <i data-feather="file"></i>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mb-4">
                                         <p class="mb-0"> <a href="#" class="text-primary"></a></p>
                                     </div>

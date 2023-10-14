@@ -12,6 +12,9 @@
 <!-- pace js -->
 <script src="{{ URL::asset('assets/libs/pace-js/pace-js.min.js') }}"></script>
 <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js" type="text/javascript">
+</script>
 <x-livewire-alert::scripts />
 <x-livewire-alert::flash />
 <script>

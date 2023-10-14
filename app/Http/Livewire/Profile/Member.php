@@ -11,7 +11,7 @@ class Member extends Component
 {
     use WithFileUploads, LivewireAlert;
     public $members, $idMember, $user, $name, $email, $avatar, $modeEdit = false;
-    protected $listeners = ['getTeam', 'deleteTeam'];
+    protected $listeners = ['getTeam', 'deleteTeam', 'refreshMembers' => '$refresh'];
     public function mount($user)
     {
         $this->user = $user;
@@ -20,7 +20,9 @@ class Member extends Component
 
     public function render()
     {
-        return view('livewire.profile.member');
+        return view('livewire.profile.member', [
+            'members' => $this->user->hasTeams
+        ]);
     }
 
     public function openModal()
@@ -70,7 +72,7 @@ class Member extends Component
                 $this->user->hasTeams()->create([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'avatar' => $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
+                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
                 ]);
             }
             $this->reset(['name', 'email', 'avatar']);
@@ -104,6 +106,8 @@ class Member extends Component
             $user = $this->user->hasTeams()->find($id);
             Storage::delete('public/' . $user->avatar);
             $user->delete();
+            $this->reset(['name', 'email', 'avatar']);
+            $this->emit('refreshMembers');
             $this->alert('success', 'Berhasil menghapus data', [
                 'position' =>  'center',
                 'toast' =>  false,

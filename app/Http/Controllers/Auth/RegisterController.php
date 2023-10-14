@@ -53,7 +53,16 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
-            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+            // 'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+        ], [
+            'name.required' => 'Username tidak boleh kosong',
+            'name.max' => 'Username maksimal 255 karakter',
+            'name.string' => 'Username harus berupa string',
+            'email.required' => 'Email tidak boleh kosong',
+            'email.unique' => 'Email sudah ada',
+            'password.required' => 'Password tidak boleh kosong',
+            'password.min' => 'Password minimal 6 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak sama dengan password',
         ]);
     }
 
@@ -66,17 +75,17 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         // return request()->file('avatar');
-        if (request()->has('avatar')) {
-            $avatar = request()->file('avatar');
-            $avatarName = $data['name'] . '-' . time() . '.' . $avatar->getClientOriginalExtension();
-            $avatar->storeAs('public/avatar', $avatarName);
-        }
+        // if (request()->has('avatar')) {
+        //     $avatar = request()->file('avatar');
+        //     $avatarName = $data['name'] . '-' . time() . '.' . $avatar->getClientOriginalExtension();
+        //     $avatar->storeAs('public/avatar', $avatarName);
+        // }
 
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'avatar' => $avatarName,
+            // 'avatar' => $avatarName,
         ]);
     }
 }

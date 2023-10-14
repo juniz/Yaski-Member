@@ -275,14 +275,14 @@
                 <button type="button" class="btn header-item bg-soft-light border-start border-end"
                     id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                        src="@if (Auth::user()->avatar != ''){{ asset('storage/avatar/'. Auth::user()->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
+                        src="@if (Auth::user()->avatar != ''){{ asset('storage/avatar/'. Auth::user()->avatar) }}@else{{ asset('storage/avatar/blank.png') }}@endif"
                         alt="Header Avatar">
                     <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ Auth::user()->name }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="apps-contacts-profile"><i
+                    <a class="dropdown-item" href="{{ url('/profile') }}"><i
                             class="mdi mdi-face-profile font-size-16 align-middle me-1"></i>
                         Profile</a>
                     <div class="dropdown-divider"></div>

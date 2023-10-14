@@ -25,8 +25,8 @@ Login
                                     @csrf
                                     <div class="form-floating form-floating-custom mb-4">
                                         <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ old('email', 'admin@admin.com') }}" id="input-username"
-                                            placeholder="Enter User Name" name="email">
+                                            value="{{ old('email') }}" id="input-username" placeholder="Enter User Name"
+                                            name="email">
                                         @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -34,15 +34,14 @@ Login
                                         @enderror
                                         <label for="input-username">Username</label>
                                         <div class="form-floating-icon">
-                                            <i data-feather="users"></i>
+                                            <i data-feather="mail"></i>
                                         </div>
                                     </div>
 
                                     <div class="form-floating form-floating-custom mb-4 auth-pass-inputgroup">
                                         <input type="password"
                                             class="form-control pe-5 @error('password') is-invalid @enderror"
-                                            name="password" id="password-input" placeholder="Enter Password"
-                                            value="123456">
+                                            name="password" id="password-input" placeholder="Enter Password">
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -136,7 +135,7 @@ Login
                     </ul>
                     <!-- end bubble effect -->
                     {{-- <div class="row justify-content-center align-items-end">
-                        <div class="col-xl-7">
+                        <div class="col-xl-12">
                             <div class="p-0 p-sm-4 px-xl-0">
                                 <div id="reviewcarouselIndicators" class="carousel slide" data-bs-ride="carousel">
                                     <div
@@ -144,17 +143,42 @@ Login
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="0" class="active" aria-current="true"
                                             aria-label="Slide 1">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-1.jpg') }}"
+                                            <img src="{{ URL::asset('assets/images/pengurus/mas-win.jpg') }}"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="1" aria-label="Slide 2">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-2.jpg') }}"
+                                            <img src="{{ URL::asset('assets/images/pengurus/kusmanto.jpg') }}"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                         <button type="button" data-bs-target="#reviewcarouselIndicators"
                                             data-bs-slide-to="2" aria-label="Slide 3">
-                                            <img src="{{ URL::asset('assets/images/users/avatar-3.jpg') }}"
+                                            <img src="{{ URL::asset('assets/images/pengurus/adri.jpeg') }}"
+                                                class="avatar-md img-fluid rounded-circle d-block" alt="...">
+                                        </button>
+                                        <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                            data-bs-slide-to="3" aria-label="Slide 4">
+                                            <img src="{{ URL::asset('assets/images/pengurus/salim.jpg') }}"
+                                                class="avatar-md img-fluid rounded-circle d-block" alt="...">
+                                        </button>
+                                        <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                            data-bs-slide-to="4" aria-label="Slide 5">
+                                            <img src="{{ URL::asset('assets/images/pengurus/agus.jpg') }}"
+                                                class="avatar-md img-fluid rounded-circle d-block" alt="...">
+                                        </button>
+                                        <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                            data-bs-slide-to="5" aria-label="Slide 6">
+                                            <img src="{{ URL::asset('assets/images/pengurus/driful.jpeg') }}"
+                                                class="avatar-md img-fluid rounded-circle d-block" alt="...">
+                                        </button>
+                                        <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                            data-bs-slide-to="6" aria-label="Slide 7">
+                                            <img src="{{ URL::asset('assets/images/pengurus/haris.jpg') }}"
+                                                class="avatar-md img-fluid rounded-circle d-block" alt="...">
+                                        </button>
+                                        <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                            data-bs-slide-to="7" aria-label="Slide 8">
+                                            <img src="{{ URL::asset('assets/images/pengurus/pakedy.jpg') }}"
                                                 class="avatar-md img-fluid rounded-circle d-block" alt="...">
                                         </button>
                                     </div>
@@ -162,18 +186,13 @@ Login
                                     <div class="carousel-inner">
                                         <div class="carousel-item active">
                                             <div class="testi-contain text-center text-white">
-                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
-                                                <h4 class="mt-4 fw-medium lh-base text-white">“I feel confident
-                                                    imposing change
-                                                    on myself. It's a lot more progressing fun than looking back.
-                                                    That's why
-                                                    I ultricies enim
-                                                    at malesuada nibh diam on tortor neaded to throw curve balls.”
+                                                <h4 class="mt-4 fw-medium lh-base text-white">“Pengembang Utama,
+                                                    Pemilik, Pemegang HAKI SIMKES Khanza.”
                                                 </h4>
                                                 <div class="mt-4 pt-1 pb-5 mb-5">
-                                                    <h5 class="font-size-16 text-white">Richard Drews
+                                                    <h5 class="font-size-16 text-white">Windiarto
                                                     </h5>
-                                                    <p class="mb-0 text-white-50">Web Designer</p>
+                                                    <p class="mb-0 text-white-50">Pengembang SIMKES Khanza</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -181,16 +200,11 @@ Login
                                         <div class="carousel-item">
                                             <div class="testi-contain text-center text-white">
                                                 <i class="bx bxs-quote-alt-left text-success display-6"></i>
-                                                <h4 class="mt-4 fw-medium lh-base text-white">“Our task must be to
-                                                    free ourselves by widening our circle of compassion to embrace
-                                                    all living
-                                                    creatures and
-                                                    the whole of quis consectetur nunc sit amet semper justo. nature
-                                                    and its beauty.”</h4>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">“Ketua Yayasan SIMRS Khanza Indonesia.”</h4>
                                                 <div class="mt-4 pt-1 pb-5 mb-5">
-                                                    <h5 class="font-size-16 text-white">Rosanna French
+                                                    <h5 class="font-size-16 text-white">Kusmanto Lesmana
                                                     </h5>
-                                                    <p class="mb-0 text-white-50">Web Developer</p>
+                                                    <p class="mb-0 text-white-50">Ketua</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -198,15 +212,70 @@ Login
                                         <div class="carousel-item">
                                             <div class="testi-contain text-center text-white">
                                                 <i class="bx bxs-quote-alt-left text-success display-6"></i>
-                                                <h4 class="mt-4 fw-medium lh-base text-white">“I've learned that
-                                                    people will forget what you said, people will forget what you
-                                                    did,
-                                                    but people will never forget
-                                                    how donec in efficitur lectus, nec lobortis metus you made them
-                                                    feel.”</h4>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Wakil Ketua Yayasan SIMRS Khanza Indonesia RS Simpangan Depok.</h4>
                                                 <div class="mt-4 pt-1 pb-5 mb-5">
-                                                    <h5 class="font-size-16 text-white">Ilse R. Eaton</h5>
-                                                    <p class="mb-0 text-white-50">Manager
+                                                    <h5 class="font-size-16 text-white">Andri Cahyo W</h5>
+                                                    <p class="mb-0 text-white-50">Wakil Ketua
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="testi-contain text-center text-white">
+                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Pengawas Yayasan SIMRS Khanza Indonesia."</h4>
+                                                <div class="mt-4 pt-1 pb-5 mb-5">
+                                                    <h5 class="font-size-16 text-white">dr. Salim Mulyana</h5>
+                                                    <p class="mb-0 text-white-50">Dokumenter
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="testi-contain text-center text-white">
+                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Pembina Yayasan SIMRS Khanza Indonesia."</h4>
+                                                <div class="mt-4 pt-1 pb-5 mb-5">
+                                                    <h5 class="font-size-16 text-white">Agus Budiono</h5>
+                                                    <p class="mb-0 text-white-50">Pembina
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="testi-contain text-center text-white">
+                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Sekretaris Yayasan SIMRS Khanza Indonesia."</h4>
+                                                <div class="mt-4 pt-1 pb-5 mb-5">
+                                                    <h5 class="font-size-16 text-white">dr. Saiful Umam</h5>
+                                                    <p class="mb-0 text-white-50">Sekretaris
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="testi-contain text-center text-white">
+                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Admin Yayasan SIMRS Khanza Indonesia."</h4>
+                                                <div class="mt-4 pt-1 pb-5 mb-5">
+                                                    <h5 class="font-size-16 text-white">Haris Rochmatullah</h5>
+                                                    <p class="mb-0 text-white-50">Admin
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="testi-contain text-center text-white">
+                                                <i class="bx bxs-quote-alt-left text-success display-6"></i>
+                                                <h4 class="mt-4 fw-medium lh-base text-white">"Humas Yayasan SIMRS Khanza Indonesia."</h4>
+                                                <div class="mt-4 pt-1 pb-5 mb-5">
+                                                    <h5 class="font-size-16 text-white">Edy Suprayitno</h5>
+                                                    <p class="mb-0 text-white-50">Humas
                                                     </p>
                                                 </div>
                                             </div>

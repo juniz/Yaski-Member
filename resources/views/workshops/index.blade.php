@@ -24,64 +24,7 @@
                                 class="mdi mdi-plus me-1"></i> Tambah </a>
                     </div>
                 </div>
-                <table id="datatables" class="table table-bordered dt-responsive  nowrap w-100">
-                    <thead>
-                        <tr>
-                            <th>Judul</th>
-                            <th>Deskripsi</th>
-                            <th>Waktu</th>
-                            <th>Gambar</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($workshops as $workshop)
-                        <tr>
-                            <td>{{ $workshop->title }}</td>
-                            <td>{!! $workshop->description !!}</td>
-                            <td>{{ $workshop->start }}</td>
-                            <td>
-                                <a href="{{ URL::asset('images/workshops/'.$workshop->image) }}"
-                                    class="image-popup-desc" data-title="{{ $workshop->title }}"
-                                    data-description="{!! $workshop->description !!}">
-                                    {{-- <img src="{{ URL::asset('images/workshops/'.$workshop->image) }}"
-                                        class="img-fluid" alt="work-thumbnail" width="60px" height="20px"> --}}
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded">
-                                        <i class="mdi mdi-eye-outline"></i> Tampilkan Gambar
-                                    </button>
-                                </a>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <a class="btn btn-link text-muted py-1 font-size-16 shadow-none dropdown-toggle"
-                                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-horizontal-rounded"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('workshops.edit', $workshop) }}">Ubah</a></li>
-                                        <li>
-                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');"
-                                                action="{{ route('workshops.destroy', $workshop) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item">HAPUS</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                                {{-- <div class="d-flex gap-3">
-                                    <a href="{{ route('workshops.edit', $workshop) }}" class="text-success"><i
-                                            class="mdi mdi-pencil font-size-18"></i></a>
-                                    <button class="btn btn-sm text-danger my-auto"
-                                        onclick="deleteData('{{$workshop}}')"><i
-                                            class="mdi mdi-delete font-size-18"></i></button>
-                                </div> --}}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+
             </div>
         </div>
     </div>

@@ -31,6 +31,8 @@ Route::resource('workshops', App\Http\Controllers\WorkshopController::class);
 Route::resource('sub-users', App\Http\Controllers\SubUserController::class);
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', fn () => view('index'))->name('dashboard');
     //Update User Details
     Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
     Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
@@ -49,6 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::get('roles', function () {
         return view('admin.roles.index');
     })->name('roles.index');
+
+    Route::get('/list-workshop', fn () => view('admin.workshop.index'))->name('workshop.index');
+    Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
+    Route::get('/workshop/create', fn () => view('workshops.create'))->name('workshop.create');
+    Route::post('/workshop/store', [App\Http\Controllers\WorkshopController::class, 'store'])->name('workshop.store');
+    Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
 });
 
-// Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
