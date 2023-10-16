@@ -58,6 +58,13 @@ class HomeController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email'],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+        ], [
+            'name.required' => 'Nama tidak boleh kosong',
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Email tidak valid',
+            'avatar.image' => 'File harus berupa gambar',
+            'avatar.mimes' => 'File harus berupa gambar',
+            'avatar.max' => 'Ukuran file maksimal 1MB',
         ]);
 
         $user = User::find($id);
