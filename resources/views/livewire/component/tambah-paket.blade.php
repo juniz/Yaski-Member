@@ -1,7 +1,6 @@
 <div>
-    
     <!-- sample modal content -->
-    {{-- <div wire:ignore.self id="tambah-paket-modal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-scroll="true">
+    <div wire:ignore.self id="tambah-paket-modal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-scroll="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -21,7 +20,13 @@
                             @error('harga')<div><span class="text-danger">{{ $message }}</span></div>@enderror
                         </div>
                         <div class="mb-3">
-                            <button type="submit"  class="btn btn-primary">Simpan</button>
+                            <button type="submit"  class="btn btn-primary btn-block">
+                                @if($state == 'tambah')
+                                Simpan
+                                @else
+                                Ubah
+                                @endif
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -30,5 +35,5 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-    </div><!-- /.modal --> --}}
+    </div><!-- /.modal -->
 </div>

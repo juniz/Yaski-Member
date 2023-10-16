@@ -18,4 +18,9 @@ class Workshop extends Model
         'lat',
         'lng',
     ];
+
+    public function paket()
+    {
+        return $this->hasMany(Paket::class);
+    }
 }

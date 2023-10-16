@@ -15,8 +15,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Basic Information</h4>
-                <p class="card-title-desc">Fill all information below</p>
+                <h4 class="card-title">Tambah Informasi Workshop</h4>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('workshop.store') }}" enctype="multipart/form-data">

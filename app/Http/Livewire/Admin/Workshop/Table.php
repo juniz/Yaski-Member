@@ -4,14 +4,37 @@ namespace App\Http\Livewire\Admin\Workshop;
 
 use Livewire\Component;
 use App\Models\Workshop;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class Table extends Component
 {
-    protected $listeners = ['refreshWorkshop' => '$refresh'];
+    use LivewireAlert;
+    public $idWorkshop;
+    protected $listeners = ['refreshWorkshop' => '$refresh', 'hapusWorkshop' => 'hapus', 'confirmHapusWorkshop' => 'confirmHapus'];
+
     public function render()
     {
         return view('livewire.admin.workshop.table', [
             'workshops' => Workshop::all()
         ]);
+    }
+
+    public function confirmHapus($id)
+    {
+        $this->idWorkshop = $id;
+        $this->confirm('Apakah anda yakin ingin menghapus data ini?', [
+            'onConfirmed' => 'hapusWorkshop',
+        ]);
+    }
+
+    public function hapus()
+    {
+        try {
+            Workshop::find($this->idWorkshop)->delete();
+            $this->alert('success', 'Berhasil Menghapus Data');
+            $this->emit('refreshWorkshop');
+        } catch (\Exception) {
+            $this->alert('error', 'Gagal Menghapus Data');
+        }
     }
 }

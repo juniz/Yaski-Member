@@ -10,12 +10,43 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 class TambahPaket extends Component
 {
     use LivewireAlert;
-    public $nama, $harga;
+    public $nama, $harga, $idWorkshop, $idPaket;
+    public $state;
+    protected $listeners = ['openModalHarga' => 'openModal', 'hapusPaket' => 'hapus', 'ubahPaket' => 'ubahModal'];
+
     public function render()
     {
-        return view('livewire.component.tambah-paket', [
-            'pakets' => Paket::all()
-        ]);
+        return view('livewire.component.tambah-paket');
+    }
+
+    public function openModal($id)
+    {
+        $this->idWorkshop = $id;
+        $this->state = 'tambah';
+        $this->reset(['nama', 'harga']);
+        $this->emit('openPaketModal');
+    }
+
+    public function hapus($id)
+    {
+        try {
+            Paket::find($id)->delete();
+            $this->emit('refreshWorkshop');
+            $this->alert('success', 'Berhasil Menghapus Data');
+        } catch (\Exception) {
+            $this->alert('error', 'Gagal Menghapus Data');
+        }
+    }
+
+    public function ubahModal($id)
+    {
+        $paket = Paket::find($id);
+        $this->nama = $paket->nama;
+        $this->harga = $paket->harga;
+        $this->idPaket = $paket->id;
+        $this->state = 'ubah';
+
+        $this->emit('openPaketModal');
     }
 
     public function simpan()
@@ -30,10 +61,18 @@ class TambahPaket extends Component
 
         try {
 
-            $paket = new Paket();
-            $paket->nama = $this->nama;
-            $paket->harga = $this->harga;
-            $paket->save();
+            if ($this->state == 'tambah') {
+                $paket = new Paket();
+                $paket->nama = $this->nama;
+                $paket->harga = $this->harga;
+                $paket->workshop_id = $this->idWorkshop;
+                $paket->save();
+            } else {
+                $paket = Paket::find($this->idPaket);
+                $paket->nama = $this->nama;
+                $paket->harga = $this->harga;
+                $paket->save();
+            }
 
             $this->alert('success', 'Berhasil Menyimpan Data', [
                 'position' =>  'top-end',
@@ -44,10 +83,10 @@ class TambahPaket extends Component
                 'showConfirmButton' =>  false,
             ]);
 
-            $this->nama = '';
-            $this->harga = '';
+            $this->reset(['nama', 'harga']);
+            $this->emit('refreshWorkshop');
 
-            $this->dispatchBrowserEvent('closePaketModal');
+            $this->emit('closePaketModal');
         } catch (\Exception $e) {
             $this->alert('error', 'Gagal Menyimpan Data', [
                 'position' =>  'center',

@@ -44,7 +44,9 @@
     </div>
     <div class="flex-grow-1">
         <div>
-            <h5 class="font-size-16 mb-1">{{ $user->name }}</h5>
+            <h5 class="font-size-16 mb-1">
+             {{ $user->name }}
+            </h5>
             <p class="text-muted font-size-13 mb-2 pb-2">{{ $user->email }}</p>
         </div>
     </div>

@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Fasyankes::class);
     }
+
+    public function paklaring()
+    {
+        return $this->hasOne(Paklaring::class);
+    }
 }

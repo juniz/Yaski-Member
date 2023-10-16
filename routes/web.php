@@ -56,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
     Route::get('/workshop/create', fn () => view('workshops.create'))->name('workshop.create');
     Route::post('/workshop/store', [App\Http\Controllers\WorkshopController::class, 'store'])->name('workshop.store');
+    Route::get('/workshop/{id}', [App\Http\Controllers\WorkshopController::class, 'show'])->name('workshop.show');
+    Route::get('/workshop/{workshop}/edit', [App\Http\Controllers\WorkshopController::class, 'edit'])->name('workshop.edit');
+    Route::put('/workshop/{workshop}', [App\Http\Controllers\WorkshopController::class, 'update'])->name('workshop.update');
     Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
 });
 

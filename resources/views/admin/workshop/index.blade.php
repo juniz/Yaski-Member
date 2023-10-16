@@ -15,6 +15,7 @@
 @component('components.alert')@endcomponent
 <livewire:admin.workshop.table />
 <livewire:admin.workshop.create />
+<livewire:component.tambah-paket />
 @endsection
 
 @section('script')
@@ -23,6 +24,14 @@
 <script src="{{ URL::asset('assets/js/pages/lightbox.init.js') }}"></script>
 
 <script>
+    window.livewire.on('openPaketModal', event => {
+        $('#tambah-paket-modal').modal('show');
+    })
+
+    window.livewire.on('closePaketModal', event => {
+        $('#tambah-paket-modal').modal('hide');
+    })
+
     window.addEventListener('createModal', event => {
         $('.tambah-workshop').modal('show');
     })
