@@ -1,6 +1,6 @@
 @extends('layouts.master-without-nav')
 @section('title')
-@lang('translation.Confirm_Mail')
+Verifikasi Email
 @endsection
 @section('content')
 
@@ -12,8 +12,9 @@
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
-                                <a href="{{ URL::asset('index') }}" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">Dason</span>
+                                <a href="{{ URL::asset('/') }}" class="d-block auth-logo">
+                                    <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="50"> <span
+                                        class="logo-txt">YASKI</span>
                                 </a>
                             </div>
                             <div class="auth-content my-auto">
@@ -24,16 +25,16 @@
                                         </div>
                                     </div>
                                     <div class="p-2 mt-4">
-                                        <h4>Success !</h4>
-                                        <p class="text-muted">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et</p>
+                                        <h4>Email Terkirim!</h4>
+                                        <p class="text-muted">Silahkan periksa email untuk melakukan konfirmasi login</p>
                                         <div class="mt-4">
-                                            <a href="{{ URL::asset('index') }}" class="btn btn-primary w-100">Back to Home</a>
+                                            <a href="{{ URL::asset('/') }}" class="btn btn-primary w-100">Tampilan Utama</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-4 mt-md-5 text-center">
-                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Dason   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesdesign</p>
+                                {{-- <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Dason   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesdesign</p> --}}
                             </div>
                         </div>
                     </div>
@@ -57,7 +58,7 @@
                         <li></li>
                     </ul>
                     <!-- end bubble effect -->
-                    <div class="row justify-content-center align-items-end">
+                    {{-- <div class="row justify-content-center align-items-end">
                         <div class="col-xl-7">
                             <div class="p-0 p-sm-4 px-xl-0">
                                 <div id="reviewcarouselIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -131,7 +132,7 @@
                                 <!-- end review carousel -->
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <!-- end col -->

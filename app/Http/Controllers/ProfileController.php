@@ -13,7 +13,7 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
     }
 
     public function index()
@@ -87,7 +87,7 @@ class ProfileController extends Controller
     public function updateFasyankes(Request $request, $id)
     {
         $request->validate([
-            'kode' => 'required',
+            'kode' => 'nullable',
             'nama' => 'required',
             'jenis' => 'required',
             'kelas' => 'required',
