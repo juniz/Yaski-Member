@@ -90,7 +90,7 @@ class ProfileController extends Controller
             'kode' => 'nullable',
             'nama' => 'required',
             'jenis' => 'required',
-            'kelas' => 'required',
+            'kelas' => 'nullable',
             'telp' => 'required',
             'email' => 'required',
             'alamat' => 'required',
@@ -99,10 +99,8 @@ class ProfileController extends Controller
             'direktur' => 'required',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:1024'
         ], [
-            'kode.required' => 'Kode Fasyankes tidak boleh kosong',
             'nama.required' => 'Nama Fasyankes tidak boleh kosong',
             'jenis.required' => 'Jenis Fasyankes tidak boleh kosong',
-            'kelas.required' => 'Kelas Fasyankes tidak boleh kosong',
             'telp.required' => 'Nomor Telepon Fasyankes tidak boleh kosong',
             'email.required' => 'Email Fasyankes tidak boleh kosong',
             'alamat.required' => 'Alamat Fasyankes tidak boleh kosong',
@@ -120,7 +118,7 @@ class ProfileController extends Controller
 
             if ($request->has('image')) {
                 $image = $request->file('image');
-                $name = 'Fasyankes-' . time() . '.' . $image->getClientOriginalExtension();
+                $name = $request->nama . '-' . time() . '.' . $image->getClientOriginalExtension();
                 if ($fasyankes->image != null) {
                     Storage::delete('public/fasyankes' . $fasyankes->image);
                 }
@@ -142,10 +140,10 @@ class ProfileController extends Controller
             } else {
                 $fasyankes = new Fasyankes();
                 $fasyankes->user_id = $id;
-                $fasyankes->kode = $request->kode;
+                $fasyankes->kode = $request->kode ?? '';
                 $fasyankes->nama = $request->nama;
                 $fasyankes->jenis = $request->jenis;
-                $fasyankes->kelas = $request->kelas;
+                $fasyankes->kelas = $request->kelas ?? '';
                 $fasyankes->telp = $request->telp;
                 $fasyankes->email = $request->email;
                 $fasyankes->alamat = $request->alamat;

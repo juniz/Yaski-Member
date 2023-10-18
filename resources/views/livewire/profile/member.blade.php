@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex flex-row justify-content-between">
-                <h5 class="card-title mb-0">Team Members</h5>
+                <h5 class="card-title mb-0">Data PIC SIMKES</h5>
                 <button wire:click='openModal' class="btn btn-sm btn-secondary"><i class="bx bx-plus me-1"></i> Tambah
                 </button>
             </div>
@@ -13,7 +13,7 @@
             <div class="table-responsive">
                 <table class="table align-middle table-nowrap">
                     <tbody>
-                        @foreach ($members as $subUser)
+                        @forelse ($members as $subUser)
                         <tr>
 
                             <td style="width: 50px;">@if(empty($subUser->avatar)) <img
@@ -40,8 +40,11 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
-
+                        @empty
+                        <tr>
+                            <td colspan="4" class="text-center">Data PIC Masih Kosong</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -78,14 +81,31 @@
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="telegram" class="form-label">Username Telegram</label>
+                            <input wire:model.defer='telegram' type="text"
+                                class="form-control @error('telegram') is-invalid @enderror" id="telegram"
+                                name="telegram" placeholder="Masukkan Username Telegram" autofocus>
+                            @error('telegram') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
 
                         <div class="mb-3">
-                            <label for="avatarTeam">Foto Profile</label>
+                            <label for="telp" class="form-label">No. Telp</label>
+                            <input wire:model.defer='telp' type="text"
+                                class="form-control @error('email') is-invalid @enderror" id="telp"
+                                name="telp" placeholder="Masukkan No. Telp" autofocus>
+                            @error('telp') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="avatarTeam">Foto PIC</label>
                             <div class="input-group">
                                 <input wire:model='avatar' type="file"
                                     class="form-control @error('avatarTeam') is-invalid @enderror" id="avatarTeam"
                                     name="avatarTeam" autofocus>
                             </div>
+
                             <div class="text-start mt-2">
                                 @if($avatar)
                                 <img src="{{ $modeEdit ? URL::asset('storage/'. $avatar) : $avatar->temporaryUrl() }}"

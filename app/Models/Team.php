@@ -13,5 +13,7 @@ class Team extends Model
         'name',
         'email',
         'avatar',
+        'telegram',
+        'telp',
     ];
 }

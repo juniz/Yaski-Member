@@ -10,7 +10,7 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 class Member extends Component
 {
     use WithFileUploads, LivewireAlert;
-    public $members, $idMember, $user, $name, $email, $avatar, $modeEdit = false;
+    public $members, $idMember, $user, $name, $email, $avatar, $telegram, $telp, $modeEdit = false;
     protected $listeners = ['getTeam', 'deleteTeam', 'refreshMembers' => '$refresh'];
     public function mount($user)
     {
@@ -51,12 +51,18 @@ class Member extends Component
             'name' => 'required',
             'email' => 'required|email',
             'avatar' => 'image|max:1024|nullable',
+            'telegram' => 'required',
+            'telp' => 'required|numeric|digits_between:10,13',
         ], [
             'name.required' => 'Nama tidak boleh kosong',
             'email.required' => 'Email tidak boleh kosong',
             'email.email' => 'Email tidak valid',
             'avatar.image' => 'Avatar harus berupa gambar',
             'avatar.max' => 'Ukuran avatar maksimal 1MB',
+            'telegram.required' => 'Username telegram tidak boleh kosong',
+            'telp.required' => 'Nomor telepon tidak boleh kosong',
+            'telp.numeric' => 'Nomor telepon harus berupa angka',
+            'telp.digits_between' => 'Nomor telepon minimal 10 dan maksimal 13 angka',
         ]);
 
         try {
@@ -65,6 +71,8 @@ class Member extends Component
                 $user->update([
                     'name' => $this->name,
                     'email' => $this->email,
+                    'telegram' => $this->telegram,
+                    'telp' => $this->telp,
                     // 'avatar' => $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
                 ]);
                 $this->modeEdit = false;
@@ -72,10 +80,12 @@ class Member extends Component
                 $this->user->hasTeams()->create([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
+                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public'),
+                    'telegram' => $this->telegram,
+                    'telp' => $this->telp,
                 ]);
             }
-            $this->reset(['name', 'email', 'avatar']);
+            $this->reset(['name', 'email', 'avatar', 'telegram', 'telp']);
             $this->dispatchBrowserEvent('closeModalTeam');
             $this->alert('success', 'Berhasil menyimpan data', [
                 'position' =>  'center',

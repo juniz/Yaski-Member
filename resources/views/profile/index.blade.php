@@ -6,6 +6,13 @@
 <!-- CSS -->
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet"
     type="text/css" />
+
+<style>
+    .required:after {
+    content:"*\00a0";
+    color:red;
+}
+</style>
 @endsection
 @section('content')
 <div class="row">
@@ -342,7 +349,7 @@
                         <div class="text-danger" id="nameError" data-ajax-feedback="name"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="avatar">Profile Picture</label>
+                        <label for="avatar">Logo Instansi / Fasyankes</label>
                         <div class="input-group">
                             <input type="file" class="form-control @error('avatar') is-invalid @enderror" id="avatar"
                                 name="avatar" autofocus>
@@ -386,13 +393,13 @@
                         <div class="text-danger" id="kodeError" data-ajax-feedback="kode"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="nama">Nama Fasyankes</label>
+                        <label class="required" for="nama">Nama Fasyankes</label>
                         <input type="text" value="{{$fasyankes->nama ?? ''}}" class=" form-control @error('nama') is-invalid
                 @enderror" id='nama' name="nama">
                         <div class="text-danger" id="namaError" data-ajax-feedback="nama"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="jenis" class="form-label font-size-13 text-muted">Jenis</label>
+                        <label for="jenis" class="form-label font-size-13 text-muted required">Jenis Fasyankes</label>
                         <select class="form-control @error('jenis') is-invalid @enderror" data-trigger name="jenis"
                             id="jenis" placeholder="Jenis Fasyankes">
                             <option value="">Pilih jenis</option>
@@ -409,8 +416,8 @@
                         <div class="text-danger" id="jenisError" data-ajax-feedback="jenis"></div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="kelas">Kelas</label>
+                    <div class="mb-3 kelas-form visually-hidden">
+                        <label class="required" for="kelas">Kelas Fasyankes</label>
                         <select type="text" value="{{$fasyankes->kelas ?? ''}}"
                             class="form-control @error('kelas') is-invalid @enderror" data-trigger id='kelas'
                             name="kelas">
@@ -429,21 +436,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="telp">Telp</label>
+                        <label class="required" for="telp">Telp</label>
                         <input type="text" value="{{$fasyankes->telp ?? ''}}"
                             class="form-control @error('telp') is-invalid @enderror" id='telp' name="telp">
                         <div class="text-danger" id="telpError" data-ajax-feedback="telp"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="email">Email</label>
+                        <label class="required" for="email">Email</label>
                         <input type="email" value="{{$fasyankes->email ?? ''}}"
                             class="form-control @error('email') is-invalid @enderror" id='email' name="email">
                         <div class="text-danger" id="emailError" data-ajax-feedback="email"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="direktur">Nama Direktur</label>
+                        <label class="required" for="direktur">Nama Direktur / Kepala Rumah Sakit</label>
                         <input type="text" value="{{$fasyankes->direktur ?? ''}}" class="form-control @error('direktur') is-invalid
             @enderror" id='direktur' name="direktur">
                         <div class="text-danger" id="direkturError" data-ajax-feedback="telp"></div>
@@ -451,7 +458,7 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="provinsi" class="form-label font-size-13 text-muted">Provinsi</label>
+                            <label for="provinsi" class="form-label font-size-13 text-muted required">Provinsi</label>
                             <select class="form-control" data-trigger name="provinsi" id="provinsi"
                                 placeholder="Cari Provinsi">
                                 <option value="">Pilih provinsi</option>
@@ -465,7 +472,7 @@
 
                     <div class="col-12 kabupaten-form">
                         <div class="mb-3">
-                            <label for="kabupaten" class="form-label font-size-13 text-muted">Kabupaten /
+                            <label for="kabupaten" class="form-label font-size-13 text-muted required">Kabupaten /
                                 Kota</label>
                             <select class="form-control" name="kabupaten" id="kabupaten" placeholder="Cari Kabupaten">
                             </select>
@@ -474,24 +481,23 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="alamat">Alamat Fasyankes</label>
+                        <label for="alamat" class="required">Alamat Fasyankes</label>
                         <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" id='alamat'
-                            name="alamat" cols="3">{{$fasyankes->alamat ?? ''}}
-            </textarea>
+                            name="alamat" cols="3">{{$fasyankes->alamat ?? ''}}</textarea>
                         <div class="text-danger" id="alamatError" data-ajax-feedback="alamat"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="image">Profile Fasyankes</label>
+                        <label for="image">Gambar Background</label>
                         <div class="input-group">
                             <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
                                 name="image" autofocus>
                             <label class="input-group-text" for="image">Upload</label>
                         </div>
-                        <div class="text-start mt-2">
+                        {{-- <div class="text-start mt-2">
                             <img src="@if (!empty($fasyankes->image)){{ asset('storage/fasyankes/'. $fasyankes->image) }}@else{{ URL::asset('assets/images/profile-bg-1.jpg') }}@endif"
                                 alt="" class="rounded me-2" width="200" data-holder-rendered="true">
-                        </div>
+                        </div> --}}
                         <div class="text-danger" role="alert" id="imageError" data-ajax-feedback="image"></div>
                     </div>
 
@@ -522,6 +528,15 @@
     //         previous: 'Sebelumnya'
     //     }
     // });
+    $('#jenis').on('change', function() {
+        var jenis = $(this).val();
+        if (jenis == 'Rumah Sakit') {
+            $('.kelas-form').removeClass('visually-hidden');
+        } else {
+            $('.kelas-form').addClass('visually-hidden');
+        }
+    });
+
     window.addEventListener('pengajuanPaklaring', (event) => {
         $('#collapseOne').collapse('hide');
         $('#collapseTwo').collapse('show');
