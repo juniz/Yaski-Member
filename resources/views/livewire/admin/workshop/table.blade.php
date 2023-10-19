@@ -5,9 +5,9 @@
                 <div class="card-body p-4">
                     <div class="d-flex flex-row justify-content-end mb-2">
                         <div class="text-sm-end">
-                            <button type="button" wire:click='$emit("createModal")'
+                            <a type="button" href="{{ route('workshop.create') }}"
                                 class="btn btn-sm btn-secondary btn-rounded waves-effect waves-light me-2"><i
-                                    class="mdi mdi-plus me-1"></i> Tambah </button>
+                                    class="mdi mdi-plus me-1"></i> Tambah </a>
                         </div>
                     </div>
                     <div class="table-responsive">

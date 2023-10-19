@@ -105,6 +105,10 @@ Login
                                     <p class="text-muted mb-0">Belum punya akun ? <a href="{{ url('register') }}"
                                             class="text-primary fw-semibold"> Daftar sekarang </a> </p>
                                 </div>
+                                <div class="mt-5 text-center">
+                                    <p class="text-muted mb-0"><a href="{{ url('register') }}"
+                                            class="text-primary fw-semibold"> Lupa Password? </a> </p>
+                                </div>
                             </div>
                             <div class="mt-4 mt-md-5 text-center">
                                 {{-- <p class="mb-0">© <script>

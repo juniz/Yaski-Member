@@ -36,6 +36,21 @@
                     </ul>
                 </li>
 
+                <li class="menu-title" data-key="t-apps">Pendaftaran</li>
+
+                <li>
+                    @can('view workshop')
+                    <a href="/workshop">
+                        <i data-feather="mail"></i>
+                        <span data-key="t-email">Workshop</span>
+                    </a>
+                    @endcan
+                    {{-- <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="apps-email-inbox" data-key="t-inbox">@lang('translation.Inbox')</a></li>
+                        <li><a href="apps-email-read" data-key="t-read-email">@lang('translation.Read_Email')</a></li>
+                    </ul> --}}
+                </li>
+
                 {{-- <li>
                     <a href="apps-chat">
                         <i data-feather="message-square"></i>
@@ -50,6 +65,12 @@
                     <a href="/paklaring">
                         <i data-feather="mail"></i>
                         <span data-key="t-email">Paklaring</span>
+                    </a>
+                    @endcan
+                    @can('view permintaan workshop')
+                    <a href="/list-workshop">
+                        <i data-feather="mail"></i>
+                        <span data-key="t-email">Atur Workshop</span>
                     </a>
                     @endcan
                     {{-- <ul class="sub-menu" aria-expanded="false">
