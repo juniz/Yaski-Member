@@ -9,7 +9,7 @@
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li>
                     @can('view profile')
-                    <a href="">
+                    <a href="/profile">
                         <i data-feather="user"></i>
                         <span data-key="t-dashboard">Profile</span>
                     </a>
