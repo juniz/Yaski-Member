@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Carbon;
@@ -51,5 +52,17 @@ class AuthServiceProvider extends ServiceProvider
                 ->action('Verifikasi Email', $verifyUrl)
                 ->line('Jika anda tidak membuat akun, abaikan email ini.');
         });
+
+        ResetPassword::toMailUsing(function ($notifiable, $token) {
+            $resetUrl = 'https://yaskimember.org/password/reset/' . $token . '?email=' . $notifiable->getEmailForPasswordReset();
+
+            return (new MailMessage)
+                ->subject('Reset Password')
+                ->line('Klik tombol dibawah untuk reset password anda.')
+                ->action('Reset Password', $resetUrl)
+                ->line('Link reset password akan kadaluarsa dalam ' . config('auth.passwords.users.expire') . ' menit.')
+                ->line('Jika anda tidak membuat akun, abaikan email ini.');
+        });
+
     }
 }
