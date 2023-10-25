@@ -106,7 +106,7 @@ Login
                                             class="text-primary fw-semibold"> Daftar sekarang </a> </p>
                                 </div>
                                 <div class="mt-5 text-center">
-                                    <p class="text-muted mb-0"><a href="{{ url('register') }}"
+                                <p class="text-muted mb-0"><a href="{{ url('/password/reset') }}"
                                             class="text-primary fw-semibold"> Lupa Password? </a> </p>
                                 </div>
                             </div>

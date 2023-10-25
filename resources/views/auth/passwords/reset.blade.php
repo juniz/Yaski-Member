@@ -12,12 +12,12 @@
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
                                 <a href="index" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">Dason</span>
+                                    <img src="{{ URL::asset('assets/images/logo.png') }}" alt="" height="28"> <span class="logo-txt">Yaski</span>
                                 </a>
                             </div>
                             <div class="auth-content my-auto">
                                 <div class="text-center">
-                                    <h5 class="mb-0">Reset Password</h5>
+                                    <h5 class="mb-0">Reset Passwordd</h5>
                                     <p class="text-muted mt-2">Reset Password with Dason.</p>
                                 </div>
                                 <div class="alert alert-success text-center my-4" role="alert">
