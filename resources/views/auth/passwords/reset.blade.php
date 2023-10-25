@@ -43,8 +43,8 @@
                                         @enderror
                                     </div>
                                     <div class="mb-3">
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="userpassword" placeholder="Enter password">
                                         <label for="userpassword" class="form-label">Password</label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="userpassword" placeholder="Enter password">
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -52,8 +52,8 @@
                                         @enderror
                                     </div>
                                     <div class="mb-3">
-                                        <input id="password-confirm" type="password" name="password_confirmation" class="form-control" placeholder="Enter confirm password">
                                         <label for="userpassword" class="form-label">Confirm Password</label>
+                                        <input id="password-confirm" type="password" name="password_confirmation" class="form-control" placeholder="Enter confirm password">
                                     </div>
                                     <div class="text-end">
                                         <button class="btn btn-primary w-md waves-effect waves-light"
