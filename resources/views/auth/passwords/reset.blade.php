@@ -1,6 +1,6 @@
 @extends('layouts.master-without-nav')
 @section('title')
-@lang('translation.Recover_Password')
+Reset Password
 @endsection
 @section('content')
 <div class="auth-page">
