@@ -6,7 +6,7 @@
 <div class="auth-page">
     <div class="container-fluid p-0">
         <div class="row g-0">
-            <div class="col-xxl-3 col-lg-4 col-md-5">
+            <div class="col-xxl-4 col-lg-4 col-md-5">
                 <div class="auth-full-page-content d-flex p-sm-5 p-4">
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
@@ -17,11 +17,10 @@
                             </div>
                             <div class="auth-content my-auto">
                                 <div class="text-center">
-                                    <h5 class="mb-0">Reset Passwordd</h5>
-                                    <p class="text-muted mt-2">Reset Password with Dason.</p>
+                                    <h5 class="mb-0">Atur Ulang Password</h5>
                                 </div>
                                 <div class="alert alert-success text-center my-4" role="alert">
-                                    Enter your Email and instructions will be sent to you!
+                                    Masukkan Email untuk mengatur ulang password!
                                 </div>
                                 @if (session('status'))
                                     <div class="alert alert-success" role="alert">
@@ -58,16 +57,16 @@
                                     </div>
                                     <div class="text-end">
                                         <button class="btn btn-primary w-md waves-effect waves-light"
-                                            type="submit">Reset</button>
+                                            type="submit">Atur Ulang</button>
                                     </div>
                                 </form>
                                 <div class="mt-5 text-center">
-                                    <p class="text-muted mb-0">Remember It ?  <a href="login"
-                                            class="text-primary fw-semibold"> Sign In </a> </p>
+                                    <p class="text-muted mb-0">Sudah ingat password ?  <a href="{{url('/login')}}"
+                                            class="text-primary fw-semibold"> Login </a> </p>
                                 </div>
                             </div>
                             <div class="mt-4 mt-md-5 text-center">
-                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Dason   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesdesign</p>
+                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Yaski</p>
                             </div>
                         </div>
                     </div>
@@ -75,7 +74,7 @@
                 <!-- end auth full page content -->
             </div>
             <!-- end col -->
-            <div class="col-xxl-9 col-lg-8 col-md-7">
+            <div class="col-xxl-8 col-lg-8 col-md-7">
                 <div class="auth-bg pt-md-5 p-4 d-flex">
                     <div class="bg-overlay"></div>
                     <ul class="bg-bubbles">
@@ -91,7 +90,7 @@
                         <li></li>
                     </ul>
                     <!-- end bubble effect -->
-                    <div class="row justify-content-center align-items-end">
+                    {{-- <div class="row justify-content-center align-items-end">
                         <div class="col-xl-7">
                             <div class="p-0 p-sm-4 px-xl-0">
                                 <div id="reviewcarouselIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -165,7 +164,7 @@
                                 <!-- end review carousel -->
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <!-- end col -->
