@@ -106,12 +106,12 @@
                                     name="avatarTeam" autofocus>
                             </div>
 
-                            <div class="text-start mt-2">
+                            {{-- <div class="text-start mt-2">
                                 @if($avatar)
                                 <img src="{{ $modeEdit ? URL::asset('storage/teams/'. $avatar) : $avatar->temporaryUrl() }}"
                                     alt="" class="rounded-circle avatar-lg">
                                 @endif
-                            </div>
+                            </div> --}}
                             @error('avatar') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
