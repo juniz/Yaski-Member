@@ -80,7 +80,7 @@ class Member extends Component
                 $this->user->hasTeams()->create([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public'),
+                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('public/teams', $this->name . '-' . time() . '.' . $this->avatar->extension()),
                     'telegram' => $this->telegram,
                     'telp' => $this->telp,
                 ]);

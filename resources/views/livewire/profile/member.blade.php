@@ -18,7 +18,7 @@
 
                             <td style="width: 50px;">@if(empty($subUser->avatar)) <img
                                     src="{{ URL::asset('storage/avatar/blank.png') }}" class="rounded-circle avatar-sm"
-                                    alt=""> @else <img src="{{ URL::asset('storage/'. $subUser->avatar) }}"
+                                    alt=""> @else <img src="{{ URL::asset('storage/teams/'. $subUser->avatar) }}"
                                     class="rounded-circle avatar-sm" alt="">@endif</td>
                             <td>
                                 <h5 class="font-size-12 m-0"><a href="javascript: void(0);" class="text-dark">{{
@@ -108,7 +108,7 @@
 
                             <div class="text-start mt-2">
                                 @if($avatar)
-                                <img src="{{ $modeEdit ? URL::asset('storage/'. $avatar) : $avatar->temporaryUrl() }}"
+                                <img src="{{ $modeEdit ? URL::asset('storage/teams/'. $avatar) : $avatar->temporaryUrl() }}"
                                     alt="" class="rounded-circle avatar-lg">
                                 @endif
                             </div>
