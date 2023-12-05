@@ -356,7 +356,7 @@
                             <label class="input-group-text" for="avatar">Upload</label>
                         </div>
                         <div class="text-start mt-2">
-                            <img src="@if (Auth::user()->avatar != ''){{ URL::asset('images/'. Auth::user()->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
+                            <img src="@if (Auth::user()->avatar != ''){{ URL::asset('storage/avatar/'. Auth::user()->avatar) }}@else{{ URL::asset('assets/images/users/avatar-1.png') }}@endif"
                                 alt="" class="rounded-circle avatar-lg">
                         </div>
                         <div class="text-danger" role="alert" id="avatarError" data-ajax-feedback="avatar">
