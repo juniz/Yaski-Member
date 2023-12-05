@@ -42,6 +42,8 @@ class Member extends Component
         $user = $this->user->hasTeams()->find($id);
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->telegram = $user->telegram;
+        $this->telp = $user->telp;
         $this->dispatchBrowserEvent('openModalTeam');
     }
 
