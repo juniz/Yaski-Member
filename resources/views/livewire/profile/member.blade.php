@@ -108,7 +108,7 @@
 
                             <div class="text-start mt-2">
                                 @if($avatar)
-                                <img src="{{ $modeEdit ? URL::asset('storage/'. $avatar) : $avatar->temporaryUrl() }}"
+                                <img src="{{ $modeEdit ? URL::asset('storage/teams/'. $avatar) : $avatar->temporaryUrl() }}"
                                     alt="" class="rounded-circle avatar-lg">
                                 @endif
                             </div>
