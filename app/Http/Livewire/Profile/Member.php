@@ -65,22 +65,32 @@ class Member extends Component
             'telp.digits_between' => 'Nomor telepon minimal 10 dan maksimal 13 angka',
         ]);
 
+        $avatarName = '';
         try {
             if ($this->modeEdit) {
                 $user = $this->user->hasTeams()->find($this->idMember);
+                if($this->avatar){
+                    @Storage::delete('public/' . $user->avatar);
+                    $avatarName = $this->name . '-' . time() . '.' . $this->avatar->extension();
+                    $this->avatar->storeAs('public/teams', $avatarName);
+                }else{
+                    $avatarName = $user->avatar;
+                }
                 $user->update([
                     'name' => $this->name,
                     'email' => $this->email,
                     'telegram' => $this->telegram,
                     'telp' => $this->telp,
-                    // 'avatar' => $this->avatar->storeAs('avatar', $this->name . '-' . time() . '.' . $this->avatar->extension(), 'public')
+                    'avatar' => $avatarName
                 ]);
                 $this->modeEdit = false;
             } else {
+                $avatarName = $this->name . '-' . time() . '.' . $this->avatar->extension();
+                $this->avatar->storeAs('public/teams', $avatarName);
                 $this->user->hasTeams()->create([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'avatar' => empty($this->avatar) ? null : $this->avatar->storeAs('public/teams', $this->name . '-' . time() . '.' . $this->avatar->extension()),
+                    'avatar' => $avatarName ?? null,
                     'telegram' => $this->telegram,
                     'telp' => $this->telp,
                 ]);
