@@ -113,17 +113,20 @@ class ProfileController extends Controller
         ]);
 
         try {
-
+            // dd($request->all());
             $fasyankes = Fasyankes::where('user_id', $id)->first();
 
             if ($request->has('image')) {
                 $image = $request->file('image');
                 $name = $request->nama . '-' . time() . '.' . $image->getClientOriginalExtension();
-                if ($fasyankes->image != null) {
-                    Storage::delete('public/fasyankes' . $fasyankes->image);
-                }
                 $image->storeAs('public/fasyankes', $name);
-                $fasyankes->image = $name;
+                if($fasyankes){
+                    $fasyankes->image = $name;
+                }
+                // if ($fasyankes->image != null) {
+                //     @Storage::delete('public/fasyankes' . $fasyankes->image);
+                //     $fasyankes->image = $name;
+                // }
             }
 
             if ($fasyankes) {
@@ -150,6 +153,7 @@ class ProfileController extends Controller
                 $fasyankes->provinsi_id = $request->provinsi;
                 $fasyankes->kabupaten_id = $request->kabupaten;
                 $fasyankes->direktur = $request->direktur;
+                $fasyankes->image = $name ?? null;
                 $fasyankes->save();
             }
             Session::flash('message', 'User Details Updated successfully!');
@@ -163,7 +167,7 @@ class ProfileController extends Controller
             Session::flash('alert-class', 'alert-danger');
             return response()->json([
                 'isSuccess' => false,
-                'Message' => $e->getMessage() ?? "Something went wrong!"
+                'Message' => $request->all()
             ], 200);
         }
     }
