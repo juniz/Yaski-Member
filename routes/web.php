@@ -62,4 +62,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
 });
 
-Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+// Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
