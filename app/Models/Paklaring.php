@@ -14,6 +14,7 @@ class Paklaring extends Model
         'file',
         'stts',
         'no_surat',
+        'tgl_pakai',
         'file_verif',
         'alasan'
     ];

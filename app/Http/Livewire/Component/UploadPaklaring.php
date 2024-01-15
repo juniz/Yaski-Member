@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Paklaring;
 use Livewire\WithFileUploads;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Illuminate\Support\Facades\App;
 
 class UploadPaklaring extends Component
 {
@@ -43,9 +44,9 @@ class UploadPaklaring extends Component
         try {
             $file_name = 'PF-' . time() . '.' . $this->file->extension();
             $this->file->storeAs('public/pakelaring', $file_name);
-            if (file_exists(storage_path('app/public/pakelaring/' . $this->paklaring->file))) {
-                unlink(storage_path('app/public/pakelaring/' . $this->paklaring->file));
-            }
+            // if (file_exists(storage_path('app/public/pakelaring/' . $this->paklaring->file))) {
+            //     unlink(storage_path('app/public/pakelaring/' . $this->paklaring->file));
+            // }
             if (!empty($this->paklaring)) {
                 if ($this->paklaring->stts != 'disetujui') {
                     $this->paklaring->update([
@@ -78,7 +79,7 @@ class UploadPaklaring extends Component
             // $this->reset(['no_surat', 'tgl_pakai', 'file']);
         } catch (\Throwable $th) {
             // dd($th->getMessage());
-            $this->alert('error', $th->getMessage(), [
+            $this->alert('error', App::environment('local') ? $th->getMessage() : 'Terjadi kesalahan pada server', [
                 'position' =>  'center',
                 'toast' =>  false,
             ]);
