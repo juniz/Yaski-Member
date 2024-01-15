@@ -43,9 +43,9 @@ class UploadPaklaring extends Component
         try {
             $file_name = 'PF-' . time() . '.' . $this->file->extension();
             $this->file->storeAs('public/pakelaring', $file_name);
-            if (file_exists(storage_path('app/public/pakelaring/' . $this->paklaring->file))) {
-                unlink(storage_path('app/public/pakelaring/' . $this->paklaring->file));
-            }
+            // if (file_exists(storage_path('app/public/pakelaring/' . $this->paklaring->file))) {
+            //     unlink(storage_path('app/public/pakelaring/' . $this->paklaring->file));
+            // }
             if (!empty($this->paklaring)) {
                 if ($this->paklaring->stts != 'disetujui') {
                     $this->paklaring->update([
