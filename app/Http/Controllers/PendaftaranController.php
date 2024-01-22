@@ -7,6 +7,7 @@ use App\Models\Province;
 use App\Models\Transaction;
 use App\Models\Workshop;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class PendaftaranController extends Controller
 {
@@ -99,7 +100,7 @@ class PendaftaranController extends Controller
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-            Transaction::create([
+            $transaction = Transaction::create([
                 'workshop_id' => $request->workshop_id,
                 'snap_token' => $snapToken,
                 'nama' => $request->nama,
@@ -115,6 +116,11 @@ class PendaftaranController extends Controller
                 'paket' => $paket,
                 'harga' => $harga,
             ]);
+
+            $sendMail = new MailMessage;
+            $sendMail->subject('Pendaftaran Workshop');
+            $sendMail->line($transaction->id);
+            $sendMail->line('Terima kasih telah mendaftar workshop kami.');
 
             return response()->json([
                 'status' => 'success',
@@ -138,7 +144,7 @@ class PendaftaranController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('workshops.index', compact('id'));
     }
 
     /**

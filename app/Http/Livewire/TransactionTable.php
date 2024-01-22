@@ -12,7 +12,13 @@ use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 
 class TransactionTable extends DataTableComponent
 {
+    public string $idWorkshop;
     protected $model = Transaction::class;
+
+    public function mount($idWorkshop)
+    {
+        $this->idWorkshop = $idWorkshop;
+    }
 
     public function configure(): void
     {
@@ -22,7 +28,10 @@ class TransactionTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return Transaction::query();
+        return Transaction::query()
+            ->join('workshop', 'workshop.id', '=', 'transaction.workshop_id')
+            ->where('workshop.id', $this->idWorkshop)
+            ->select('transaction.*', 'workshop.nama');
     }
 
     public function filters(): array
@@ -50,14 +59,15 @@ class TransactionTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make("Workshop", "workshop.nama")
-                ->sortable(),
+            // Column::make("Workshop", "workshop.nama")
+            //     ->sortable(),
             Column::make("Snap token", "snap_token")
                 ->sortable(),
             Column::make("Nama", "nama")
                 ->sortable(),
             Column::make("Jns kelamin", "jns_kelamin")
-                ->sortable(),
+                ->sortable()
+                ->format(fn ($value, $row, Column $column) => $value == 'L' ? 'Laki-laki' : 'Perempuan'),
             Column::make("Email", "email")
                 ->sortable(),
             Column::make("Telp", "telp")
@@ -68,9 +78,9 @@ class TransactionTable extends DataTableComponent
                 ->sortable(),
             Column::make("Kepemilikan rs", "kepemilikan_rs")
                 ->sortable(),
-            Column::make("Provinsi id", "provinsi_id")
+            Column::make("Provinsi", "provinsi.name")
                 ->sortable(),
-            Column::make("Kabupaten id", "kabupaten_id")
+            Column::make("Kabupaten", "kabupaten.name")
                 ->sortable(),
             Column::make("Ukuran baju", "ukuran_baju")
                 ->sortable(),
@@ -82,6 +92,12 @@ class TransactionTable extends DataTableComponent
             Column::make("Stts", "stts")
                 ->sortable()
                 ->format(fn ($value, $row, Column $column) => $value == 'hadir' ? 'Hadir' : 'Tidak hadir'),
+            Column::make("Aksi", "id")
+                ->format(function ($value, $column, $row) {
+                    return "<button id='qrcode-button' data-id=$value class='btn btn-primary'><i class='bx bx-camera'></i></button>";
+                })
+                ->html(),
+
             // Column::make("Created at", "created_at")
             //     ->sortable(),
             // Column::make("Updated at", "updated_at")

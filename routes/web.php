@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
     Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
-    Route::get('/transaksi', fn () => view('workshops.index'));
+    Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
 });
 
 Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');

@@ -17,7 +17,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">
-                <livewire:transaction-table />
+                <div class="d-flex flex-row mb-4">
+                    <div class="mx-auto">
+                        <div style="width: 500" id="reader"></div>
+                    </div>
+                </div>
+                <livewire:transaction-table :id-workshop="$id" />
+                {{-- <livewire:component.scan-qr /> --}}
             </div>
         </div>
     </div>
@@ -38,5 +44,27 @@
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/glightbox/glightbox.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/lightbox.init.js') }}"></script>
+<script src="{{ asset('assets/js/html5-qrcode.min.js') }}"></script>
+<script>
+    Livewire.on('scanQr', () => {
+        $('#qrcode-modal').modal('show');
+    });
+
+    $("#qrcode-button").click(function () {
+        let transaction = $(this).data('id');
+        Livewire.emit('transaction-set', transaction);
+        $('#qrcode-modal').modal('show');
+    });
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // Handle on success condition with the decoded text or result.
+        // console.log(`Scan result: ${decodedText}`, decodedResult);
+        Livewire.emit('get-transaction', decodedText);
+    }
+
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
 
 @endsection

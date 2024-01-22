@@ -33,4 +33,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(Workshop::class);
     }
+
+    public function provinsi()
+    {
+        return $this->belongsTo(Province::class);
+    }
+
+    public function kabupaten()
+    {
+        return $this->belongsTo(Regency::class);
+    }
 }
