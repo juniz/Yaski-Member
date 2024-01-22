@@ -36,7 +36,7 @@
                     </ul>
                 </li>
 
-                <li class="menu-title" data-key="t-apps">Pendaftaran</li>
+                {{-- <li class="menu-title" data-key="t-apps">Pendaftaran</li>
 
                 <li>
                     @can('view workshop')
@@ -45,11 +45,11 @@
                         <span data-key="t-email">Workshop</span>
                     </a>
                     @endcan
-                    {{-- <ul class="sub-menu" aria-expanded="false">
+                    <ul class="sub-menu" aria-expanded="false">
                         <li><a href="apps-email-inbox" data-key="t-inbox">@lang('translation.Inbox')</a></li>
                         <li><a href="apps-email-read" data-key="t-read-email">@lang('translation.Read_Email')</a></li>
-                    </ul> --}}
-                </li>
+                    </ul>
+                </li> --}}
 
                 {{-- <li>
                     <a href="apps-chat">
