@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master-layouts')
 
 @section('title')
 Workshop
@@ -24,11 +24,9 @@ Workshop
 @component('components.alert')@endcomponent
 @php
 $workshop = \App\Models\Workshop::latest()->first();
-$reservation = \App\Models\Reservation::where('workshop_id', $workshop->id ?? '')->where('user_id', Auth::user()->id)->first();
+// $reservation = \App\Models\Reservation::where('workshop_id', $workshop->id ?? '')->where('user_id', Auth::user()->id)->first();
 @endphp
-@if($reservation)
-<livewire:component.reservasi-validation :idWorkshop='$workshop->id' />
-@elseif($workshop)
+@if($workshop)
 <livewire:component.form-pendaftaran />
 @else
 <h3 class="text-center">Workshop Kosong</h3>

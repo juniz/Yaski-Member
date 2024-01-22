@@ -20,8 +20,12 @@
 @show
 <!-- Begin page -->
 <div id="layout-wrapper">
+    @if(Auth::check())
     @include('layouts.topbar')
     @include('layouts.sidebar')
+    @else
+    @include('layouts.horizontal')
+    @endif
     <!-- ============================================================== -->
     <!-- Start right Content here -->
     <!-- ============================================================== -->

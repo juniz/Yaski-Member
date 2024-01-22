@@ -17,14 +17,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">
-                <div class="d-flex flex-row justify-content-end mb-2">
-                    <div class="text-sm-end">
-                        <a type="button" href="{{ route('workshops.create') }}"
-                            class="btn btn-success btn-rounded waves-effect waves-light me-2"><i
-                                class="mdi mdi-plus me-1"></i> Tambah </a>
-                    </div>
-                </div>
-
+                <livewire:transaction-table />
             </div>
         </div>
     </div>
@@ -46,43 +39,4 @@
 <script src="{{ URL::asset('assets/libs/glightbox/glightbox.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/lightbox.init.js') }}"></script>
 
-<script>
-    $(document).ready(function () {
-        $("#datatables").DataTable({
-            language: {
-                paginate: {
-                    previous: "<i class='mdi mdi-chevron-left'>",
-                    next: "<i class='mdi mdi-chevron-right'>",
-                },
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                lengthMenu: "Tampilkan _MENU_ data",
-                zeroRecords: "Tidak ada data yang sesuai dengan pencarian anda",
-                infoEmpty: "Data tidak tersedia",
-                infoFiltered: "(terfilter dari _MAX_ total data)",
-                search: "Cari",
-                processing: '<div class="spinner-border text-primary" role="status"></div>',
-            },
-            drawCallback: function () {
-                $(".dataTables_paginate > .pagination").addClass(
-                    "pagination-rounded"
-                );
-            },
-            "order": [[ 0, "desc" ]]
-        });
-
-        function deleteData(id) {
-            swal({
-                title: "Apakah anda yakin?",
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete) {
-                window.location = "workshops/" + id + "/destroy";
-                }
-            });
-        }
-    });
-</script>
 @endsection

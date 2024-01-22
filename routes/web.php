@@ -53,13 +53,33 @@ Route::middleware('auth')->group(function () {
     })->name('roles.index');
 
     Route::get('/list-workshop', fn () => view('admin.workshop.index'))->name('workshop.index');
-    Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
+
     Route::get('/workshop/create', fn () => view('workshops.create'))->name('workshop.create');
     Route::post('/workshop/store', [App\Http\Controllers\WorkshopController::class, 'store'])->name('workshop.store');
     Route::get('/workshop/{id}', [App\Http\Controllers\WorkshopController::class, 'show'])->name('workshop.show');
     Route::get('/workshop/{workshop}/edit', [App\Http\Controllers\WorkshopController::class, 'edit'])->name('workshop.edit');
     Route::put('/workshop/{workshop}', [App\Http\Controllers\WorkshopController::class, 'update'])->name('workshop.update');
     Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
+
+    // Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class);
+
+    Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
+    Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
+    Route::get('/transaksi', fn () => view('workshops.index'));
+});
+
+Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
+Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])->name('pendaftaran.index');
+Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', fn () => view('auth.login'))->name('login');
+    Route::get('/register', fn () => view('auth.register'))->name('register');
+    Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
+    Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
+    Route::get('/verify-email', fn () => view('auth.verify-email'))->name('verification.notice');
+    Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
+    Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
 });
 
 // Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');

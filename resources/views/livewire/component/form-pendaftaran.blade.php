@@ -32,7 +32,8 @@
                         <div class="col-lg-3 order-lg-2 order-1 pl-lg-4 mb-5 event-info">
     
                             <div class="mb-5">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">Daftar</button>
+                                {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">Daftar</button> --}}
+                                <a type="button" class="btn btn-primary" href="{{ route('pendaftaran.index', \Crypt::encrypt($workshop->id)) }}">Daftar</a>
                             </div>
     
     
@@ -62,14 +63,14 @@
                     @else
                     <h3 class="text-center">Workshop Kosong</h3>
                     @endif
-                    <div class="mt-3">
+                    {{-- <div class="mt-3">
                         <div class="timer" x-data="timer(new Date().setDate(new Date().getDate() + 1))" x-init="init();">
                             <h1 x-text="time().days"></h1>
                             <h1 x-text="time().hours"></h1>
                             <h1 x-text="time().minutes"></h1>
                             <h1 x-text="time().seconds"></h1>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

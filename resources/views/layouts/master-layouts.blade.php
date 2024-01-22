@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <title> @yield('title') | Yaski Member </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Yaski Member" name="description" />
-    <meta content="yaski" name="author" />
+    <meta content="Yaski Member" name="Website pendaftran workshop yaski." />
+    <meta content="yaski" name="yaski" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::asset('assets/images/favicon.ico') }}">
     @include('layouts.head-css')

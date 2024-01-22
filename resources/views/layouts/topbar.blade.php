@@ -271,6 +271,7 @@
                 </button>
             </div> --}}
 
+            @if(Auth::check())
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item bg-soft-light border-start border-end"
                     id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -295,6 +296,7 @@
                     </form>
                 </div>
             </div>
+            @endif
 
         </div>
     </div>

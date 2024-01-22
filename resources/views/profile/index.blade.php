@@ -673,6 +673,7 @@
             processData: false,
             success: function(response) {
                 if (response.isSuccess == false) {
+                    console.log(response);
                     alert(response.Message);
                 } else if (response.isSuccess == true) {
                     setTimeout(function() {
