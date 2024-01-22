@@ -85,7 +85,7 @@
                         @endforeach
                     </x-ui.select>
                     <div class="d-flex flex-row justify-content-between">
-                        <button type="reset" class="btn btn-danger">Kembali</button>
+                        <a type="reset" href="{{ route('workshop.list') }}" class="btn btn-danger">Kembali</a>
                         <button type="submit" class="btn btn-primary">Daftar</button>
                     </div>
                 </form>
