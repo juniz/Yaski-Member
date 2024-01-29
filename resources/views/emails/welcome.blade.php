@@ -12,15 +12,15 @@
 			<td width="100%" height="10"></td>
 		</tr>
 		<tr>
-			<td class="paragraph text-center">
+			<td width="100%" class="text-center">
 				<img src="data:image/png;base64, {!! base64_encode($qr) !!} ">
 			</td>
 		</tr>
-		<tr>
+		{{-- <tr>
 			<td class="text-center" width="100%">
 				{!! $qr !!}
 			</td>
-		</tr>
+		</tr> --}}
 		{{-- <tr>
 			<td class="title">
 				This is a heading
