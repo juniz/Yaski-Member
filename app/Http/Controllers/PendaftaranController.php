@@ -133,7 +133,7 @@ class PendaftaranController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'error : ' . $e->getMessage() . 'Line : ' . $e->getLine() . 'File : ' . $e->getFile(),
                 'data' => $transaction,
             ], 500);
         }
