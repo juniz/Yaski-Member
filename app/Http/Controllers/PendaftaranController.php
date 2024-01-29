@@ -128,7 +128,28 @@ class PendaftaranController extends Controller
                 'qr' => $qr,
             );
 
-            dispatch(new \App\Jobs\SendMailTransaction($payloads));
+            // dispatch(new \App\Jobs\SendMailTransaction($payloads));
+
+            $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
+            $qr = QrCode::size(300)
+                ->format('png')
+                ->merge('assets/images/logo.png', 0.3, true)
+                ->style('dot')
+                ->eye('circle')
+                ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
+                ->margin(1)
+                ->errorCorrection('M')
+                ->generate($snapToken);
+            // return response($qr)->header('Content-type', 'image/png');
+            $beautymail->send('emails.welcome', [
+                'name' => $request->nama,
+                'qr' => $qr,
+            ], function ($message) use ($request) {
+                $message
+                    ->from('noreplay@yaski.com')
+                    ->to($request->email, $request->nama)
+                    ->subject('Berhasil mendaftar workshop');
+            });
 
             return response()->json([
                 'status' => 'success',
