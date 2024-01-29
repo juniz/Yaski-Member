@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Snowfire\Beautymail\Beautymail;
 
 class PendaftaranController extends Controller
 {
@@ -130,7 +131,7 @@ class PendaftaranController extends Controller
 
             // dispatch(new \App\Jobs\SendMailTransaction($payloads));
 
-            $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
+            $beautymail = app()->make(Beautymail::class);
             $qr = QrCode::size(300)
                 ->format('png')
                 ->merge('assets/images/logo.png', 0.3, true)
