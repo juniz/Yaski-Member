@@ -14,17 +14,16 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class SendMailTransaction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    protected $transaction, $qr;
+    public $data;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($transaction, $qr)
+    public function __construct($data)
     {
-        $this->transaction = $transaction;
-        $this->qr = $qr;
+        $this->data = $data;
     }
 
     /**
@@ -35,14 +34,14 @@ class SendMailTransaction implements ShouldQueue
     public function handle()
     {
         $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
-        $data = $this->transaction;
+        $data = $this->data;
         $beautymail->send('emails.welcome', [
-            'name' => $data->nama,
-            'qr' => $this->qr,
+            'name' => $data['nama'],
+            'qr' => $data['qr'],
         ], function ($message) use ($data) {
             $message
                 ->from('noreplay@yaski.com')
-                ->to($data->email, $data->nama)
+                ->to($data['email'], $data['nama'])
                 ->subject('Bukti Pendaftaran Workshop YASKI');
         });
     }

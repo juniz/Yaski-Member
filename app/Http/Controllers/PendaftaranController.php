@@ -122,7 +122,13 @@ class PendaftaranController extends Controller
 
             $qr = $this->generateQrCode($snapToken);
 
-            dispatch(new \App\Jobs\SendMailTransaction($transaction, $qr));
+            $payloads = array(
+                'nama' => $request->nama,
+                'email' => $request->email,
+                'qr' => $qr,
+            );
+
+            dispatch(new \App\Jobs\SendMailTransaction($payloads));
 
             return response()->json([
                 'status' => 'success',
