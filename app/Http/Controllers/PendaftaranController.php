@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Province;
 use App\Models\Transaction;
 use App\Models\Workshop;
+use App\Notifications\TransactionMail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Mail;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PendaftaranController extends Controller
 {
@@ -117,10 +120,9 @@ class PendaftaranController extends Controller
                 'harga' => $harga,
             ]);
 
-            $sendMail = new MailMessage;
-            $sendMail->subject('Pendaftaran Workshop');
-            $sendMail->line($transaction->id);
-            $sendMail->line('Terima kasih telah mendaftar workshop kami.');
+            $qr = $this->generateQrCode($snapToken);
+
+            dispatch(new \App\Jobs\SendMailTransaction($transaction, $qr));
 
             return response()->json([
                 'status' => 'success',
@@ -134,6 +136,15 @@ class PendaftaranController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function generateQrCode($data)
+    {
+        return QrCode::size(300)
+            ->format('png')
+            ->merge('assets/images/logo.png', 0.3, true)
+            ->errorCorrection('M')
+            ->generate($data);
     }
 
     /**

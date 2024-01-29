@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -80,6 +81,31 @@ Route::middleware('guest')->group(function () {
     Route::get('/verify-email', fn () => view('auth.verify-email'))->name('verification.notice');
     Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
     Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+});
+
+Route::get('/test', function () {
+
+    $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
+    $qr = QrCode::size(300)
+        ->format('png')
+        ->merge('assets/images/logo.png', 0.3, true)
+        ->style('dot')
+        ->eye('circle')
+        ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
+        ->margin(1)
+        ->errorCorrection('M')
+        ->generate('83745837hfdyeurf');
+    // return response($qr)->header('Content-type', 'image/png');
+    $beautymail->send('emails.welcome', [
+        'name' => 'Yudo',
+        'qr' => $qr,
+        'link' => 'https://yaski.com'
+    ], function ($message) {
+        $message
+            ->from('noreplay@yaski.com')
+            ->to('yudojuni93@gmail.com', 'Yudo')
+            ->subject('Berhasil mendaftar workshop');
+    });
 });
 
 // Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
