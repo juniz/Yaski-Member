@@ -12,7 +12,7 @@ return [
 
     'colors' => [
 
-        'highlight' => '#004ca3',
+        'highlight' => '#FFFFFF',
         'button'    => '#004cad',
 
     ],
@@ -26,7 +26,7 @@ return [
         'logo'        => [
             'path'   => '%PUBLIC%/assets/images/logo.png',
             'width'  => '',
-            'height' => '',
+            'height' => '50',
         ],
 
         'twitter'  => null,
