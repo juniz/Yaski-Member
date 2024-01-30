@@ -79,11 +79,11 @@ class PendaftaranController extends Controller
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');
         // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction', false);
         // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized', true);
         // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds', true);
 
         try {
             $paket = Workshop::find($request->workshop_id)->paket()->where('id', $request->harga)->first();
@@ -122,14 +122,6 @@ class PendaftaranController extends Controller
             ]);
 
             $qr = $this->generateQrCode($snapToken);
-
-            $payloads = array(
-                'nama' => $request->nama,
-                'email' => $request->email,
-                'qr' => $qr,
-            );
-
-            // dispatch(new \App\Jobs\SendMailTransaction($payloads));
 
             $beautymail = app()->make(Beautymail::class);
             $qr = QrCode::size(300)
@@ -257,11 +249,11 @@ class PendaftaranController extends Controller
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');
         // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction', false);
         // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized', true);
         // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds', true);
 
         try {
             $paket = Workshop::find($request->workshop_id)->paket()->where('id', $request->harga)->first();
@@ -292,7 +284,7 @@ class PendaftaranController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine(),
             ], 500);
         }
     }

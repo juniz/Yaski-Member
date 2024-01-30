@@ -181,7 +181,7 @@
                                 type: "POST",
                                 data: payloads,
                                 success: function(data) {
-                                    console.log(data);
+                                    // console.log(data);
                                     if (data.status == "success") {
                                         window.location.href = "{{ route('workshop.list') }}";
                                     }
