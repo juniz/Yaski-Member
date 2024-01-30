@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     //profile
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
     Route::post('/update-fasyankes/{id}', [App\Http\Controllers\ProfileController::class, 'updateFasyankes'])->name('updateFasyankes');
-    Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
     Route::post('/update-paklaring/{id}', [App\Http\Controllers\ProfileController::class, 'updatePaklaring'])->name('updatePaklaring');
 
     //members
@@ -69,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
 });
 
+Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
 Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])->name('pendaftaran.index');
 Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');

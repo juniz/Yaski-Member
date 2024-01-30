@@ -13,7 +13,7 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'verified']);
+        $this->middleware(['auth', 'verified'])->except(['getKabupaten']);
     }
 
     public function index()
@@ -120,7 +120,7 @@ class ProfileController extends Controller
                 $image = $request->file('image');
                 $name = $request->nama . '-' . time() . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('public/fasyankes', $name);
-                if($fasyankes){
+                if ($fasyankes) {
                     $fasyankes->image = $name;
                 }
                 // if ($fasyankes->image != null) {

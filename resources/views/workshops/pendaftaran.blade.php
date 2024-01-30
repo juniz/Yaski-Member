@@ -170,7 +170,7 @@
             type: "POST",
             data: data,
             success: function(data) {
-                console.log(data);
+                // console.log(data);
                 if (data.status == "success") {
                     snap.pay(data.snap_token, {
                         onSuccess: function(result) {
@@ -201,7 +201,7 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.log(xhr);
+                // console.log(xhr);
                 let err = JSON.parse(xhr.responseText);
                 if (err.errors) {
                     $.each(err.errors, function(key, value) {
