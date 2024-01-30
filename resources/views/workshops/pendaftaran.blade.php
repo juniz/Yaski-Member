@@ -183,7 +183,7 @@
                                 success: function(data) {
                                     console.log(data);
                                     if (data.status == "success") {
-                                        window.location.href = "{{ route('pendaftaran.success') }}";
+                                        window.location.href = "{{ route('workshop.list') }}";
                                     }
                                 },
                                 error: function(xhr, status, error) {
