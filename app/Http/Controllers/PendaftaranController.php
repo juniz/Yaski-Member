@@ -281,11 +281,11 @@ class PendaftaranController extends Controller
             );
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
-            // $snapToken = \Midtrans\Snap::createTransaction($params)->redirect_url;
 
             return response()->json([
                 'status' => 'success',
                 'snap_token' => $snapToken,
+                'data' => $request->all(),
                 'message' => 'Pendaftaran berhasil',
             ], 200);
         } catch (\Exception $e) {
