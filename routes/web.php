@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -109,3 +110,6 @@ Route::get('/test', function () {
 });
 
 // Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+Route::get('/mail', function () {
+    Mail::to('yudojuni93@gmail.com')->send(new App\Mail\TransactionMail());
+})->name('mail');
