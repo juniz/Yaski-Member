@@ -12,15 +12,27 @@ use Illuminate\Queue\SerializesModels;
 class TransactionMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $order_id;
+    public $workshop;
+    public $nama;
+    public $pesanan;
+    public $total;
+    public $jml;
+    public $harga;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($order_id, $workshop, $nama, $pesanan, $total, $jml, $harga)
     {
-        //
+        $this->order_id = $order_id;
+        $this->workshop = $workshop;
+        $this->nama = $nama;
+        $this->pesanan = $pesanan;
+        $this->total = $total;
+        $this->jml = $jml;
+        $this->harga = $harga;
     }
 
     /**
@@ -31,7 +43,8 @@ class TransactionMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Transaction Mail',
+            subject: 'Notifikasi Pembayaran Workshop',
+            from: 'noreply.khanzaindonesia@gmail.com',
         );
     }
 
@@ -44,6 +57,15 @@ class TransactionMail extends Mailable
     {
         return new Content(
             view: 'emails.mail',
+            with: [
+                'order_id' => $this->order_id,
+                'workshop' => $this->workshop,
+                'nama' => $this->nama,
+                'pesanan' => $this->pesanan,
+                'total' => $this->total,
+                'jml' => $this->jml,
+                'harga' => $this->harga,
+            ],
         );
     }
 

@@ -6,12 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Province;
 use App\Models\Transaction;
 use App\Models\Workshop;
-use App\Notifications\TransactionMail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Snowfire\Beautymail\Beautymail;
+use App\Mail\TransactionMail;
 
 class PendaftaranController extends Controller
 {
@@ -89,10 +88,11 @@ class PendaftaranController extends Controller
             $paket = Workshop::find($request->workshop_id)->paket()->where('id', $request->harga)->first();
             $harga = $paket->harga;
             $paket = $paket->nama;
+            $order_id = rand();
 
             $params = array(
                 'transaction_details' => array(
-                    'order_id' => rand(),
+                    'order_id' => $order_id,
                     'gross_amount' => $harga,
                 ),
                 'customer_details' => array(
@@ -121,28 +121,32 @@ class PendaftaranController extends Controller
                 'harga' => $harga,
             ]);
 
-            $qr = $this->generateQrCode($snapToken);
+            // $qr = $this->generateQrCode($snapToken);
 
-            $beautymail = app()->make(Beautymail::class);
-            $qr = QrCode::size(300)
-                ->format('png')
-                ->merge('assets/images/logo.png', 0.3, true)
-                ->style('dot')
-                ->eye('circle')
-                ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
-                ->margin(1)
-                ->errorCorrection('M')
-                ->generate($snapToken);
+            // $beautymail = app()->make(Beautymail::class);
+            // $qr = QrCode::size(300)
+            //     ->format('png')
+            //     ->merge('assets/images/logo.png', 0.3, true)
+            //     ->style('dot')
+            //     ->eye('circle')
+            //     ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
+            //     ->margin(1)
+            //     ->errorCorrection('M')
+            //     ->generate($snapToken);
             // return response($qr)->header('Content-type', 'image/png');
-            $beautymail->send('emails.welcome', [
-                'name' => $request->nama,
-                'qr' => $qr,
-            ], function ($message) use ($request) {
-                $message
-                    ->from('noreplay@yaski.com')
-                    ->to($request->email, $request->nama)
-                    ->subject('Berhasil mendaftar workshop');
-            });
+            // $beautymail->send('emails.welcome', [
+            //     'name' => $request->nama,
+            //     'qr' => $qr,
+            // ], function ($message) use ($request) {
+            //     $message
+            //         ->from('noreplay@yaski.com')
+            //         ->to($request->email, $request->nama)
+            //         ->subject('Berhasil mendaftar workshop');
+            // });
+
+            $workshop = Workshop::find($request->workshop_id)->first();
+            Mail::to($request->email)
+                ->send(new TransactionMail($order_id, $workshop->nama, $request->nama, $paket, $harga, '1', $harga));
 
             return response()->json([
                 'status' => 'success',
@@ -154,7 +158,7 @@ class PendaftaranController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'error : ' . $e->getMessage() . 'Line : ' . $e->getLine() . 'File : ' . $e->getFile(),
-                'data' => $transaction,
+                'data' => $request->all(),
             ], 500);
         }
     }
@@ -222,9 +226,9 @@ class PendaftaranController extends Controller
             'email' => 'required|email|unique:transaction,email',
             'telp' => 'required',
             'pribadi' => 'required',
-            'nama_rs' => 'required_if:pribadi,rs',
-            'kode_rs' => 'required_if:pribadi,rs|unique:transaction,kd_rs',
-            'kepemilikan_rs' => 'required_if:pribadi,rs',
+            // 'nama_rs' => 'required_if:pribadi,rs',
+            // 'kode_rs' => 'required_if:pribadi,rs|unique:transaction,kd_rs',
+            // 'kepemilikan_rs' => 'required_if:pribadi,rs',
             'provinsi' => 'required',
             'kabupaten' => 'required',
             'harga' => 'required',
@@ -236,9 +240,9 @@ class PendaftaranController extends Controller
             'email.unique' => 'Email sudah terdaftar',
             'telp.required' => 'Nomor telepon tidak boleh kosong',
             'pribadi.required' => 'Pilih salah satu',
-            'nama_rs.required_if' => 'Nama rumah sakit tidak boleh kosong',
-            'kode_rs.required_if' => 'Kode rumah sakit tidak boleh kosong',
-            'kode_rs.unique' => 'Kode rumah sakit sudah terdaftar',
+            // 'nama_rs.required_if' => 'Nama rumah sakit tidak boleh kosong',
+            // 'kode_rs.required_if' => 'Kode rumah sakit tidak boleh kosong',
+            // 'kode_rs.unique' => 'Kode rumah sakit sudah terdaftar',
             'kepemilikan_rs.required_if' => 'Pilih salah satu',
             'provinsi.required' => 'Provinsi tidak boleh kosong',
             'kabupaten.required' => 'Kabupaten tidak boleh kosong',

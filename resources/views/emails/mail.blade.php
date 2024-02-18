@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
-    <title> Welcome to [Coded Mails] </title>
+    <title> Transaksi Email </title>
     <!--[if !mso]><!-- -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!--<![endif]-->
@@ -88,7 +88,7 @@
   <style type="text/css"></style></head>
   
   <body style="background-color:#54595f;">
-    <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> Preview - Welcome to Coded Mails </div>
+    {{-- <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> Preview - Welcome to Coded Mails </div> --}}
     <div style="background-color:#54595f;">
       <!--[if mso | IE]>
         <table
@@ -194,7 +194,7 @@
                                     <tbody>
                                       <tr>
                                         <td style="width:150px;">
-                                          <img height="auto" src="https://codedmails.com/images/logo.png" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="150" />
+                                          <img height="auto" src="{{ asset('assets/images/logo.png') }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="150" />
                                         </td>
                                       </tr>
                                     </tbody>
@@ -220,12 +220,22 @@
                               </tr>
                               <tr>
                                 <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:24px;font-weight:300;line-height:30px;text-align:left;color:#000000;">Thank you for your order.</div>
+                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:24px;font-weight:300;line-height:30px;text-align:left;color:#000000;">Terima kasih atas pesanan Anda.</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:left;color:#000000;">Your order was successfully placed and your payment has been processed. Here is your order summary:</div>
+                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:left;color:#000000;">Pesanan Anda berhasil dilakukan dan pembayaran Anda telah diproses. Ini ringkasan pesanan Anda:</div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:left;color:#000000;">ID Pesanan : {{ $order_id ?? '-' }}</div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                  <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:left;color:#000000;">Workshop : {{ $workshop ?? '-' }}</div>
                                 </td>
                               </tr>
                             </tbody></table>
@@ -282,17 +292,17 @@
                                   <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                     <tbody><tr valign="top">
                                       <td width="60%" style="font-size: 14px; line-height: 16px; word-break: normal;">
-                                        <p style="margin: 0 0 5px 0;"> Product 1 </p>
-                                        <p style="margin: 0 0 5px 0; color: #ACA9BB; padding-bottom: 10px;"> by Company ABC </p>
+                                        <p style="margin: 0 0 5px 0;"> {{ $pesanan ?? '-' }} </p>
+                                        <p style="margin: 0 0 5px 0; color: #ACA9BB; padding-bottom: 10px;"> {{ $nama ?? '-' }} </p>
                                       </td>
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px; padding-right: 5px;">
-                                        <p style="margin: 0 0 5px 0;">x1</p>
+                                        <p style="margin: 0 0 5px 0;">x{{ $jml ?? '0' }}</p>
                                       </td>
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;">
-                                        <p style="margin: 0 0 5px 0;">$24.95</p>
+                                        <p style="margin: 0 0 5px 0;">Rp. {{ $harga ?? '0.00' }}</p>
                                       </td>
                                     </tr>
-                                    <tr valign="top">
+                                    {{-- <tr valign="top">
                                       <td width="60%" style="font-size: 14px; line-height: 16px; word-break: normal;">
                                         <p style="margin: 0 0 5px 0;"> Product 2 / More product info </p>
                                         <p style="margin: 0 0 5px 0; color: #ACA9BB; padding-bottom: 10px;"> by the Classic Company </p>
@@ -303,13 +313,13 @@
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;">
                                         <p style="margin: 0 0 5px 0;">$39.95</p>
                                       </td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; border-bottom-width: 1px; border-bottom-color: #EAEEEB; border-bottom-style: dashed; padding-top: 10px;"></td>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; border-bottom-width: 1px; border-bottom-color: #EAEEEB; border-bottom-style: dashed; padding-top: 10px;"></td>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; border-bottom-width: 1px; border-bottom-color: #EAEEEB; border-bottom-style: dashed; padding-top: 10px;"></td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 10px;"></td>
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 10px;">
                                         <p style="margin: 0 0 5px 0;"><small>Subtotal</small></p>
@@ -317,8 +327,8 @@
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 10px;">
                                         <p style="margin: 0 0 5px 0;"><small>$64.90</small></p>
                                       </td>
-                                    </tr>
-                                    <tr>
+                                    </tr> --}}
+                                    {{-- <tr>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 10px;"></td>
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 10px;">
                                         <p style="margin: 0 0 5px 0;"><small>Savings</small></p>
@@ -344,11 +354,11 @@
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal;">
                                         <p style="margin: 0 0 5px 0;"><small>$3.51</small></p>
                                       </td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                       <td style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;"></td>
                                       <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;"><strong>Total</strong></td>
-                                      <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;"><strong>$61.93</strong></td>
+                                      <td align="right" style="font-size: 14px; line-height: 16px; word-break: normal; padding-top: 20px;"><strong>Rp. {{ $total ?? '-' }}</strong></td>
                                     </tr>
                                   </tbody></table>
                                 </td>
@@ -405,7 +415,7 @@
                               <tbody><tr>
                                 <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                   <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:left;color:#000000;">
-                                    <p style="margin: 0 0 5px 0;"> If you have any questions or need further information about returns, you can <a href="#" style="color: #2e58ff; text-decoration: none; font-weight: 400;">view our return policy.</a> </p>
+                                    {{-- <p style="margin: 0 0 5px 0;"> If you have any questions or need further information about returns, you can <a href="#" style="color: #2e58ff; text-decoration: none; font-weight: 400;">view our return policy.</a> </p> --}}
                                   </div>
                                 </td>
                               </tr>
@@ -465,17 +475,17 @@
             <![endif]-->
                 <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                   <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                    <tbody><tr>
+                    {{-- <tbody><tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:center;color:#fafafa;">
                           <!-- <a href="#" style="color:#fafafa">Privacy Policy</a> | <a href="#" style="color:#fafafa">Contact Support</a> | <a href="#" style="color:#fafafa">Unsubscribe</a><br /> --> 123 Medalling Jr., Suite 100, Parrot Park, CA 12345<br /> © 2020 [Coded Mails] Inc.</div>
-                      </td>
+                      </td> --}}
                     </tr>
                     <tr>
-                      <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      {{-- <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Roboto, Helvetica, Arial, sans-serif;font-size:14px;font-weight:300;line-height:20px;text-align:center;color:#fafafa;">Update your <a class="footer-link" href="https://google.com" style="color: #2e58ff; text-decoration: none; font-weight: 400;">email preferences</a> to choose the types of emails you receive, or you can <a class="footer-link" href="https://google.com" style="color: #2e58ff; text-decoration: none; font-weight: 400;"> unsubscribe </a>from all future emails.</div>
                       </td>
-                    </tr>
+                    </tr> --}}
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <!--[if mso | IE]>
@@ -488,7 +498,7 @@
               <![endif]-->
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="float:none;display:inline-table;">
                           <tbody><tr>
-                            <td style="padding:4px;">
+                            {{-- <td style="padding:4px;">
                               <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-radius:3px;width:24px;">
                                 <tbody><tr>
                                   <td style="font-size:0;height:24px;vertical-align:middle;width:24px;">
@@ -498,7 +508,7 @@
                                   </td>
                                 </tr>
                               </tbody></table>
-                            </td>
+                            </td> --}}
                           </tr>
                         </tbody></table>
                         <!--[if mso | IE]>
@@ -508,7 +518,7 @@
               <![endif]-->
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="float:none;display:inline-table;">
                           <tbody><tr>
-                            <td style="padding:4px;">
+                            {{-- <td style="padding:4px;">
                               <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-radius:3px;width:24px;">
                                 <tbody><tr>
                                   <td style="font-size:0;height:24px;vertical-align:middle;width:24px;">
@@ -518,7 +528,7 @@
                                   </td>
                                 </tr>
                               </tbody></table>
-                            </td>
+                            </td> --}}
                           </tr>
                         </tbody></table>
                         <!--[if mso | IE]>
@@ -528,7 +538,7 @@
               <![endif]-->
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="float:none;display:inline-table;">
                           <tbody><tr>
-                            <td style="padding:4px;">
+                            {{-- <td style="padding:4px;">
                               <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-radius:3px;width:24px;">
                                 <tbody><tr>
                                   <td style="font-size:0;height:24px;vertical-align:middle;width:24px;">
@@ -538,7 +548,7 @@
                                   </td>
                                 </tr>
                               </tbody></table>
-                            </td>
+                            </td> --}}
                           </tr>
                         </tbody></table>
                         <!--[if mso | IE]>
