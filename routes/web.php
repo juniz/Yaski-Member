@@ -74,42 +74,44 @@ Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
 Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', fn () => view('auth.login'))->name('login');
-    Route::get('/register', fn () => view('auth.register'))->name('register');
-    Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
-    Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
-    Route::get('/verify-email', fn () => view('auth.verify-email'))->name('verification.notice');
-    Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
-    Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
-});
+// Route::middleware('guest')->group(function () {
+//     Route::get('/login', fn () => view('auth.login'))->name('login');
+//     Route::get('/register', fn () => view('auth.register'))->name('register');
+//     Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
+//     Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
+//     Route::get('/verify-email', fn () => view('auth.verify-email'))->name('verification.notice');
+//     Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
+//     Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+// });
 
-Route::get('/test', function () {
+// Route::get('/test', function () {
 
-    $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
-    $qr = QrCode::size(300)
-        ->format('png')
-        ->merge('assets/images/logo.png', 0.3, true)
-        ->style('dot')
-        ->eye('circle')
-        ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
-        ->margin(1)
-        ->errorCorrection('M')
-        ->generate('83745837hfdyeurf');
-    // return response($qr)->header('Content-type', 'image/png');
-    $beautymail->send('emails.welcome', [
-        'name' => 'Yudo',
-        'qr' => $qr,
-        'link' => 'https://yaski.com'
-    ], function ($message) {
-        $message
-            ->from('noreplay@yaski.com')
-            ->to('yudojuni93@gmail.com', 'Yudo')
-            ->subject('Berhasil mendaftar workshop');
-    });
-});
+//     $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
+//     $qr = QrCode::size(300)
+//         ->format('png')
+//         ->merge('assets/images/logo.png', 0.3, true)
+//         ->style('dot')
+//         ->eye('circle')
+//         ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
+//         ->margin(1)
+//         ->errorCorrection('M')
+//         ->generate('83745837hfdyeurf');
+//     // return response($qr)->header('Content-type', 'image/png');
+//     $beautymail->send('emails.welcome', [
+//         'name' => 'Yudo',
+//         'qr' => $qr,
+//         'link' => 'https://yaski.com'
+//     ], function ($message) {
+//         $message
+//             ->from('noreplay@yaski.com')
+//             ->to('yudojuni93@gmail.com', 'Yudo')
+//             ->subject('Berhasil mendaftar workshop');
+//     });
+// });
 
-// Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
-Route::get('/mail', function () {
-    Mail::to('yudojuni93@gmail.com')->send(new App\Mail\TransactionMail());
-})->name('mail');
+// // Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+// Route::get('/mail', function () {
+//     Mail::to('yudojuni93@gmail.com')
+//         ->send(new App\Mail\TransactionMail('123', 'Workshop', 'Yudo', 'Pemrograman', '100000', '1', '100000'));
+//     // return view('emails.mail');
+// })->name('mail');
