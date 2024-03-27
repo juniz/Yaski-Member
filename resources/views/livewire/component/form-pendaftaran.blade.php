@@ -33,7 +33,11 @@
     
                             <div class="mb-5">
                                 {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">Daftar</button> --}}
+                                @auth
+                                <button type="button" class="btn btn-primary" wire:click='$emit("openModalWorkshop", {{$workshop->id}})'>Daftar</button>
+                                @else
                                 <a type="button" class="btn btn-primary" href="{{ route('pendaftaran.index', \Crypt::encrypt($workshop->id)) }}">Daftar</a>
+                                @endauth
                             </div>
     
     

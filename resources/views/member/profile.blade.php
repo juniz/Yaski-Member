@@ -63,7 +63,7 @@
                                         Fasyankes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Pakelaring</a>
+                                    <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Paklaring</a>
                                 </li>
                             </ul>
                         </div>

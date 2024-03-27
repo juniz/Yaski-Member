@@ -130,6 +130,7 @@ class ProfileController extends Controller
             }
 
             if ($fasyankes) {
+                $fasyankes->kode = $request->kode ?? '';
                 $fasyankes->nama = $request->nama;
                 $fasyankes->jenis = $request->jenis;
                 $fasyankes->kelas = $request->kelas;

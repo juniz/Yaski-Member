@@ -33,6 +33,14 @@
                         @can('view permission')
                         <li><a href="permissions" data-key="t-orders">Permission</a></li>
                         @endcan
+                        @can('view permintaan workshop')
+                        <li>
+                            <a href="/list-workshop">
+                                <i data-feather="calendar"></i>
+                                <span data-key="t-setting-workshop">Workshop</span>
+                            </a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
 
@@ -58,19 +66,27 @@
                     </a>
                 </li> --}}
 
+                <li class="menu-title" data-key="t-apps">Pendaftaran</li>
+                <li>
+                    <a href="/workshop">
+                        <i data-feather="calendar"></i>
+                        <span data-key="t-workshop">Workshop</span>
+                    </a>
+                </li>
+
                 <li class="menu-title" data-key="t-apps">Permintaan</li>
 
                 <li>
                     @can('view paklaring')
                     <a href="/paklaring">
-                        <i data-feather="mail"></i>
-                        <span data-key="t-email">Paklaring</span>
+                        <i data-feather="archive"></i>
+                        <span data-key="t-paklaring">Paklaring</span>
                     </a>
                     @endcan
-                    @can('view permintaan workshop')
-                    <a href="/list-workshop">
-                        <i data-feather="mail"></i>
-                        <span data-key="t-email">Atur Workshop</span>
+                    @can('view permintaan mou')
+                    <a href="/mou">
+                        <i data-feather="clipboard"></i>
+                        <span data-key="t-mou">MOU</span>
                     </a>
                     @endcan
                     {{-- <ul class="sub-menu" aria-expanded="false">

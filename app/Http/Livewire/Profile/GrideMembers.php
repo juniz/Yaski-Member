@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Profile;
 
 use App\Models\Paklaring;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,17 @@ class GrideMembers extends Component
     public function mount()
     {
         // $this->getMembers();
+    }
+
+    public function status($id)
+    {
+        $paklaring = Paklaring::where('user_id', $id)->where('stts', 'disetujui')->first();
+        $mou = \App\Models\Mou::where('user_id', $id)->where('stts', 'disetujui')->first();
+        if ($paklaring && $mou) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function kwitansi($id)

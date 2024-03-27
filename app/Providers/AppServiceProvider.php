@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        if (env(key: 'APP_ENV') === 'local' && request()->server(key: 'HTTP_X_FORWARDED_PROTO') === 'https') {
+            URL::forceScheme(scheme: 'https');
+        }
         Schema::defaultStringLength(191);
     }
 }

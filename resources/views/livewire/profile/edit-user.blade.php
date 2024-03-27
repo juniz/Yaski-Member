@@ -23,6 +23,10 @@
                                 class="form-control @error('email') is-invalid @enderror" autofocus>
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                        <div class="form-check mb-3">
+                            <label for="verif_email" class="form-check-label">Verifikasi Email</label>
+                            <input type="checkbox" wire:model='verifEmail' class="form-check-input" name="verif_email" id="verif_email">
+                        </div>
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
                             <select wire:model.defer='roleUser' class="form-select @error('role') is-invalid @enderror"

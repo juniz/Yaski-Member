@@ -19,7 +19,11 @@
         type="{{ $type }}"
         {{ $attributes->merge(['class' => 'form-control']) }}
         @if ($model)
-            wire:model.defer="{{ $model }}"
+            @if($attributes->has('live'))
+                wire:model.debounce.500ms="{{ $model }}"
+            @else
+                wire:model.defer="{{ $model }}"
+            @endif
         @endif
     />
 

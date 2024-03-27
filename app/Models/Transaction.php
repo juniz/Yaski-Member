@@ -14,18 +14,19 @@ class Transaction extends Model
     protected $fillable = [
         'workshop_id',
         'snap_token',
-        'nama',
-        'jns_kelamin',
-        'email',
-        'telp',
+        'order_id',
+        // 'nama',
+        // 'jns_kelamin',
+        // 'email',
+        // 'telp',
         'nama_rs',
         'kd_rs',
         'kepemilikan_rs',
         'provinsi_id',
         'kabupaten_id',
-        'ukuran_baju',
-        'paket',
-        'harga',
+        // 'ukuran_baju',
+        // 'paket',
+        // 'harga',
         'stts',
     ];
 
@@ -42,5 +43,10 @@ class Transaction extends Model
     public function kabupaten()
     {
         return $this->belongsTo(Regency::class);
+    }
+
+    public function peserta()
+    {
+        return $this->hasMany(Peserta::class);
     }
 }

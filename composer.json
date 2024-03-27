@@ -21,6 +21,7 @@
         "laravel/ui": "^3.3",
         "laraveldaily/laravel-invoices": "^3.0",
         "livewire/livewire": "^2.12",
+        "maatwebsite/excel": "^3.1",
         "midtrans/midtrans-php": "^2.5",
         "rappasoft/laravel-livewire-tables": "^2.15",
         "simplesoftwareio/simple-qrcode": "^4.2",

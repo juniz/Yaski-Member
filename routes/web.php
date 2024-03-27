@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Invoice\Transaction;
+use App\Http\Controllers\PaymentCallbackController;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Mail;
 /*
@@ -61,10 +63,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/workshop/{workshop}/edit', [App\Http\Controllers\WorkshopController::class, 'edit'])->name('workshop.edit');
     Route::put('/workshop/{workshop}', [App\Http\Controllers\WorkshopController::class, 'update'])->name('workshop.update');
     Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
-
+    Route::get('/mou', fn () => view('mou.index'))->name('mou.index');
     // Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class);
 
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
+    Route::get('/paklaring-cek', [App\Http\Controllers\Api\PaklaringController::class, 'cekPic'])->name('paklaring.cek-pic');
+
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
 });
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
@@ -82,6 +87,27 @@ Route::middleware('guest')->group(function () {
     Route::get('/verify-email', fn () => view('auth.verify-email'))->name('verification.notice');
     Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
     Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+});
+
+Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
+
+Route::get('invoice', function () {
+    $data = [
+        'costumer' => [
+            'name' => 'Yudo',
+            'email' => 'yudojuni93@gmail.com',
+            'phone' => '08123456789'
+        ],
+        'product' => [
+            'name' => 'Pemrograman',
+            'description' => 'Twin Bed',
+            'price' => '3500000',
+            'quantity' => '1',
+        ],
+
+    ];
+    $invoice = new Transaction();
+    return $invoice->generateInvoice($data)->stream();
 });
 
 // Route::get('/test', function () {

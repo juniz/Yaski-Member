@@ -52,6 +52,11 @@
     <div class="flex-grow-1">
         <div>
             <h5 class="font-size-16 mb-1">
+            @if($user->paklaring->stts == 'disetujui' && $user->mou->stts == 'disetujui')
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+              </svg>
+            @endif
              {{ $user->name }}
             </h5>
             <p class="text-muted font-size-13 mb-2 pb-2">{{ $user->email }}</p>
@@ -61,12 +66,6 @@
 </div>
 <div class="col-sm-auto">
     <div class="d-flex align-items-start justify-content-end gap-2 mb-2">
-        {{-- <div>
-            <button type="button" class="btn btn-success"><i class="me-1"></i> Message</button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".update-profile"><i
-                    class="me-1"></i> Ubah Profile</button>
-
-        </div> --}}
         <div>
             <div class="dropdown">
                 <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
@@ -91,96 +90,23 @@
     <div class="col-lg-12">
         <div class="card bg-transparent shadow-none">
             <div class="card-body">
-                <ul class="nav nav-tabs-custom card-header-tabs border-top mt-2" id="pills-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab">Profile
-                            Fasyankes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" data-bs-toggle="tab" href="#post" role="tab">Pakelaring</a>
-                    </li>
-                </ul>
+                <livewire:profile.tab-paklaring />
             </div>
         </div>
     </div>
 </div>
 
+<livewire:profile.alert :fasyankes="$fasyankes" />
+
 <div class="row">
     <div class="col-xl-8 col-lg-8">
         <div class="tab-content">
             <div class="tab-pane active" id="overview" role="tabpanel">
-                {{--
-                <livewire:profile.body /> --}}
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex flex-row justify-content-between">
-                            <h4 class="card-title text-uppercase mb-0">{{ $fasyankes->nama ?? 'Data Fasyankes
-                                Kosong' }}
-                            </h4>
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-                        @if(!empty($fasyankes))
-                        <div>
-                            <div class="pb-3">
-                                <h5 class="font-size-15">Kode :</h5>
-                                <div class="text-muted">
-                                    <p class="mb-2">{{ $fasyankes->kode }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Jenis Fasyankes :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->jenis }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Kelas :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->kelas }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Telp :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->telp }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Email :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->email }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Direktur :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->direktur }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3">
-                                <h5 class="font-size-15">Alamat :</h5>
-                                <div class="text-muted">
-                                    <p>{{ $fasyankes->alamat }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                    </div>
-                    <!-- end card body -->
-                </div>
-                <!-- end card -->
+                <livewire:profile.body />
             </div>
             <!-- end tab pane -->
 
-            <div class="tab-pane" id="post" role="tabpanel">
+            <div class="tab-pane" id="paklaring-tabpanel" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex flex-row justify-content-between">
@@ -233,82 +159,72 @@
                               </div>
                             </div>
                         </div>
-                        <!-- SmartWizard html -->
-                        {{-- <div id="smartwizard">
-                            <ul class="nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#step-1">
-                                        <div class="num">1</div>
-                                        Download template pakelaring
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#step-2">
-                                        <span class="num">2</span>
-                                        Upload Pakelaring
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#step-3">
-                                        <span class="num">3</span>
-                                        Step Title
-                                    </a>
-                                </li>
-                            </ul>
-                
-                            <div class="tab-content">
-                                <div id="step-1" class="tab-pane" role="tabpanel" aria-labelledby="step-1">
-                                    <div class="container p-5">
-                                        <div class="d-flex flex-row justify-content-center">
-                                            <a href="{{ URL::asset('assets/files/template_paklaring.xlsx') }}"
-                                            class="btn btn-lg btn-secondary ms-2"><i class="bx bx-download"></i>
-                                            Unduh Template</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="step-2" class="tab-pane" role="tabpanel" aria-labelledby="step-2">
-                                    <div class="accordion" id="accordionExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingOne">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                  File Pakelaring
-                                                </button>
-                                            </h2>
-                                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    @if(empty($paklaring))
-                                                    <h6 class="text-center">Data Kosong</h6>
-                                                    @else
-                                                    <iframe src="{{ asset('storage/pakelaring/'. $paklaring->file) }}" frameborder="1"
-                                                        width="100%" height="500vh"></iframe>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <button id="btn-unggah-paklaring" class="btn btn-secondary btn-block">Unggah Paklaring</button>
-                                    </div>
-                                </div>
-                                <div id="step-3" class="tab-pane" role="tabpanel" aria-labelledby="step-3">
-                                    Step content
-                                </div>
-                            </div>
-                
-                            <!-- Include optional progressbar HTML -->
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div> --}}
                     </div>
-                    <!-- end card body -->
-                    {{-- <livewire:component.upload-paklaring :paklaring="$paklaring" /> --}}
                 </div>
                 <!-- end card -->
                 </div>                
             </div>
             <!-- end tab pane -->
+            <div class="tab-pane" id="mou-tabpanel" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <h4 class="card-title text-uppercase mb-0">MOU
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div wire:ignore.self class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                1. Download Template MOU
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="container p-5">
+                                        <div class="d-flex flex-row justify-content-center">
+                                            {{-- <a href="{{ URL::asset('assets/files/template_paklaring.xlsx') }}" --}}
+                                            <a href="{{ env('URL_PAKLARING') }}"
+                                            class="btn btn-lg btn-secondary ms-2"><i class="bx bx-download"></i>
+                                            Unduh Template</a>
+                                        </div>
+                                    </div>
+                            </div>
+                            </div>
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    2. Upload MOU
+                                </button>
+                              </h2>
+                              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <livewire:component.upload-mou />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                  3. Status MOU
+                                </button>
+                              </h2>
+                              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <livewire:component.mou />
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="workshop-tabpanel" role="tabpanel">
+                <livewire:profile.riwayat-workshop />
+            </div>
         </div>
         <!-- end tab content -->
     </div>
@@ -389,7 +305,7 @@
                     <div class="mb-3">
                         <label for="kode">Kode Fasyankes</label>
                         <input type="text" value="{{$fasyankes->kode ?? ''}}"
-                            class="form-control @error('kode') is-invalid @enderror" id='kode' name="kode" autofocus>
+                            class="form-control uppercase @error('kode') is-invalid @enderror" id='kode' name="kode" autofocus>
                         <div class="text-danger" id="kodeError" data-ajax-feedback="kode"></div>
                     </div>
                     <div class="mb-3">
@@ -459,7 +375,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="provinsi" class="form-label font-size-13 text-muted required">Provinsi</label>
-                            <select class="form-control" data-trigger name="provinsi" id="provinsi"
+                            <select class="form-control" name="provinsi" id="provinsi"
                                 placeholder="Cari Provinsi">
                                 <option value="">Pilih provinsi</option>
                                 @foreach ($provinces as $province)
@@ -488,16 +404,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="image">Gambar Background</label>
+                        <label for="image">Gambar tampak depan Fasyankes <small class="text-danger">File gambar max 1mb</small></label>
                         <div class="input-group">
                             <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
                                 name="image" autofocus>
                             <label class="input-group-text" for="image">Upload</label>
                         </div>
-                        {{-- <div class="text-start mt-2">
-                            <img src="@if (!empty($fasyankes->image)){{ asset('storage/fasyankes/'. $fasyankes->image) }}@else{{ URL::asset('assets/images/profile-bg-1.jpg') }}@endif"
-                                alt="" class="rounded me-2" width="200" data-holder-rendered="true">
-                        </div> --}}
                         <div class="text-danger" role="alert" id="imageError" data-ajax-feedback="image"></div>
                     </div>
 
@@ -511,6 +423,8 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<livewire:profile.daftar-workshop />
+
 @endsection
 @section('script')
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
@@ -520,6 +434,7 @@
 <script src="{{ URL::asset('assets/js/pages/profile.init.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/form-advanced.init.js') }}"></script>
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
+<script src="{{ env('URL_SNAP') }}" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 <script type="text/javascript">
     // $('#smartwizard').smartWizard({
     //     theme: 'arrows',
@@ -528,6 +443,7 @@
     //         previous: 'Sebelumnya'
     //     }
     // });
+
     $('#jenis').on('change', function() {
         var jenis = $(this).val();
         if (jenis == 'Rumah Sakit') {
@@ -536,16 +452,6 @@
             $('.kelas-form').addClass('visually-hidden');
         }
     });
-
-    window.addEventListener('pengajuanPaklaring', (event) => {
-        $('#collapseOne').collapse('hide');
-        $('#collapseTwo').collapse('show');
-    })
-
-    window.addEventListener('simpanPaklaring', (event) => {
-        $('#collapseTwo').collapse('hide');
-        $('#collapseThree').collapse('show');
-    })
 
     
     $("#btn-unggah-paklaring").on('click', function() {
@@ -676,6 +582,8 @@
                     console.log(response);
                     alert(response.Message);
                 } else if (response.isSuccess == true) {
+                    $('.update-fasyankes').modal('hide');
+                    // livewire.emit('load-fasyankes');
                     setTimeout(function() {
                         window.location.reload();
                     }, 1000);
@@ -697,10 +605,16 @@
         });
     });
 
+    const provinsi = new Choices('#provinsi', {
+        removeItemButton: true,
+        searchPlaceholderValue: 'Cari Provinsi', 
+        placeholder: false,
+    });
+
     const query_task = new Choices('#kabupaten', {
             removeItemButton: true,
             searchPlaceholderValue: 'Pilih Kabupaten / Kota', 
-            placeholder: true,
+            placeholder: false,
         });
         query_task.passedElement.element.addEventListener('addItem', () => reset(), false);
         query_task.passedElement.element.addEventListener('removeItem', () => reset(), false);
@@ -765,5 +679,44 @@
                 }
             })
         })
+
+    Livewire.on('openModalEditTeam', () => {
+        $('.edit-team-modal').modal('show');
+    })
+
+    Livewire.on('closeModalEditTeam', () => {
+
+        $('.edit-team-modal').modal('hide');
+    })
+
+    Livewire.on('openModalSkpic', () => {
+        $('.skpic-team-modal').modal('show');
+    })
+
+    Livewire.on('open-modal-workshop', () => {
+        $('.daftar-workshop-modal').modal('show');
+    })
+
+    Livewire.on('open-modal-snap', (event) => {
+        // console.log(event);
+        snap.pay(event.snapToken, {
+            onSuccess: function(result) {
+                console.log(result);
+                Livewire.emit('updateSnapToken', event.order_id, event.snapToken);
+            },
+            onPending: function(result) {
+                console.log(result);
+                // Livewire.emit('batalDaftar', event.id);
+            },
+            onError: function(result) {
+                alert(result.status_message);
+                // Livewire.emit('batalDaftar', event.id);
+            }
+        });
+    })
+
+    Livewire.on('close-modal-workshop', () => {
+        $('.daftar-workshop-modal').modal('hide');
+    })
 </script>
 @endsection

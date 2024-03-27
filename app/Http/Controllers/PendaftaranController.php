@@ -7,10 +7,10 @@ use App\Models\Province;
 use App\Models\Transaction;
 use App\Models\Workshop;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Mail\TransactionMail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use App\Invoice\Transaction as InvoiceTransaction;
 
 class PendaftaranController extends Controller
 {
@@ -44,81 +44,36 @@ class PendaftaranController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'workshop_id' => 'required',
-            'nama' => 'required',
-            'jenis_kelamin' => 'required',
-            'email' => 'required|email|unique:transaction,email',
-            'telp' => 'required',
-            'pribadi' => 'required',
-            'nama_rs' => 'required_if:pribadi,rs',
-            'kode_rs' => 'required_if:pribadi,rs|unique:transaction,kd_rs',
-            'kepemilikan_rs' => 'required_if:pribadi,rs',
-            'provinsi' => 'required',
-            'kabupaten' => 'required',
-            'harga' => 'required',
-            'baju' => 'required',
-        ], [
-            'nama.required' => 'Nama tidak boleh kosong',
-            'jenis_kelamin.required' => 'Jenis kelamin tidak boleh kosong',
-            'email.required' => 'Email tidak boleh kosong',
-            'email.unique' => 'Email sudah terdaftar',
-            'telp.required' => 'Nomor telepon tidak boleh kosong',
-            'pribadi.required' => 'Pilih salah satu',
-            'nama_rs.required_if' => 'Nama rumah sakit tidak boleh kosong',
-            'kode_rs.required_if' => 'Kode rumah sakit tidak boleh kosong',
-            'kode_rs.unique' => 'Kode rumah sakit sudah terdaftar',
-            'kepemilikan_rs.required_if' => 'Pilih salah satu',
-            'provinsi.required' => 'Provinsi tidak boleh kosong',
-            'kabupaten.required' => 'Kabupaten tidak boleh kosong',
-            'harga.required' => 'Harga tidak boleh kosong',
-            'baju.required' => 'Pilih salah satu',
-        ]);
-
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = config('midtrans.isProduction', false);
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized', true);
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = config('midtrans.is3ds', true);
 
         try {
-            $paket = Workshop::find($request->workshop_id)->paket()->where('id', $request->harga)->first();
-            $harga = $paket->harga;
-            $paket = $paket->nama;
-            $order_id = rand();
+            DB::beginTransaction();
+            $transaksi = Transaction::create([
+                'workshop_id' => $request['workshop']['id'],
+                'snap_token' => $request['data']['snap_token'],
+                'order_id' => $request['data']['order_id'],
+                // 'nama' => Str::upper($request['data']['nama']),
+                // 'jns_kelamin' => $request['data']['jns_kelamin'],
+                // 'email' => $request['data']['email'],
+                // 'telp' => $request['data']['telp'],
+                'nama_rs' => $request['data']['nama_rs'],
+                'kd_rs' => $request['data']['kd_rs'],
+                'kepemilikan_rs' => $request['data']['kepemilikan_rs'],
+                'provinsi_id' => $request['data']['provinsi_id'],
+                'kabupaten_id' => $request['data']['kabupaten_id'],
+                // 'ukuran_baju' => $request['data']['ukuran_baju'],
+                // 'paket' => $request['data']['paket'],
+                // 'harga' => $request['data']['harga'],
+            ]);
 
-            $params = array(
-                'transaction_details' => array(
-                    'order_id' => $order_id,
-                    'gross_amount' => $harga,
-                ),
-                'customer_details' => array(
-                    'first_name' => $request->nama,
-                    'email' => $request->email,
-                    'phone' => $request->telp,
-                ),
-            );
-
-            $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-            $transaction = Transaction::create([
-                'workshop_id' => $request->workshop_id,
-                'snap_token' => $snapToken,
-                'nama' => $request->nama,
-                'jns_kelamin' => $request->jenis_kelamin,
-                'email' => $request->email,
-                'telp' => $request->telp,
-                'nama_rs' => $request->nama_rs,
-                'kd_rs' => $request->kode_rs,
-                'kepemilikan_rs' => $request->kepemilikan_rs,
-                'provinsi_id' => $request->provinsi,
-                'kabupaten_id' => $request->kabupaten,
-                'ukuran_baju' => $request->baju,
-                'paket' => $paket,
-                'harga' => $harga,
+            \App\Models\Peserta::create([
+                'nama' => Str::upper($request['data']['nama']),
+                'jns_kelamin' => $request['data']['jns_kelamin'],
+                'email' => $request['data']['email'],
+                'telp' => $request['data']['telp'],
+                'transaction_id' => $transaksi->id,
+                'baju' => $request['data']['ukuran_baju'],
+                'paket' => $request['data']['paket'],
+                'harga' => $request['data']['harga'],
             ]);
 
             // $qr = $this->generateQrCode($snapToken);
@@ -144,20 +99,55 @@ class PendaftaranController extends Controller
             //         ->subject('Berhasil mendaftar workshop');
             // });
 
-            $workshop = Workshop::find($request->workshop_id)->first();
-            Mail::to($request->email)
-                ->send(new TransactionMail($order_id, $workshop->nama, $request->nama, $paket, $harga, '1', $harga));
+            // $workshop = Workshop::find($request->workshop_id)->first();
 
+            $invoice = new InvoiceTransaction();
+            $data = [
+                'order_id' => $request['data']['order_id'],
+                'file_name' => $request['data']['order_id'],
+                'costumer' => [
+                    'name' => $request['data']['nama'],
+                    'email' => $request['data']['email'],
+                    'phone' => $request['data']['telp'],
+                ],
+                'product' => [
+                    'name' => $request['workshop']['nama'],
+                    'description' => $request['data']['paket'],
+                    'price' => $request['data']['harga'],
+                    'quantity' => 1,
+                ],
+            ];
+            $invoice->generateInvoice($data);
+
+            $params = [
+                'order_id' => $request['data']['order_id'],
+                'email' => $request['data']['email'],
+                'workshop' => $request['workshop']['nama'],
+                'nama' => $request['data']['nama'],
+                'pesanan' => $request['data']['paket'],
+                'total' => $request['data']['harga'],
+                'jml' => 1,
+                'harga' => $request['data']['harga'],
+                // 'pdf' => storage_path('app/public/invoices/' . $request['data']['order_id'] . '.pdf'),
+                // 'qr' => $qr,
+                'invoice' =>  $request['data']['order_id'] . '.pdf',
+            ];
+
+            // dispatch(function () use ($params) {
+            //     Mail::to($params['email'])
+            //         ->send(new TransactionMail($params));
+            // });
+            DB::commit();
             return response()->json([
                 'status' => 'success',
-                'snap_token' => $snapToken,
+                // 'snap_token' => $request->snap_token,
                 'message' => 'Pendaftaran berhasil',
             ], 200);
         } catch (\Exception $e) {
-
+            DB::rollBack();
             return response()->json([
                 'status' => 'error',
-                'message' => 'error : ' . $e->getMessage() . 'Line : ' . $e->getLine() . 'File : ' . $e->getFile(),
+                'message' => 'Pendaftaran gagal',
                 'data' => $request->all(),
             ], 500);
         }
@@ -223,7 +213,7 @@ class PendaftaranController extends Controller
             'workshop_id' => 'required',
             'nama' => 'required',
             'jenis_kelamin' => 'required',
-            'email' => 'required|email|unique:transaction,email',
+            'email' => 'required|email',
             'telp' => 'required',
             'pribadi' => 'required',
             // 'nama_rs' => 'required_if:pribadi,rs',
@@ -260,17 +250,29 @@ class PendaftaranController extends Controller
         \Midtrans\Config::$is3ds = config('midtrans.is3ds', true);
 
         try {
-            $paket = Workshop::find($request->workshop_id)->paket()->where('id', $request->harga)->first();
+            $workshop = Workshop::find($request->workshop_id);
+            $paket = $workshop->paket()->where('id', $request->harga)->first();
             $harga = $paket->harga;
             $paket = $paket->nama;
+            // $last_no = sprintf("%04d", $workshop->count() + 1);
+            $last_no = rand(100000, 999999);
+            $order_id = date('Ymd') . '-' . $last_no;
 
             $params = array(
                 'transaction_details' => array(
-                    'order_id' => rand(),
+                    'order_id' => $order_id,
                     'gross_amount' => $harga,
                 ),
+                'item_details' => array(
+                    array(
+                        'id' => $request->workshop_id,
+                        'price' => $harga,
+                        'quantity' => 1,
+                        'name' => $paket,
+                    ),
+                ),
                 'customer_details' => array(
-                    'first_name' => $request->nama,
+                    'first_name' => Str::upper($request->nama),
                     'email' => $request->email,
                     'phone' => $request->telp,
                 ),
@@ -278,11 +280,54 @@ class PendaftaranController extends Controller
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-            return response()->json([
-                'status' => 'success',
+            $data = [
                 'snap_token' => $snapToken,
-                'data' => $request->all(),
-                'message' => 'Pendaftaran berhasil',
+                // 'order_id' => $order_id,
+                // 'nama' => Str::upper($request->nama),
+                // 'jns_kelamin' => $request->jenis_kelamin,
+                // 'email' => $request->email,
+                // 'telp' => $request->telp,
+                // 'nama_rs' => $request->nama_rs,
+                // 'kd_rs' => $request->kode_rs,
+                // 'kepemilikan_rs' => $request->kepemilikan_rs,
+                // 'provinsi_id' => $request->provinsi,
+                // 'kabupaten_id' => $request->kabupaten,
+                // 'ukuran_baju' => $request->baju,
+                // 'paket' => $paket,
+                // 'harga' => $harga,
+            ];
+
+            DB::beginTransaction();
+            $transaksi = Transaction::create([
+                'workshop_id' => $workshop->id,
+                'snap_token' => $snapToken,
+                'order_id' => $order_id,
+                'nama_rs' => $request->nama_rs,
+                'kd_rs' => $request->kode_rs,
+                'kepemilikan_rs' => $request->kepemilikan_rs,
+                'provinsi_id' => $request->provinsi,
+                'kabupaten_id' => $request->kabupaten,
+            ]);
+
+            \App\Models\Peserta::create([
+                'nama' => Str::upper($request->nama),
+                'jns_kelamin' => $request->jenis_kelamin,
+                'email' => Str::lower($request->email),
+                'telp' => $request->telp,
+                'transaction_id' => $transaksi->id,
+                'baju' => $request->baju,
+                'paket' => $paket,
+                'harga' => $harga,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                // '_token' => $request->_token,
+                'status' => 'success',
+                // 'snap_token' => $snapToken,
+                'data' => $data,
+                // 'workshop' => $workshop,
             ], 200);
         } catch (\Exception $e) {
 

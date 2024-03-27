@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Attachment;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -12,27 +13,15 @@ use Illuminate\Queue\SerializesModels;
 class TransactionMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $order_id;
-    public $workshop;
-    public $nama;
-    public $pesanan;
-    public $total;
-    public $jml;
-    public $harga;
+    public $params = [];
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($order_id, $workshop, $nama, $pesanan, $total, $jml, $harga)
+    public function __construct($params)
     {
-        $this->order_id = $order_id;
-        $this->workshop = $workshop;
-        $this->nama = $nama;
-        $this->pesanan = $pesanan;
-        $this->total = $total;
-        $this->jml = $jml;
-        $this->harga = $harga;
+        $this->params = $params;
     }
 
     /**
@@ -57,15 +46,7 @@ class TransactionMail extends Mailable
     {
         return new Content(
             view: 'emails.mail',
-            with: [
-                'order_id' => $this->order_id,
-                'workshop' => $this->workshop,
-                'nama' => $this->nama,
-                'pesanan' => $this->pesanan,
-                'total' => $this->total,
-                'jml' => $this->jml,
-                'harga' => $this->harga,
-            ],
+            with: $this->params,
         );
     }
 
@@ -76,6 +57,10 @@ class TransactionMail extends Mailable
      */
     public function attachments()
     {
-        return [];
+        return [
+            Attachment::fromStorageDisk('invoices', $this->params['invoice'])
+                ->as('Invoice-Workshop.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

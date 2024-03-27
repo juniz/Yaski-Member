@@ -28,6 +28,7 @@ $workshop = \App\Models\Workshop::latest()->first();
 @endphp
 @if($workshop)
 <livewire:component.form-pendaftaran />
+<livewire:profile.daftar-workshop />
 @else
 <h3 class="text-center">Workshop Kosong</h3>
 @endif
@@ -40,6 +41,10 @@ $workshop = \App\Models\Workshop::latest()->first();
 <script>
     window.livewire.on('closeModal', () => {
         $('.orderdetailsModal').modal('hide');
+    });
+
+    Livewire.on('open-modal-workshop', () => {
+        $('.daftar-workshop-modal').modal('show');
     });
 
     function timer(expiry) {

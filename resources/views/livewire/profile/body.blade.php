@@ -2,74 +2,77 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex flex-row justify-content-between">
-                <h4 class="card-title text-uppercase mb-0">{{ $fasyankes->nama ?? 'Data Fasyankes Kosong' }}
+                <h4 class="card-title text-uppercase mb-0">
+                    @if(isset($nama))
+                    {{ $nama }}
+                    @else
+                    Data Fasynakes Kosong
+                    @endif
                 </h4>
-                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                {{-- <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
                     data-bs-target=".update-fasyankes"><i class="bx bx-plus me-1"></i>@if(empty($fasyankes))
                     Tambah Fasyankes @else Ubah
-                    Fasyankes @endif</button>
+                    Fasyankes @endif</button> --}}
             </div>
         </div>
 
-        <div class="card-body">
-            @if(!empty($fasyankes))
+        <div wire:init='load' class="card-body">
             <div>
                 <div class="pb-3">
                     <h5 class="font-size-15">Kode :</h5>
                     <div class="text-muted">
-                        <p class="mb-2">{{ $fasyankes->kode }}</p>
+                        <p class="mb-2">{{ $kode }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Jenis Fasyankes :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->jenis }}</p>
+                        <p>{{ $jenis }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Kelas :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->kelas }}</p>
+                        <p>{{ $kelas }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Telp :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->telp }}</p>
+                        <p>{{ $telp }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Email :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->email }}</p>
+                        <p>{{ $email }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Direktur :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->direktur }}</p>
+                        <p>{{ $direktur }}</p>
                     </div>
                 </div>
 
                 <div class="pt-3">
                     <h5 class="font-size-15">Alamat :</h5>
                     <div class="text-muted">
-                        <p>{{ $fasyankes->alamat }}</p>
+                        <p>{{ $alamat }}</p>
                     </div>
                 </div>
             </div>
-            @endif
         </div>
         <!-- end card body -->
     </div>
     <!-- end card -->
     <!--  Update Fasyankes -->
-    <div class="modal fade update-fasyankes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    {{-- <div class="modal fade update-fasyankes" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -195,10 +198,10 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    </div><!-- /.modal --> --}}
 </div>
 
-@section('script')
+{{-- @section('script')
 <script>
     window.addEventListener('openUpdateFasyankesModal', event => {
         $("#update-fasyankes").modal('show');
@@ -208,4 +211,4 @@
         $("#update-fasyankes").modal('hide');
     })
 </script>
-@endsection
+@endsection --}}

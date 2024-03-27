@@ -44,6 +44,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
+
+
     public function hasTeams()
     {
         return $this->hasMany(Team::class);
@@ -57,5 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function paklaring()
     {
         return $this->hasOne(Paklaring::class);
+    }
+
+    public function mou()
+    {
+        return $this->hasOne(Mou::class);
     }
 }

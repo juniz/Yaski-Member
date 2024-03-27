@@ -15,5 +15,6 @@ class Team extends Model
         'avatar',
         'telegram',
         'telp',
+        'sk_pic',
     ];
 }

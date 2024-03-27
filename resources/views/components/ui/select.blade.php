@@ -17,7 +17,14 @@
         name="{{ $id }}"
         {{ $attributes->merge(['class' => 'form-select']) }}
         @if ($model)
-            wire:model.defer="{{ $model }}"
+            @if($attributes->has('live'))
+                wire:model.debounce.500ms="{{ $model }}"
+            @else
+                wire:model.defer="{{ $model }}"
+            @endif
+        @endif
+        @if($attributes->has('disable'))
+            disabled
         @endif
     >
         {{ $slot }}

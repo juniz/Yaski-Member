@@ -23,7 +23,7 @@
                         </template>
                         <button type="button" class="btn btn-primary" x-on:click="jml++">+</button>
                     </div> --}}
-                    <x-ui.input-row label="Nama" id="nama" />
+                    <x-ui.input-row label="Nama" class="uppercase" id="nama" />
                     <x-ui.select-row label="Jenis Kelamin" id="jenis_kelamin" placeholder="Pilih jenis kelamin">
                         <option value="">Pilih jenis kelamin</option>
                         <option value="L">Laki-laki</option>
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <x-ui.input-row label="Nomor HP" id="telp" />
-                    <x-ui.input-row label="Email" id="email" />
+                    <x-ui.input-row label="Email" type="email" class="lowercase" id="email" />
                     <x-ui.select-row label="Ukuran Baju" id="baju" placeholder="Pilih ukuran baju">
                         <option value="">Pilih ukuran baju</option>
                         <option value="S">S</option>
@@ -152,7 +152,7 @@
         let data = {
             _token: "{{ csrf_token() }}",
             workshop_id: "{{ $workshop->id }}",
-            nama: $("#nama").val(),
+            nama: $("#nama").val().toUpperCase(),
             jenis_kelamin: $("#jenis_kelamin").val(),
             pribadi:$("#pribadi").is(':checked') ? 1 : 0,
             nama_rs: $("#nama_rs").val(),
@@ -161,7 +161,7 @@
             provinsi: $("#provinsi").val(),
             kabupaten: $("#kabupaten").val(),
             telp: $("#telp").val(),
-            email: $("#email").val(),
+            email: $("#email").val().toLowerCase(),
             baju: $("#baju").val(),
             harga: $("#harga").val(),
         };
@@ -170,26 +170,28 @@
             type: "POST",
             data: data,
             success: function(data) {
-                // console.log(data);
+                console.log(data);
+                // window.location = data.snap_token;
                 if (data.status == "success") {
-                    snap.pay(data.snap_token, {
+                    snap.pay(data.data.snap_token, {
                         onSuccess: function(result) {
-                            console.log(result);
-                            let payloads = data.data;
-                            $.ajax({
-                                url: "{{ route('pendaftaran.store') }}",
-                                type: "POST",
-                                data: payloads,
-                                success: function(data) {
-                                    // console.log(data);
-                                    if (data.status == "success") {
-                                        window.location.href = "{{ route('workshop.list') }}";
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.log(xhr);
-                                }
-                            });
+                            // console.log(result);
+                            window.location.href = "{{ route('workshop.list') }}";
+                            // $.ajax({
+                            //     url: "{{ route('pendaftaran.store') }}",
+                            //     type: "POST",
+                            //     data: data,
+                            //     success: function(data) {
+                            //         console.log(data);
+                            //         if (data.status == "success") {
+                            //             window.location.href = "{{ route('workshop.list') }}";
+                            //         }
+                            //     },
+                            //     error: function(xhr, status, error) {
+                            //         let err = JSON.parse(xhr.responseText);
+                            //         alert(err.message);
+                            //     }
+                            // });
                         },
                         onPending: function(result) {
                             console.log(result);

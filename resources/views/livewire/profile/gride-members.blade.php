@@ -2,8 +2,7 @@
     <div class="row align-items-center">
         <div class="col-md-6">
             <div class="mb-3">
-                <h5 class="card-title">Jumlah Member <span class="text-muted fw-normal ms-2">({{ count($members)
-                        }})</span></h5>
+                <h5 class="card-title">Jumlah Member <span class="text-muted fw-normal ms-2">({{ $members->total() }})</span></h5>
             </div>
         </div>
 
@@ -36,14 +35,34 @@
                     <tbody>
                         @forelse($members as $member)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ ($members ->currentpage()-1) * $members ->perpage() + $loop->index + 1 }}</td>
                             <td><img src="{{ URL::asset('storage/avatar/'.$member->avatar) }}" alt=""
                                     class="avatar-sm rounded-circle me-2"><a class="text-body">{{ $member->name }}</a>
                             </td>
-                            <td>{{ $member->fasyankes->nama ?? 'Fasyankes masih kosong' }}</td>
+                            <td>
+                                @if($this->status($member->id))
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                                  </svg>
+                                @endif
+                                {{ $member->fasyankes->nama ?? 'Fasyankes masih kosong' }}
+                            </td>
                             <td>{{ $member->email }}</td>
                             <td>
-                                <div class="btn-group">
+                                <div class="dropdown">
+                                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-horizontal-rounded font-size-20"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" wire:click='$emit("edit-user", {{$member->id}})' href="#">
+                                            <i class="bx bx-edit me-1"></i>Edit
+                                        </a>
+                                        <a class="dropdown-item" wire:click='modalPakelaring("{{$member->id}}")' href="#"><i class="bx bx-envelope me-1"></i>Paklaring</a>
+                                        <a class="dropdown-item" href="{{ route('members.edit', $member->id) }}"><i class="bx bx-user me-1"></i>Profile</a>
+                                        <a class="dropdown-item" wire:click='confirmDelete("{{$member->id}}")' href="#"><i class="bx bx-trash me-1"></i>Hapus</a>
+                                    </div>
+                                </div>
+                                {{-- <div class="btn-group">
                                     <button type="button" wire:click='$emit("edit-user", {{$member->id}})'
                                         class="btn btn-sm btn-success"><i class="bx bx-edit"></i></button>
                                     <button type="button" wire:click='modalPakelaring("{{$member->id}}")'
@@ -54,7 +73,7 @@
                                         class="btn btn-sm btn-secondary"><i class="bx bx-user"></i></a>
                                     <button type="button" wire:click='confirmDelete("{{$member->id}}")'
                                         class="btn btn-sm btn-danger"><i class="bx bx-trash"></i></button>
-                                </div>
+                                </div> --}}
                             </td>
                         </tr>
                         @empty
@@ -124,16 +143,9 @@
     </div> --}}
     <!-- end row -->
 
-    <div class="row g-0 align-items-center mb-4">
-        {{-- <div class="col-sm-6">
-            <div>
-                <p class="mb-sm-0">Showing 1 to 10 of 57 entries</p>
-            </div>
-        </div> --}}
-        <div class="col-sm-6">
-            <div class="float-sm-end">
-                {{ $members->links() }}
-            </div>
+    <div class="d-flex flex-row">
+        <div class="mx-auto">
+            {{ $members->onEachSide(1)->links() }}
         </div>
     </div>
     <!-- end row -->

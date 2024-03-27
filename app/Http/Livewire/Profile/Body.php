@@ -10,20 +10,33 @@ use Livewire\Component;
 
 class Body extends Component
 {
-    public $user, $subUsers, $provinces, $fasyankes, $jenis, $kelas;
+    public $kode = '';
+    public $nama = '';
+    public $jenis = '';
+    public $kelas = '';
+    public $alamat = '';
+    public $email = '';
+    public $telp = '';
+    public $direktur = '';
 
-    public function mount()
-    {
-        $this->user = auth()->user();
-        // $this->subUsers = $this->user->hasTeams;
-        $this->provinces = Province::all();
-        $this->fasyankes = Fasyankes::where('user_id', $this->user->id)->first();
-        $this->jenis = ['Praktik Mandiri', 'Rumah Sakit', 'Klinik', 'Puskesmas', 'Apotek'];
-        $this->kelas = ['-', 'A', 'B', 'C', 'D', 'D Pratama'];
-    }
+    protected $listeners = ['load-fasyankes' => 'load'];
 
     public function render()
     {
         return view('livewire.profile.body');
+    }
+
+    public function load()
+    {
+        $user = auth()->user();
+        $fasyankes = Fasyankes::where('user_id', $user->id)->first();
+        $this->kode = $fasyankes->kode;
+        $this->nama = $fasyankes->nama;
+        $this->jenis = $fasyankes->jenis;
+        $this->kelas = $fasyankes->kelas;
+        $this->alamat = $fasyankes->alamat;
+        $this->email = $fasyankes->email;
+        $this->telp = $fasyankes->telp;
+        $this->direktur = $fasyankes->direktur;
     }
 }

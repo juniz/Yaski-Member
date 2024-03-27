@@ -11,6 +11,7 @@ class EditUser extends Component
 {
     use LivewireAlert, WithFileUploads;
     public $idUser, $name, $email, $password, $password_confirmation, $role, $roleUser, $avatar;
+    public $verifEmail = false;
     protected $listeners = ['edit-user' => 'ubah'];
 
     public function render()
@@ -27,7 +28,19 @@ class EditUser extends Component
         $this->name = $user->name;
         $this->email = $user->email;
         $this->role = $user->roles->pluck('name')->first();
+        $this->verifEmail = empty($user->email_verified_at) ? false : true;
         $this->dispatchBrowserEvent('openModalEditUser');
+    }
+
+    public function updatedVerifEmail()
+    {
+        $user = \App\Models\User::find($this->idUser);
+        if ($this->verifEmail) {
+            $user->update(['email_verified_at' => now()]);
+            $this->alert('success', 'Email berhasil diverifikasi');
+        } else {
+            $user->update(['email_verified_at' => null]);
+        }
     }
 
     public function simpan()
