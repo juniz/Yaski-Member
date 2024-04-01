@@ -28,4 +28,9 @@ class Workshop extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function peserta()
+    {
+        return $this->hasManyThrough(Peserta::class, Transaction::class);
+    }
 }
