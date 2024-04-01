@@ -218,9 +218,6 @@ class PendaftaranController extends Controller
             'email' => 'required|email',
             'telp' => 'required',
             'pribadi' => 'required',
-            // 'nama_rs' => 'required_if:pribadi,rs',
-            // 'kode_rs' => 'required_if:pribadi,rs|unique:transaction,kd_rs',
-            // 'kepemilikan_rs' => 'required_if:pribadi,rs',
             'provinsi' => 'required',
             'kabupaten' => 'required',
             'harga' => 'required',
@@ -232,9 +229,6 @@ class PendaftaranController extends Controller
             'email.unique' => 'Email sudah terdaftar',
             'telp.required' => 'Nomor telepon tidak boleh kosong',
             'pribadi.required' => 'Pilih salah satu',
-            // 'nama_rs.required_if' => 'Nama rumah sakit tidak boleh kosong',
-            // 'kode_rs.required_if' => 'Kode rumah sakit tidak boleh kosong',
-            // 'kode_rs.unique' => 'Kode rumah sakit sudah terdaftar',
             'kepemilikan_rs.required_if' => 'Pilih salah satu',
             'provinsi.required' => 'Provinsi tidak boleh kosong',
             'kabupaten.required' => 'Kabupaten tidak boleh kosong',
@@ -293,23 +287,6 @@ class PendaftaranController extends Controller
             );
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-            $data = [
-                'snap_token' => $snapToken,
-                // 'order_id' => $order_id,
-                // 'nama' => Str::upper($request->nama),
-                // 'jns_kelamin' => $request->jenis_kelamin,
-                // 'email' => $request->email,
-                // 'telp' => $request->telp,
-                // 'nama_rs' => $request->nama_rs,
-                // 'kd_rs' => $request->kode_rs,
-                // 'kepemilikan_rs' => $request->kepemilikan_rs,
-                // 'provinsi_id' => $request->provinsi,
-                // 'kabupaten_id' => $request->kabupaten,
-                // 'ukuran_baju' => $request->baju,
-                // 'paket' => $paket,
-                // 'harga' => $harga,
-            ];
 
             DB::beginTransaction();
             $transaksi = Transaction::create([
@@ -374,11 +351,11 @@ class PendaftaranController extends Controller
             DB::commit();
 
             return response()->json([
-                // '_token' => $request->_token,
                 'status' => 'success',
-                // 'snap_token' => $snapToken,
-                'data' => $data,
-                // 'workshop' => $workshop,
+                'data' => [
+                    'snap_token' => $snapToken,
+                    'order_id' => $order_id,
+                ]
             ], 200);
         } catch (\Exception $e) {
 
