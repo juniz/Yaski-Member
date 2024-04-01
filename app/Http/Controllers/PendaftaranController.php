@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Crypt;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TransactionMail;
 use App\Invoice\Transaction as InvoiceTransaction;
 
 class PendaftaranController extends Controller
@@ -133,10 +135,10 @@ class PendaftaranController extends Controller
                 'invoice' =>  $request['data']['order_id'] . '.pdf',
             ];
 
-            // dispatch(function () use ($params) {
-            //     Mail::to($params['email'])
-            //         ->send(new TransactionMail($params));
-            // });
+            dispatch(function () use ($params) {
+                Mail::to($params['email'])
+                    ->send(new TransactionMail($params));
+            });
             DB::commit();
             return response()->json([
                 'status' => 'success',
