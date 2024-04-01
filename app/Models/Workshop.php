@@ -23,4 +23,9 @@ class Workshop extends Model
     {
         return $this->hasMany(Paket::class);
     }
+
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

@@ -259,7 +259,7 @@ class PendaftaranController extends Controller
                     'message' => 'Workshop sudah berakhir',
                 ]);
             }
-            if ($workshop->count() >= $workshop->kuota) {
+            if ($workshop->transaction->peserta->count() >= $workshop->kuota) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Kuota workshop sudah penuh',
