@@ -173,7 +173,7 @@
                 console.log(data);
                 // window.location = data.snap_token;
                 if (data.status == "success") {
-                    snap.pay(data.snap_token, {
+                    snap.pay(data.data.snap_token, {
                         onSuccess: function(result) {
                             // console.log(result);
                             window.location.href = "{{ route('workshop.list') }}";
