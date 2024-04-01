@@ -200,6 +200,8 @@
                             console.log(result);
                         }
                     });
+                }else{
+                    alert(data.message);
                 }
             },
             error: function(xhr, status, error) {

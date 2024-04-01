@@ -253,6 +253,18 @@ class PendaftaranController extends Controller
 
         try {
             $workshop = Workshop::find($request->workshop_id);
+            if ($workshop->tgl_mulai < now() || $workshop->tgl_selesai < now()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Workshop sudah berakhir',
+                ]);
+            }
+            if ($workshop->count() >= $workshop->kuota) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Kuota workshop sudah penuh',
+                ]);
+            }
             $paket = $workshop->paket()->where('id', $request->harga)->first();
             $harga = $paket->harga;
             $paket = $paket->nama;
@@ -321,6 +333,43 @@ class PendaftaranController extends Controller
                 'paket' => $paket,
                 'harga' => $harga,
             ]);
+
+            $invoice = new InvoiceTransaction();
+            $data = [
+                'order_id' => $order_id,
+                'file_name' => $order_id,
+                'costumer' => [
+                    'name' => Str::upper($request->nama),
+                    'email' => Str::lower($request->email),
+                    'phone' => $request->telp,
+                ],
+                'product' => [
+                    'name' => $workshop->nama,
+                    'description' => $paket,
+                    'price' => $harga,
+                    'quantity' => 1,
+                ],
+            ];
+            $invoice->generateInvoice($data);
+
+            $params = [
+                'order_id' => $order_id,
+                'email' => Str::lower($request->email),
+                'workshop' => $workshop->nama,
+                'nama' => Str::upper($request->nama),
+                'pesanan' => $paket,
+                'total' => $harga,
+                'jml' => 1,
+                'harga' => $harga,
+                // 'pdf' => storage_path('app/public/invoices/' . $request['data']['order_id'] . '.pdf'),
+                // 'qr' => $qr,
+                'invoice' =>  $order_id . '.pdf',
+            ];
+
+            dispatch(function () use ($params) {
+                Mail::to($params['email'])
+                    ->send(new TransactionMail($params));
+            });
 
             DB::commit();
 
