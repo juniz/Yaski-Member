@@ -113,7 +113,7 @@ class WorkshopController extends Controller
      * @param  \App\Models\Workshop  $workshop
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Workshop $workshop)
+    public function update(Request $request, $workshop)
     {
         $this->validate(
             $request,
@@ -147,7 +147,7 @@ class WorkshopController extends Controller
                 $imageName = $workshop->gambar;
             }
 
-            $workshop = new Workshop();
+            $workshop = Workshop::find($workshop);
             $workshop->nama = $request->nama;
             $workshop->deskripsi = $request->deskripsi;
             $workshop->kuota = $request->kuota;
