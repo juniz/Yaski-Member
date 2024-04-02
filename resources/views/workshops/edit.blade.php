@@ -18,7 +18,7 @@
                 <h4 class="card-title">Ubah Informasi Workshop</h4>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url('/workshop/'.$workshop) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ url('/workshop/'.$workshop->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
