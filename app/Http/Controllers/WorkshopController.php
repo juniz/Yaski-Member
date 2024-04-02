@@ -157,7 +157,7 @@ class WorkshopController extends Controller
             $workshop->tgl_selesai = $request->tgl_selesai;
             $workshop->save();
 
-            return redirect()->to('/list-workshop')->with(['message' => 'Workshop berhasil ditambahkan', 'type' => 'success']);
+            return redirect()->to('/list-workshop')->with(['message' => 'Workshop berhasil dirubah', 'type' => 'success']);
         } catch (\Exception $e) {
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
         }
