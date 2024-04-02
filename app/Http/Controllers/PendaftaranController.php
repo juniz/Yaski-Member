@@ -330,21 +330,19 @@ class PendaftaranController extends Controller
             ];
             $invoice->generateInvoice($data);
 
-            $params = [
-                'order_id' => $order_id,
-                'email' => Str::lower($request->email),
-                'workshop' => $workshop->nama,
-                'nama' => Str::upper($request->nama),
-                'pesanan' => $paket,
-                'total' => $harga,
-                'jml' => 1,
-                'harga' => $harga,
-                // 'pdf' => storage_path('app/public/invoices/' . $request['data']['order_id'] . '.pdf'),
-                // 'qr' => $qr,
-                'invoice' =>  $order_id . '.pdf',
-            ];
+            // $params = [
+            //     'order_id' => $order_id,
+            //     'email' => Str::lower($request->email),
+            //     'workshop' => $workshop->nama,
+            //     'nama' => Str::upper($request->nama),
+            //     'pesanan' => $paket,
+            //     'total' => $harga,
+            //     'jml' => 1,
+            //     'harga' => $harga,
+            //     'invoice' =>  $order_id . '.pdf',
+            // ];
 
-            SendMailTransaction::dispatchSync($params);
+            // SendMailTransaction::dispatchSync($params);
 
             // dispatch(function () use ($params) {
             //     Mail::to($params['email'])

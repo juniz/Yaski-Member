@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Services\Midtrans\CallbackService;
+use App\Jobs\SendMailTransaction;
+use Illuminate\Support\Str;
 
 class PaymentCallbackController extends Controller
 {
@@ -18,9 +20,25 @@ class PaymentCallbackController extends Controller
                 $order = $callback->getOrder();
 
                 if ($callback->isSuccess()) {
-                    Transaction::where('order_id', $order->order_id)->update([
+                    $transaction = Transaction::where('order_id', $order->order_id)->first();
+                    $transaction->update([
                         'stts' => 'dibayar',
                     ]);
+                    foreach ($transaction->peserta as $peserta) {
+                        $params = [
+                            'order_id' => $order->order_id,
+                            'email' => Str::lower($peserta->email),
+                            'workshop' => $transaction->workshop->nama,
+                            'nama' => Str::upper($peserta->nama),
+                            'pesanan' => $peserta->paket,
+                            'total' => $peserta->harga,
+                            'jml' => 1,
+                            'harga' => $peserta->harga,
+                            'invoice' => $order->order_id . '.pdf',
+                        ];
+
+                        SendMailTransaction::dispatchSync($params);
+                    }
                 }
 
                 if ($callback->isExpire()) {
