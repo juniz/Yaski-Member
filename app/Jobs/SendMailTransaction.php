@@ -3,13 +3,12 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Mail\TransactionMail;
 
 class SendMailTransaction implements ShouldQueue
 {
@@ -33,16 +32,7 @@ class SendMailTransaction implements ShouldQueue
      */
     public function handle()
     {
-        $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
-        $data = $this->data;
-        $beautymail->send('emails.welcome', [
-            'name' => $data['nama'],
-            'qr' => $data['qr'],
-        ], function ($message) use ($data) {
-            $message
-                ->from('noreplay@yaski.com')
-                ->to($data['email'], $data['nama'])
-                ->subject('Bukti Pendaftaran Workshop YASKI');
-        });
+        Mail::to($this->data['email'])
+            ->send(new TransactionMail($this->data));
     }
 }

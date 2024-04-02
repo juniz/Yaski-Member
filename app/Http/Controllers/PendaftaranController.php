@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TransactionMail;
 use App\Invoice\Transaction as InvoiceTransaction;
+use App\Jobs\SendMailTransaction;
 
 class PendaftaranController extends Controller
 {
@@ -343,19 +344,18 @@ class PendaftaranController extends Controller
                 'invoice' =>  $order_id . '.pdf',
             ];
 
-            dispatch(function () use ($params) {
-                Mail::to($params['email'])
-                    ->send(new TransactionMail($params));
-            });
+            SendMailTransaction::dispatchSync($params);
+
+            // dispatch(function () use ($params) {
+            //     Mail::to($params['email'])
+            //         ->send(new TransactionMail($params));
+            // });
 
             DB::commit();
 
             return response()->json([
                 'status' => 'success',
-                'data' => [
-                    'snap_token' => $snapToken,
-                    'order_id' => $order_id,
-                ]
+                'snap_token' => $snapToken,
             ], 200);
         } catch (\Exception $e) {
 
