@@ -24,6 +24,7 @@ class PaymentCallbackController extends Controller
                     $transaction->update([
                         'stts' => 'dibayar',
                     ]);
+                    dd($transaction->peserta);
                     foreach ($transaction->peserta as $peserta) {
                         $params = [
                             'order_id' => $order->order_id,
