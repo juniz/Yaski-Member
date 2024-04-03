@@ -346,7 +346,10 @@ class PendaftaranController extends Controller
             //     'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine(),
             // ], 500);
 
-            return redirect()->back()->with('error', App::environment('production') ? 'Terjadi kesalahan' : $e->getMessage());
+            return redirect()->back()->with([
+                'type' => 'error',
+                'message' => App::environment('production') ? 'Terjadi kesalahan' : $e->getMessage(),
+            ]);
         }
     }
 }
