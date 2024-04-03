@@ -16,14 +16,15 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">
-                <form id="payment-formm" method="POST" action="{{ route('pendaftaran.transaksi') }}">
-                    @csrf
+                <form id="payment-form" method="POST">
+                    {{-- @csrf --}}
                     {{-- <div x-data="{ jml:1 }">
                         <template x-for="i in jml">
                             <x-ui.input-row label="Nama" id="nama" />
                         </template>
                         <button type="button" class="btn btn-primary" x-on:click="jml++">+</button>
                     </div> --}}
+                    {{-- <x-ui.input-row id="workshop_id" value="{{ $workshop->id }}" type="hidden" /> --}}
                     <x-ui.input-row label="Nama" class="uppercase" id="nama" />
                     <x-ui.select-row label="Jenis Kelamin" id="jenis_kelamin" placeholder="Pilih jenis kelamin">
                         <option value="">Pilih jenis kelamin</option>
@@ -172,35 +173,19 @@
             data: data,
             success: function(data) {
                 console.log(data);
-                // window.location = data.snap_token;
                 if (data.status == "success") {
-                    snap.pay(data.snap_token, {
-                        onSuccess: function(result) {
-                            // console.log(result);
-                            window.location.href = "{{ route('workshop.list') }}";
-                            // $.ajax({
-                            //     url: "{{ route('pendaftaran.store') }}",
-                            //     type: "POST",
-                            //     data: data,
-                            //     success: function(data) {
-                            //         console.log(data);
-                            //         if (data.status == "success") {
-                            //             window.location.href = "{{ route('workshop.list') }}";
-                            //         }
-                            //     },
-                            //     error: function(xhr, status, error) {
-                            //         let err = JSON.parse(xhr.responseText);
-                            //         alert(err.message);
-                            //     }
-                            // });
-                        },
-                        onPending: function(result) {
-                            console.log(result);
-                        },
-                        onError: function(result) {
-                            console.log(result);
-                        }
-                    });
+                    window.location = data.snap_token;
+                    // snap.pay(data.snap_token, {
+                    //     onSuccess: function(result) {
+                    //         window.location.href = "{{ route('workshop.list') }}";
+                    //     },
+                    //     onPending: function(result) {
+                    //         console.log(result);
+                    //     },
+                    //     onError: function(result) {
+                    //         console.log(result);
+                    //     }
+                    // });
                 }else{
                     alert(data.message);
                 }

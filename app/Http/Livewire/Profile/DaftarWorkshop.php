@@ -3,15 +3,12 @@
 namespace App\Http\Livewire\Profile;
 
 use Livewire\Component;
-use App\Models\Team;
 use App\Models\Workshop;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
-use Illuminate\Support\Facades\Mail;
-use App\Invoice\TransactionMember as InvoiceTransaction;
-use App\Mail\MemberTransactionMail;
+use Illuminate\Support\Facades\Redirect;
 
 class DaftarWorkshop extends Component
 {
@@ -81,9 +78,12 @@ class DaftarWorkshop extends Component
 
         try {
             $workshop = Workshop::find($this->workshop_id)->first();
-            $diffDate = now()->diffInDays($workshop->tgl_mulai, false);
-            if ($diffDate > 0) {
-                $this->alert('warning', 'Pendaftaran sudah ditutup');
+            if ($workshop->tgl_mulai < now() || $workshop->tgl_selesai < now()) {
+                $this->alert('warning', 'Workshop sudah berakhir');
+                return;
+            }
+            if ($workshop->peserta->count() >= $workshop->kuota) {
+                $this->alert('warning', 'Kuota workshop sudah penuh');
                 return;
             }
             $fasyankes = \App\Models\Fasyankes::where('user_id', auth()->user()->id)->first();
@@ -91,14 +91,15 @@ class DaftarWorkshop extends Component
                 $this->alert('warning', 'Lengkapi data fasyankes terlebih dahulu');
                 return;
             }
-            $cek = \App\Models\Transaction::where('kd_rs', $fasyankes->kode)->where('workshop_id', $this->workshop_id)->first();
-            if ($cek) {
-                $this->alert('warning', 'Anda sudah terdaftar');
-                return;
-            }
-
-            $rand = rand(000000, 999999);
-            $order_id = date('Ymd') . '-' . $rand;
+            // $cek = \App\Models\Transaction::where('kd_rs', $fasyankes->kode)->where('workshop_id', $this->workshop_id)->first();
+            // if ($cek) {
+            //     $this->alert('warning', 'Anda sudah terdaftar');
+            //     return;
+            // }
+            $countTransanction = \App\Models\Transaction::where('workshop_id', $this->workshop_id)->count();
+            $last_no = sprintf("%04d", $countTransanction + 1);
+            // $rand = rand(000000, 999999);
+            $order_id = date('Ymd') . '-' . $last_no;
 
             DB::beginTransaction();
             $transaksi = \App\Models\Transaction::create([
@@ -174,40 +175,14 @@ class DaftarWorkshop extends Component
                 ),
             );
 
-            $this->snapToken = \Midtrans\Snap::getSnapToken($params);
+            $transactionSnap = \Midtrans\Snap::createTransaction($params);
+            $this->snapToken = $transactionSnap->token;
             $transaksi->snap_token = $this->snapToken;
             $transaksi->save();
-            // $invoice = new InvoiceTransaction();
-            // $data = [
-            //     'order_id' => $order_id,
-            //     'invoice_name' => $workshop->nama,
-            //     'file_name' => 'Invoice - ' . $fasyankes->nama . '-' . time(),
-            //     'costumer' => [
-            //         'name' => $fasyankes->nama,
-            //         'email' => $fasyankes->email,
-            //         'phone' => $fasyankes->telp,
-            //     ],
-            //     'product' => $producs,
-            // ];
-            // // dd($data);
-            // $invoice->generateInvoice($data);
-
-            // $params = [
-            //     'order_id' => $order_id,
-            //     'email' => $fasyankes->email,
-            //     'workshop' => $workshop->nama,
-            //     'items' => $pesanan,
-            //     'total' => $ttl,
-            //     'invoice' => 'Invoice - ' . $fasyankes->nama . '-' . time() . '.pdf',
-            // ];
-
-            // dispatch(function () use ($params) {
-            //     Mail::to('yudojuni93@gmail.com')
-            //         ->send(new MemberTransactionMail($params));
-            // });
             DB::commit();
 
-            $this->emit('open-modal-snap', ['snapToken' => $this->snapToken, 'order_id' => $order_id]);
+            return Redirect::to($transactionSnap->redirect_url);
+            // $this->emit('open-modal-snap', ['snapToken' => $this->snapToken, 'order_id' => $order_id]);
         } catch (\Exception $e) {
             DB::rollBack();
             $this->alert('error', 'Gagal mendaftar', [
