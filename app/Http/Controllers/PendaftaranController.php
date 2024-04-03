@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TransactionMail;
 use App\Invoice\Transaction as InvoiceTransaction;
 use App\Jobs\SendMailTransaction;
+use Illuminate\Support\Facades\App;
 
 class PendaftaranController extends Controller
 {
@@ -287,7 +288,7 @@ class PendaftaranController extends Controller
                 ),
             );
 
-            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            $snapToken = \Midtrans\Snap::createTransaction($params)->redirect_url;
 
             DB::beginTransaction();
             $transaksi = Transaction::create([
@@ -330,37 +331,22 @@ class PendaftaranController extends Controller
             ];
             $invoice->generateInvoice($data);
 
-            // $params = [
-            //     'order_id' => $order_id,
-            //     'email' => Str::lower($request->email),
-            //     'workshop' => $workshop->nama,
-            //     'nama' => Str::upper($request->nama),
-            //     'pesanan' => $paket,
-            //     'total' => $harga,
-            //     'jml' => 1,
-            //     'harga' => $harga,
-            //     'invoice' =>  $order_id . '.pdf',
-            // ];
-
-            // SendMailTransaction::dispatchSync($params);
-
-            // dispatch(function () use ($params) {
-            //     Mail::to($params['email'])
-            //         ->send(new TransactionMail($params));
-            // });
-
             DB::commit();
 
-            return response()->json([
-                'status' => 'success',
-                'snap_token' => $snapToken,
-            ], 200);
+            // return response()->json([
+            //     'status' => 'success',
+            //     'snap_token' => $snapToken,
+            // ], 200);
+
+            return redirect()->to($snapToken);
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine(),
-            ], 500);
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine(),
+            // ], 500);
+
+            return redirect()->back()->with('error', App::environment('production') ? 'Terjadi kesalahan' : $e->getMessage());
         }
     }
 }
