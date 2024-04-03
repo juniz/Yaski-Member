@@ -17,6 +17,7 @@
         <div class="card">
             <div class="card-body p-4">
                 <form id="payment-formm" method="POST" action="{{ route('pendaftaran.transaksi') }}">
+                    @csrf
                     {{-- <div x-data="{ jml:1 }">
                         <template x-for="i in jml">
                             <x-ui.input-row label="Nama" id="nama" />
