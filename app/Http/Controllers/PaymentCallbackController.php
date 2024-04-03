@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Services\Midtrans\CallbackService;
 use App\Jobs\SendMailTransaction;
 use Illuminate\Support\Str;
+use App\Invoice\Transaction as InvoiceTransaction;
 
 class PaymentCallbackController extends Controller
 {
@@ -25,7 +26,27 @@ class PaymentCallbackController extends Controller
                         'stts' => 'dibayar',
                     ]);
 
+                    $workshop = $transaction->workshop;
+                    $invoice = new InvoiceTransaction();
+
                     foreach ($transaction->peserta as $peserta) {
+                        $data = [
+                            'order_id' => $order->order_id,
+                            'file_name' => $order->order_id,
+                            'costumer' => [
+                                'name' => Str::upper($peserta->nama),
+                                'email' => Str::lower($peserta->email),
+                                'phone' => $peserta->telp,
+                            ],
+                            'product' => [
+                                'name' => $workshop->nama,
+                                'description' =>  $peserta->paket,
+                                'price' =>  $peserta->harga,
+                                'quantity' => 1,
+                            ],
+                        ];
+                        $invoice->generateInvoice($data);
+
                         $params = [
                             'order_id' => $order->order_id,
                             'email' => Str::lower($peserta->email),
@@ -37,7 +58,7 @@ class PaymentCallbackController extends Controller
                             'harga' => $peserta->harga,
                             'invoice' => $order->order_id . '.pdf',
                         ];
-                        dd($params);
+
                         SendMailTransaction::dispatchSync($params);
                     }
                 }

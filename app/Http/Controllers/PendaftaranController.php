@@ -315,24 +315,6 @@ class PendaftaranController extends Controller
                 'harga' => $harga,
             ]);
 
-            $invoice = new InvoiceTransaction();
-            $data = [
-                'order_id' => $order_id,
-                'file_name' => $order_id,
-                'costumer' => [
-                    'name' => Str::upper($request->nama),
-                    'email' => Str::lower($request->email),
-                    'phone' => $request->telp,
-                ],
-                'product' => [
-                    'name' => $workshop->nama,
-                    'description' => $paket,
-                    'price' => $harga,
-                    'quantity' => 1,
-                ],
-            ];
-            $invoice->generateInvoice($data);
-
             DB::commit();
 
             return response()->json([
