@@ -145,7 +145,7 @@
                     <td class="border-0 pl-0">
                         @if($invoice->status)
                             <h4 class="text-uppercase cool-gray">
-                                <strong>{{ $invoice->status }}</strong>
+                                <strong>Lunas</strong>
                             </h4>
                         @endif
                         <p>{{ __('invoices::invoice.serial') }} <strong>{{ $invoice->getSerialNumber() }}</strong></p>
@@ -160,11 +160,11 @@
             <thead>
                 <tr>
                     <th class="border-0 pl-0 party-header" width="48.5%">
-                        {{ __('invoices::invoice.seller') }}
+                        Dari
                     </th>
                     <th class="border-0" width="3%"></th>
                     <th class="border-0 pl-0 party-header">
-                        {{ __('invoices::invoice.buyer') }}
+                        Kepada
                     </th>
                 </tr>
             </thead>
