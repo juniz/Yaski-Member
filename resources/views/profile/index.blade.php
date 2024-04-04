@@ -72,7 +72,7 @@
             <div class="dropdown">
                 <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bx bx-dots-horizontal-rounded font-size-20"></i>
+                    <i class="bx bx-dots-horizontal-rounded font-size-20"></i> Menu
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target=".update-profile"
