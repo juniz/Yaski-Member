@@ -11,6 +11,7 @@ use Rappasoft\LaravelLivewireTables\Views\Filters\DateFilter;
 use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PesertaExport;
+use Illuminate\Support\Str;
 use Rappasoft\LaravelLivewireTables\Views\Columns\BooleanColumn;
 
 class PesertaTable extends DataTableComponent
@@ -35,7 +36,7 @@ class PesertaTable extends DataTableComponent
             ->join('transaction', 'transaction.id', '=', 'peserta.transaction_id')
             ->where('transaction.workshop_id', $this->idWorkshop)
             ->orderBy('transaction.order_id', 'asc')
-            ->select('peserta.*', 'transaction.order_id', 'transaction.nama_rs', 'transaction.kd_rs', 'transaction.stts');
+            ->select('peserta.*', 'transaction.order_id', 'transaction.nama_rs', 'transaction.kd_rs', 'transaction.stts', 'peserta.stts as stts_peserta');
     }
 
     public function filters(): array
@@ -57,8 +58,11 @@ class PesertaTable extends DataTableComponent
                 ->filter(function (Builder $builder, $value) {
                     if ($value === '') {
                         return;
+                    } else if ($value === 'batal') {
+                        $builder->where('peserta.stts', $value)->orWhere('transaction.stts', $value);
+                    } else {
+                        $builder->where('transaction.stts', $value);
                     }
-                    $builder->where('transaction.stts', $value);
                 }),
         ];
     }
@@ -93,6 +97,13 @@ class PesertaTable extends DataTableComponent
                 ->sortable()
                 ->searchable(),
             Column::make("Status", "transaction.stts")
+                ->format(function ($value, $row, Column $column) {
+                    if ($row->stts_peserta == 'batal') {
+                        return 'Batal';
+                    } else {
+                        return Str::ucfirst($value);
+                    }
+                })
                 ->sortable()
                 ->searchable(),
             Column::make("Nama RS", "transaction.nama_rs")

@@ -77,6 +77,8 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target=".update-profile"
                             href="#">Profile</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" id="changePasswordBtn" data-bs-target="#changePasswordModal"
+                                href="#">Rubah Password</a></li>
                     <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target=".update-fasyankes"
                             href="#">Fasyankes</a></li>
                 </ul>
@@ -426,6 +428,7 @@
 </div><!-- /.modal -->
 
 <livewire:profile.daftar-workshop />
+<livewire:component.change-password />
 
 @endsection
 @section('script')
@@ -445,6 +448,10 @@
     //         previous: 'Sebelumnya'
     //     }
     // });
+
+    $('#changePasswordBtn').on('click', function() {
+        $('#changePasswordModal').modal('show');
+    });
 
     $('#jenis').on('change', function() {
         var jenis = $(this).val();
