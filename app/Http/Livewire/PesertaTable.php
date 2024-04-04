@@ -110,8 +110,8 @@ class PesertaTable extends DataTableComponent
                 ->format(function ($value, $row, Column $column) {
                     if ($row->transaction->kd_rs) {
                         $fasyankes = \App\Models\Fasyankes::where('kode', $row->transaction->kd_rs)->first();
-                        $paklaring = \App\Models\Paklaring::where('user_id', $fasyankes->belongUser->id)->where('stts', 'disetujui')->first();
-                        $mou = \App\Models\Mou::where('user_id', $fasyankes->belongUser->id)->where('stts', 'disetujui')->first();
+                        $paklaring = \App\Models\Paklaring::where('user_id', $fasyankes->belongUser->id ?? '-')->where('stts', 'disetujui')->first();
+                        $mou = \App\Models\Mou::where('user_id', $fasyankes->belongUser->id ?? '-')->where('stts', 'disetujui')->first();
                         if ($paklaring && $mou) {
                             return '
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
