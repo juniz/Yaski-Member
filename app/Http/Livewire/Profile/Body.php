@@ -30,13 +30,16 @@ class Body extends Component
     {
         $user = auth()->user();
         $fasyankes = Fasyankes::where('user_id', $user->id)->first();
-        $this->kode = $fasyankes->kode;
-        $this->nama = $fasyankes->nama;
-        $this->jenis = $fasyankes->jenis;
-        $this->kelas = $fasyankes->kelas;
-        $this->alamat = $fasyankes->alamat;
-        $this->email = $fasyankes->email;
-        $this->telp = $fasyankes->telp;
-        $this->direktur = $fasyankes->direktur;
+        // dd($fasyankes);
+        if ($fasyankes) {
+            $this->kode = $fasyankes->kode;
+            $this->nama = $fasyankes->nama;
+            $this->jenis = $fasyankes->jenis;
+            $this->kelas = $fasyankes->kelas;
+            $this->alamat = $fasyankes->alamat;
+            $this->email = $fasyankes->email;
+            $this->telp = $fasyankes->telp;
+            $this->direktur = $fasyankes->direktur;
+        }
     }
 }

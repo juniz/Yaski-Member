@@ -8,12 +8,18 @@
 <livewire:profile.gride-members />
 <livewire:profile.create-user />
 <livewire:profile.edit-user />
+<livewire:component.rubah-password />
 @endsection
 @section('script')
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/pages/sweetalert.init.js') }}"></script>
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
 <script>
+    Livewire.on('changePassword', event => {
+        Livewire.emit('changeIdUser', event)
+        $('#changePasswordModal').modal('show');
+    })
+
     window.addEventListener('modalPakelaring', event => {
         $('#pakelaring-modal').modal('show');
     })

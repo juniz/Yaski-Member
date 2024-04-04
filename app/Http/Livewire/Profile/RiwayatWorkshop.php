@@ -18,7 +18,7 @@ class RiwayatWorkshop extends Component
     public function getWorkshop()
     {
         $fasyankes = \App\Models\Fasyankes::where('user_id', auth()->user()->id)->first();
-        $this->transactions = Transaction::where('kd_rs', $fasyankes->kode)->get();
+        $this->transactions = Transaction::where('kd_rs', $fasyankes->kode ?? '-')->get();
     }
 
     public function bayar($id)

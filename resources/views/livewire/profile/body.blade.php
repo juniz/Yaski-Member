@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="d-flex flex-row justify-content-between">
                 <h4 class="card-title text-uppercase mb-0">
-                    @if(isset($nama))
+                    @if(!empty($nama))
                     {{ $nama }}
                     @else
                     Data Fasynakes Kosong
@@ -17,6 +17,7 @@
         </div>
 
         <div wire:init='load' class="card-body">
+            @if(!empty($name))
             <div>
                 <div class="pb-3">
                     <h5 class="font-size-15">Kode :</h5>
@@ -67,6 +68,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         <!-- end card body -->
     </div>

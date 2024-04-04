@@ -57,6 +57,9 @@
                                         <a class="dropdown-item" wire:click='$emit("edit-user", {{$member->id}})' href="#">
                                             <i class="bx bx-edit me-1"></i>Edit
                                         </a>
+                                        <a class="dropdown-item" wire:click='$emit("changePassword", {{$member->id}})' href="#">
+                                            <i class="bx bx-edit me-1"></i>Rubah Password
+                                        </a>
                                         <a class="dropdown-item" wire:click='modalPakelaring("{{$member->id}}")' href="#"><i class="bx bx-envelope me-1"></i>Paklaring</a>
                                         <a class="dropdown-item" href="{{ route('members.edit', $member->id) }}"><i class="bx bx-user me-1"></i>Profile</a>
                                         <a class="dropdown-item" wire:click='confirmDelete("{{$member->id}}")' href="#"><i class="bx bx-trash me-1"></i>Hapus</a>
