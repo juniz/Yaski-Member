@@ -17,16 +17,11 @@ use Illuminate\Support\Facades\Mail;
 |
 */
 
-Auth::routes(['verify' => true]);
+Auth::routes();
 //Language Translation
-Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
+// Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
-Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('root');
-
-Route::get('kwitansi', function () {
-    return view('pdf.kwitansi');
-});
 
 //workshop
 Route::resource('workshops', App\Http\Controllers\WorkshopController::class);
@@ -34,8 +29,8 @@ Route::resource('workshops', App\Http\Controllers\WorkshopController::class);
 //sub-user
 Route::resource('sub-users', App\Http\Controllers\SubUserController::class);
 
-Route::middleware('auth')->group(function () {
-
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('root');
     Route::get('/dashboard', fn () => view('index'))->name('dashboard');
     //Update User Details
     Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
