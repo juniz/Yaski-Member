@@ -17,13 +17,13 @@ use Illuminate\Support\Facades\Mail;
 |
 */
 
-Auth::routes();
+// Auth::routes();
 
-// Auth::routes(['verify' => true]);
+Auth::routes(['verify' => true]);
 //Language Translation
 // Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
 
 //workshop
 Route::resource('workshops', App\Http\Controllers\WorkshopController::class);
@@ -76,34 +76,36 @@ Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
 Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
 
-Route::get('/login', fn () => view('auth.login'))->name('login');
-Route::get('/register', fn () => view('auth.register'))->name('register');
-Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
-Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
-Route::get('/verify-email', fn () => view('auth.verify'))->name('verification.notice');
-Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
-Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', fn () => view('auth.login'))->name('login');
+    Route::get('/register', fn () => view('auth.register'))->name('register');
+    Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
+    Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
+    Route::get('/verify-email', fn () => view('auth.verify'))->name('verification.notice');
+    Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
+    Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+});
 
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 
-Route::get('invoice', function () {
-    $data = [
-        'costumer' => [
-            'name' => 'Yudo',
-            'email' => 'yudojuni93@gmail.com',
-            'phone' => '08123456789'
-        ],
-        'product' => [
-            'name' => 'Pemrograman',
-            'description' => 'Twin Bed',
-            'price' => '3500000',
-            'quantity' => '1',
-        ],
+// Route::get('invoice', function () {
+//     $data = [
+//         'costumer' => [
+//             'name' => 'Yudo',
+//             'email' => 'yudojuni93@gmail.com',
+//             'phone' => '08123456789'
+//         ],
+//         'product' => [
+//             'name' => 'Pemrograman',
+//             'description' => 'Twin Bed',
+//             'price' => '3500000',
+//             'quantity' => '1',
+//         ],
 
-    ];
-    $invoice = new Transaction();
-    return $invoice->generateInvoice($data)->stream();
-});
+//     ];
+//     $invoice = new Transaction();
+//     return $invoice->generateInvoice($data)->stream();
+// });
 
 // Route::get('/test', function () {
 
