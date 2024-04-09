@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Invoice\Transaction;
 use App\Http\Controllers\PaymentCallbackController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Mail;
 /*
@@ -76,15 +77,25 @@ Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
 Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', fn () => view('auth.login'))->name('login');
-    Route::get('/register', fn () => view('auth.register'))->name('register');
-    Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
-    Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
-    Route::get('/verify-email', fn () => view('auth.verify'))->name('verification.notice');
-    Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
-    Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
-});
+// Route::get('/email/verify', function () {
+//     return view('auth.verify');
+// })->middleware('auth')->name('verification.notice');
+
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+
+//     return redirect('/profile');
+// })->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route::middleware('guest')->group(function () {
+//     Route::get('/login', fn () => view('auth.login'))->name('login');
+//     Route::get('/register', fn () => view('auth.register'))->name('register');
+//     Route::get('/forgot-password', fn () => view('auth.forgot-password'))->name('password.request');
+//     Route::get('/reset-password/{token}', fn () => view('auth.reset-password'))->name('password.reset');
+//     Route::get('/verify-email', fn () => view('auth.verify'))->name('verification.notice');
+//     Route::get('/verify-email/{id}/{hash}', fn () => view('auth.verify-email'))->name('verification.verify');
+//     Route::get('/confirm-password', fn () => view('auth.confirm-password'))->name('password.confirm');
+// });
 
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 
