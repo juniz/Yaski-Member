@@ -7,6 +7,7 @@ use App\Http\Controllers\PaymentCallbackController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -86,6 +87,12 @@ Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))-
 
 //     return redirect('/profile');
 // })->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Route::middleware('guest')->group(function () {
 //     Route::get('/login', fn () => view('auth.login'))->name('login');

@@ -30,6 +30,12 @@ Verifikasi Email
                                         <div class="mt-4">
                                             <a href="{{ URL::asset('/') }}" class="btn btn-primary w-100">Tampilan Utama</a>
                                         </div>
+                                        <div class="mt-4">
+                                            <form method="POST" action="{{ route('verification.send') }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success w-100">Kirim Ulang Email Verifikasi</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
