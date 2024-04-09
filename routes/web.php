@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Mail;
 
 Auth::routes();
 
-Auth::routes(['verify' => true]);
+// Auth::routes(['verify' => true]);
 //Language Translation
 // Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
