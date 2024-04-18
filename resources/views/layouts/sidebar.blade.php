@@ -16,6 +16,7 @@
                     @endcan
                 </li>
 
+                @can('view member')
                 <li class="menu-title" data-key="t-apps">Pengaturan</li>
 
                 <li>
@@ -43,6 +44,7 @@
                         @endcan
                     </ul>
                 </li>
+                @endcan
 
                 {{-- <li class="menu-title" data-key="t-apps">Pendaftaran</li>
 
@@ -74,6 +76,7 @@
                     </a>
                 </li>
 
+                @can('view paklaring')
                 <li class="menu-title" data-key="t-apps">Permintaan</li>
 
                 <li>
@@ -94,6 +97,7 @@
                         <li><a href="apps-email-read" data-key="t-read-email">@lang('translation.Read_Email')</a></li>
                     </ul> --}}
                 </li>
+                @can('view paklaring')
 
                 {{-- <li>
                     <a href="apps-calendar">
