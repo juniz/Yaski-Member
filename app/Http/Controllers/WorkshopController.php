@@ -141,12 +141,11 @@ class WorkshopController extends Controller
         );
 
         try {
+            $imageName = null;
             if (request()->has('gambar')) {
                 $image = request()->file('gambar');
                 $imageName = $request->nama . '-' . time() . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('public/workshop', $imageName);
-            } else {
-                $imageName = $workshop->gambar;
             }
 
             $workshop = Workshop::find($workshop);
@@ -154,7 +153,7 @@ class WorkshopController extends Controller
             $workshop->slug = Str::slug($request->nama);
             $workshop->deskripsi = $request->deskripsi;
             $workshop->kuota = $request->kuota;
-            $workshop->gambar = $imageName;
+            $workshop->gambar = $imageName ?? $workshop->gambar;
             $workshop->lokasi = $request->lokasi;
             $workshop->tgl_mulai = $request->tgl_mulai;
             $workshop->tgl_selesai = $request->tgl_selesai;
