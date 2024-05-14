@@ -23,15 +23,47 @@ Workshop
 @endcomponent
 @component('components.alert')@endcomponent
 @php
-$workshop = \App\Models\Workshop::latest()->first();
+$workshop = \App\Models\Workshop::latest()->get();
 // $reservation = \App\Models\Reservation::where('workshop_id', $workshop->id ?? '')->where('user_id', Auth::user()->id)->first();
 @endphp
-@if($workshop)
-<livewire:component.form-pendaftaran />
-<livewire:profile.daftar-workshop />
-@else
-<h3 class="text-center">Workshop Kosong</h3>
-@endif
+<div class="row">
+    @forelse($workshop as $item)
+    <div class="col-xl-4 col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="pricing-badge">
+                    <span class="badge text-white bg-primary">Baru</span>
+                </div>
+                <div class="product-img position-relative">
+                    <img src="{{ url('storage/workshop/'.$item->gambar) }}" alt="{{ $item->nama }}" class="img-fluid mx-auto d-block">
+                </div>
+                <div class="d-flex justify-content-between align-items-end mt-4">
+                    <div>
+                        <h5 class="mb-3 text-truncate"><a href="javascript: void(0);" class="text-dark">{{ $item->nama }}</a></h5>
+                        <span class="d-inline-block text-truncate" style="max-width: 400px; max-height: 75px;">
+                            {!! $item->deskripsi !!}
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-start">
+                <div></div>
+                <div>
+                    <a href="{{  url('/workshop/detail/'.$item->slug) }}" class="link-primary stretched-link">Lihat detail <i class="bx bx-right-arrow-alt"></i></a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @empty
+    <div class="card">
+        <div class="card-body">
+            <h3 class="text-center">Workshop Kosong</h3>
+        </div>
+    </div>
+    @endforelse
+</div>
+{{-- <livewire:component.form-pendaftaran /> --}}
+{{-- <livewire:profile.daftar-workshop /> --}}
 @endsection
 
 @section('script')

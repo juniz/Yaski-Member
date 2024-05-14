@@ -6,14 +6,24 @@ use Livewire\Component;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Illuminate\Http\Request;
 
 class FormPendaftaran extends Component
 {
     use LivewireAlert;
     public $total = 0, $nama = [], $jml = [], $harga = [];
+    public $slug = '';
+    public $workshop_id;
+
+    public function mount(Request $request)
+    {
+        $this->slug = $request->slug;
+    }
+
     public function render()
     {
-        $workshop = \App\Models\Workshop::latest()->first();
+        $workshop = \App\Models\Workshop::where('slug', $this->slug)->first();
+        $this->workshop_id = $workshop->id;
         return view('livewire.component.form-pendaftaran', [
             'workshop' => $workshop
         ]);
@@ -54,7 +64,7 @@ class FormPendaftaran extends Component
             $this->alert('warning', 'Pilih paket terlebih dahulu');
         } else {
             try {
-                $cek = \App\Models\Reservation::where('user_id', auth()->user()->id)->where('workshop_id', \App\Models\Workshop::latest()->first()->id)->first();
+                $cek = \App\Models\Reservation::where('user_id', auth()->user()->id)->where('workshop_id', $this->workshop_id)->first();
                 if ($cek) {
                     $this->alert('warning', 'Anda sudah terdaftar');
                     return;
@@ -63,7 +73,7 @@ class FormPendaftaran extends Component
                     'tgl_reservasi' => now(),
                     'status' => 'pesan',
                     'user_id' => auth()->user()->id,
-                    'workshop_id' => \App\Models\Workshop::latest()->first()->id,
+                    'workshop_id' => $this->workshop_id,
                 ]);
                 foreach ($this->nama as $key => $value) {
                     \App\Models\WorkshopItem::create([

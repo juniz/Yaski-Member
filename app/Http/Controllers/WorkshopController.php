@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Workshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class WorkshopController extends Controller
 {
@@ -70,6 +71,7 @@ class WorkshopController extends Controller
 
             $workshop = new Workshop();
             $workshop->nama = $request->nama;
+            $workshop->slug = Str::slug($request->nama);
             $workshop->deskripsi = $request->deskripsi;
             $workshop->kuota = $request->kuota;
             $workshop->gambar = $imageName;
@@ -78,7 +80,7 @@ class WorkshopController extends Controller
             $workshop->tgl_selesai = $request->tgl_selesai;
             $workshop->save();
 
-            return redirect()->route('workshops.index')->with(['message' => 'Workshop berhasil ditambahkan', 'type' => 'success']);
+            return redirect()->to('/list-workshop')->with(['message' => 'Workshop berhasil ditambahkan', 'type' => 'success']);
         } catch (\Exception $e) {
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
         }
@@ -149,6 +151,7 @@ class WorkshopController extends Controller
 
             $workshop = Workshop::find($workshop);
             $workshop->nama = $request->nama;
+            $workshop->slug = Str::slug($request->nama);
             $workshop->deskripsi = $request->deskripsi;
             $workshop->kuota = $request->kuota;
             $workshop->gambar = $imageName;

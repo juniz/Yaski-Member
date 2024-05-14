@@ -11,6 +11,7 @@ class Alert extends Component
 {
     public $fasyankes;
     public $workshop_id;
+    public $slug;
     protected $listeners = ['load-alert' => 'load'];
 
     public function mount($fasyankes)
@@ -29,6 +30,7 @@ class Alert extends Component
         if ($team > 0) {
             $workshop = Workshop::latest()->first();
             $this->workshop_id = $workshop->id;
+            $this->slug = $workshop->slug;
             $transaction = Transaction::where('workshop_id', $workshop->id)->where('kd_rs', $this->fasyankes->kode)->first();
             if (empty($transaction)) {
                 session()->flash('message', 'Anda belum terdaftar di workshop ' . $workshop->nama . '<br> Silahkan melakukan pendaftaran disini.');

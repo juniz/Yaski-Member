@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
 Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
+Route::get('/workshop/detail/{slug}', fn () => view('workshops.detail'))->name('workshop.detail');
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])->name('pendaftaran.index');
 Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');

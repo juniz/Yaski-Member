@@ -6,7 +6,7 @@
                     @if(!empty($nama))
                     {{ $nama }}
                     @else
-                    Data Fasynakes Kosong
+                    Data Fasyankes Masih Kosong
                     @endif
                 </h4>
                 {{-- <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"

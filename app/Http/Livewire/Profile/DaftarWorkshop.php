@@ -53,8 +53,9 @@ class DaftarWorkshop extends Component
     {
         $this->workshop_id = $id;
         // $this->teams = Team::where('user_id', auth()->user()->id)->get();
-        $workshop = Workshop::find($id)->first();
+        $workshop = Workshop::find($id);
         $this->listHarga = $workshop->paket;
+        // dd($this->listHarga);
         $this->emit('open-modal-workshop');
     }
 
@@ -77,8 +78,8 @@ class DaftarWorkshop extends Component
         ]);
 
         try {
-            $workshop = Workshop::find($this->workshop_id)->first();
-            if ($workshop->tgl_mulai < now() || $workshop->tgl_selesai < now()) {
+            $workshop = Workshop::find($this->workshop_id);
+            if ($workshop->tgl_mulai < date('Y-m-d') || $workshop->tgl_selesai < date('Y-m-d')) {
                 $this->alert('warning', 'Workshop sudah berakhir');
                 return;
             }

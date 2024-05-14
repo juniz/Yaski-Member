@@ -20,7 +20,7 @@
                 <li class="menu-title" data-key="t-apps">Pengaturan</li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow">
+                    <a href="javascript: void(0);" class="has-arrow"> 
                         <i data-feather="lock"></i>
                         <span data-key="t-ecommerce">Admin</span>
                     </a>

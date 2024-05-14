@@ -12,6 +12,7 @@ class Workshop extends Model
     protected $table = 'workshop';
     protected $fillable = [
         'nama',
+        'slug',
         'gambar',
         'tgl_mulai',
         'tgl_selesai',
@@ -21,7 +22,7 @@ class Workshop extends Model
 
     public function paket()
     {
-        return $this->hasMany(Paket::class);
+        return $this->hasMany(Paket::class, 'workshop_id', 'id');
     }
 
     public function transaction()

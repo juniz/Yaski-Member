@@ -5,7 +5,8 @@
         <i class="bx bxs-info-circle label-icon"></i><span id="daftar-workshop-btn"><strong>{!! Session::get('message') !!}</strong></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         @if(Session::get('type') == 'info')
-        <button type="button" wire:click='$emit("openModalWorkshop", {{$workshop_id}})' class="btn btn-primary">Daftar</button>
+        {{-- <button type="button" wire:click='$emit("openModalWorkshop", {{$workshop_id}})' class="btn btn-primary">Daftar</button> --}}
+        <a href="{{  url('/workshop/detail/'.$slug) }}" type="button" class="btn btn-primary">Daftar Sekarang</a>
         @endif
     </div>
     @endif
