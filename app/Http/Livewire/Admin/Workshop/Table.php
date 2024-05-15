@@ -37,4 +37,13 @@ class Table extends Component
             $this->alert('error', 'Gagal Menghapus Data');
         }
     }
+
+    public function setStatus($id)
+    {
+        $workshop = Workshop::find($id);
+        $workshop->stts = $workshop->stts == 1 ? '0' : '1';
+        $workshop->save();
+        $this->alert('success', 'Berhasil Mengubah Status');
+        $this->emit('refreshWorkshop');
+    }
 }

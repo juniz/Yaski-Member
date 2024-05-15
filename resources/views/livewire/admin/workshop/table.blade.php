@@ -31,12 +31,16 @@
                                         <td>{{ $workshop->tgl_mulai }}</td>
                                         <td>{{ $workshop->tgl_selesai }}</td>
                                         <td>
-                                            <button 
-                                                type="button" 
-                                                x-bind:class="! open ? 'btn btn-secondary' : 'btn btn-danger' " 
-                                                @click="open = !open" 
-                                                ><span x-text="open ? 'Tutup' : 'Detail'"></span>
-                                            </button>
+                                            <div class="btn-group">
+                                                <button 
+                                                    type="button" 
+                                                    x-bind:class="! open ? 'btn btn-secondary' : 'btn btn-danger' " 
+                                                    @click="open = !open" 
+                                                    ><span x-text="open ? 'Tutup' : 'Detail'"></span>
+                                                </button>
+                                                <button type="button" wire:click='setStatus("{{$workshop->id}}")' class="btn {{ $workshop->stts == '1' ? 'btn-success' : 'btn-danger' }}">{{ $workshop->stts == '1' ? 'Aktif' : 'Tidak Aktif' }}</button>
+                                            </div>
+                                            
                                         </td>
                                     </tr>
                                     <td x-show="open" colspan="6" x-transition>
@@ -71,7 +75,7 @@
                                                 <div class="btn-group">
                                                     <a href="{{ url('/workshop/'.$workshop->id.'/edit') }}" type="button" class="btn btn-sm btn-success"><i class="bx bx-edit"> Ubah</i></a>
                                                     <button type="button" wire:click="$emit('openModalHarga', '{{$workshop->id}}')" class="btn btn-sm btn-primary"><i class="bx bx-lock"></i> Harga</button>
-                                                    <a href="{{ route('workshop.peserta', $workshop->id) }}" class="btn btn-sm btn-secondary">Peserta</a>
+                                                    <a href="{{ route('workshop.peserta', $workshop->id) }}" class="btn btn-sm btn-secondary"><i class="bx bx-user"></i> Peserta</a>
                                                     <button type="button" wire:click="$emit('confirmHapusWorkshop', '{{$workshop->id}}')" class="btn btn-sm btn-danger"><i class="bx bx-trash"></i> Hapus</button>
                                                 </div>
                                             </div>

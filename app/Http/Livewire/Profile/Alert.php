@@ -28,7 +28,7 @@ class Alert extends Component
     {
         $team = Team::where('user_id', auth()->user()->id)->count();
         if ($team > 0) {
-            $workshop = Workshop::latest()->first();
+            $workshop = Workshop::where('stts', '1')->first();
             $this->workshop_id = $workshop->id;
             $this->slug = $workshop->slug;
             $transaction = Transaction::where('workshop_id', $workshop->id)->where('kd_rs', $this->fasyankes->kode)->first();

@@ -23,7 +23,7 @@ Workshop
 @endcomponent
 @component('components.alert')@endcomponent
 @php
-$workshop = \App\Models\Workshop::latest()->get();
+$workshop = \App\Models\Workshop::where('stts', '1')->get();
 // $reservation = \App\Models\Reservation::where('workshop_id', $workshop->id ?? '')->where('user_id', Auth::user()->id)->first();
 @endphp
 <div class="row">
@@ -38,9 +38,9 @@ $workshop = \App\Models\Workshop::latest()->get();
                     <img src="{{ url('storage/workshop/'.$item->gambar) }}" alt="{{ $item->nama }}" class="img-fluid mx-auto d-block">
                 </div>
                 <div class="d-flex justify-content-between align-items-end mt-4">
-                    <div>
+                    <div class="overflow-hidden">
                         <h5 class="mb-3 text-truncate"><a href="javascript: void(0);" class="text-dark">{{ $item->nama }}</a></h5>
-                        <span class="d-inline-block text-truncate" style="max-width: 400px; max-height: 75px;">
+                        <span class="d-inline-block text-truncate" style="max-width: 350px; max-height: 75px;">
                             {!! $item->deskripsi !!}
                         </span>
                     </div>

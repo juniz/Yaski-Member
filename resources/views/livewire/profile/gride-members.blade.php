@@ -25,7 +25,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Nama</th>
                             <th>Fasyankes</th>
                             <th>Email</th>
@@ -34,8 +33,8 @@
                     </thead>
                     <tbody>
                         @forelse($members as $member)
+                        @if(!$member->hasRole('super-admin'))
                         <tr>
-                            <td>{{ ($members ->currentpage()-1) * $members ->perpage() + $loop->index + 1 }}</td>
                             <td><img src="{{ URL::asset('storage/avatar/'.$member->avatar) }}" alt=""
                                     class="avatar-sm rounded-circle me-2"><a class="text-body">{{ $member->name }}</a>
                             </td>
@@ -79,6 +78,7 @@
                                 </div> --}}
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="5" class="text-center">Data tidak ditemukan</td>

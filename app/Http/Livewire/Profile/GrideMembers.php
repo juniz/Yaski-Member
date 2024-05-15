@@ -30,7 +30,7 @@ class GrideMembers extends Component
     public function render()
     {
         return view('livewire.profile.gride-members', [
-            'members' => User::where('name', 'like', '%' . $this->search . '%')->paginate(10)
+            'members' => User::where('name', 'like', '%' . $this->search . '%')->paginate(10),
         ]);
     }
 

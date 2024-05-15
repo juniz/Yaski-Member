@@ -18,6 +18,7 @@ class Workshop extends Model
         'tgl_selesai',
         'lat',
         'lng',
+        'stts',
     ];
 
     public function paket()
