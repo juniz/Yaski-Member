@@ -124,6 +124,7 @@ class WorkshopController extends Controller
                 'deskripsi' => 'required',
                 'kuota' => 'required',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'tor' => 'nullable|mimes:pdf',
                 'lokasi' => 'required',
                 'tgl_mulai' => 'required|date',
                 'tgl_selesai' => 'required|date',
@@ -134,6 +135,7 @@ class WorkshopController extends Controller
                 'kuota.required' => 'Kuota tidak boleh kosong',
                 'gambar.image' => 'File harus berupa gambar',
                 'gambar.mimes' => 'File harus berupa gambar',
+                'tor.mimes' => 'File harus berupa pdf',
                 'lokasi.required' => 'Lokasi tidak boleh kosong',
                 'tgl_mulai.required' => 'Tanggal mulai tidak boleh kosong',
                 'tgl_selesai.required' => 'Tanggal selesai tidak boleh kosong',
@@ -148,12 +150,20 @@ class WorkshopController extends Controller
                 $image->storeAs('public/workshop', $imageName);
             }
 
+            $torName = null;
+            if (request()->has('tor')) {
+                $tor = request()->file('tor');
+                $torName = $request->nama . '-tor-' . time() . '.' . $tor->getClientOriginalExtension();
+                $tor->storeAs('public/workshop', $torName);
+            }
+
             $workshop = Workshop::find($workshop);
             $workshop->nama = $request->nama;
             $workshop->slug = Str::slug($request->nama);
             $workshop->deskripsi = $request->deskripsi;
             $workshop->kuota = $request->kuota;
             $workshop->gambar = $imageName ?? $workshop->gambar;
+            $workshop->tor = $torName ?? $workshop->tor;
             $workshop->lokasi = $request->lokasi;
             $workshop->tgl_mulai = $request->tgl_mulai;
             $workshop->tgl_selesai = $request->tgl_selesai;

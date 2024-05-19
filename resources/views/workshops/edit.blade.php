@@ -35,6 +35,18 @@
                                 </textarea>
                                 @error('deskripsi')<div><span class="text-danger">{{ $message }}</span></div>@enderror
                             </div>
+
+                            <div class="mb-3">
+                                <label for="tor">TOR</label>
+                                <input id="tor" name="tor" type="file" accept="application/pdf" class="form-control">
+                                @error('tor')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                            </div>
+
+                            @if($workshop->tor)
+                            <div class="mb-3">
+                                <img src="{{ asset('/storage/workshop/'.$workshop->tor) }}" alt="" class="img-thumbnail w-25">
+                            </div>
+                            @endif
                         </div>
 
                         <div class="col-sm-6">

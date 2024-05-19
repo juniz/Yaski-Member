@@ -7,15 +7,15 @@
                     <div class="row mb-3">
                         <div class="col-lg-8">
                             <div class="row">
-                                <div class="col-lg-3 col-sm-5 col-md-4 mb-sm-7">
+                                <div class="col-lg-3 col-sm-5 col-md-4 order-2 order-lg-1 mb-sm-7">
                                     <img src="{{url('storage/workshop/'.$workshop->gambar)}}" class="img-thumbnail" alt="{{$workshop->nama}}">
                                 </div>
-                                <div class="col-lg-9 col-sm-7 col-md-8 pt-3 pl-xl-4 pl-lg-5 pl-sm-4">
+                                <div class="col-lg-9 col-sm-7 col-md-8 order-1 order-lg-2 pt-3 pl-xl-4 pl-lg-5 pl-sm-4">
                                     <h2>{{ $workshop->nama }}</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 text-center pt-5">
+                        <div class="col-12 col-lg-4 text-center pt-5">
                             <span class="text-muted d-block mb-2">Terbuka Hingga:</span>
                             <b>{{ \Carbon\Carbon::parse($workshop->tgl_selesai)->isoFormat('LL') }}</b>
                             <span class="text-muted d-block mt-3 mb-2">Sisa Kuota:</span>
@@ -23,45 +23,52 @@
                         </div>
                     </div>
                     <div class="row border-top pt-3">
-                        <div class="col-lg-9 order-lg-1 order-2 col-lg-push-3 pr-lg-5">
+                        <div class="col-lg-9 order-lg-1 order-1 col-lg-push-3 pr-lg-5">
                             <h3>Deskripsi</h3>
                             <div class="fr-view mb-5">
                                 {!! $workshop->deskripsi !!}
                             </div>
                         </div>
-                        <div class="col-lg-3 order-lg-2 order-1 pl-lg-4 mb-5 event-info">
-    
-                            <div class="mb-5">
-                                {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">Daftar</button> --}}
-                                @auth
-                                <button type="button" class="btn btn-primary" wire:click='$emit("openModalWorkshop", {{$workshop->id}})'>Daftar</button>
-                                @else
-                                <a type="button" class="btn btn-primary" href="{{ route('pendaftaran.index', \Crypt::encrypt($workshop->id)) }}">Daftar</a>
-                                @endauth
-                            </div>
-    
+                        <div class="col-lg-3 order-lg-2 order-2 pl-lg-4 mb-5 event-info">
     
                             <div class="mb-5">
                             <div class="text-for-element">Jadwal Pelaksanaan</div>
                             <div class="row">
-                                <div class="col-sm-3">Mulai</div>
-                                <div class="col-sm-9">: <b>{{ \Carbon\Carbon::parse($workshop->tgl_mulai)->isoFormat('LL') }}</b></div>
+                                <div class="col-2 col-sm-3">Mulai</div>
+                                <div class="col-10 col-sm-9">: <b>{{ \Carbon\Carbon::parse($workshop->tgl_mulai)->isoFormat('LL') }}</b></div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-3">Selesai</div>
-                                <div class="col-sm-9">: <b>{{ \Carbon\Carbon::parse($workshop->tgl_selesai)->isoFormat('LL') }}</b></div>
+                                <div class="col-2 col-sm-3">Selesai</div>
+                                <div class="col-10 col-sm-9">: <b>{{ \Carbon\Carbon::parse($workshop->tgl_selesai)->isoFormat('LL') }}</b></div>
                             </div>
                             </div>
                             <div class="mb-5">
                             <div class="text-for-element">Lokasi</div>
                             <div class="row">
-                                <div class="col-sm-2"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="col-sm-10">
+                                <div class="col-2 col-sm-2"><i class="fas fa-map-marker-alt"></i></div>
+                                <div class="col-10 col-sm-10">
                                     <b>{!! $workshop->lokasi !!}</b>
                                 </div>
                             </div>
                             </div>
     
+                            <div class="mb-5">
+                                <div class="d-grid d-flex gap-2">
+                                    @if($workshop->stts == '1')
+                                    @auth
+                                        @if($workshop->tor)
+                                        <a href="{{ url('storage/workshop/'.$workshop->tor) }}" type="button" class="btn btn-secondary w-50" target="_blank">TOR</a>
+                                        @endif
+                                        <button type="button" class="btn btn-primary w-50" wire:click='$emit("openModalWorkshop", {{$workshop->id}})'>Daftar</button>
+                                    @else
+                                        @if($workshop->tor)
+                                        <a href="{{ url('storage/workshop/'.$workshop->tor) }}" type="button" class="btn btn-secondary w-50" target="_blank">TOR</a>
+                                        @endif
+                                        <a type="button" class="btn btn-primary w-50" href="{{ route('pendaftaran.index', \Crypt::encrypt($workshop->id)) }}">Daftar</a>
+                                    @endauth
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @else
