@@ -23,7 +23,7 @@ Workshop
 @endcomponent
 @component('components.alert')@endcomponent
 @php
-$workshop = \App\Models\Workshop::where('tgl_selesai', '>=', date('Y-m-d'))->get();
+$workshop = \App\Models\Workshop::where('tgl_selesai', '>=', date('Y-m-d'))->orderBy('tgl_mulai', 'asc')->get();
 // $reservation = \App\Models\Reservation::where('workshop_id', $workshop->id ?? '')->where('user_id', Auth::user()->id)->first();
 @endphp
 <div class="row">

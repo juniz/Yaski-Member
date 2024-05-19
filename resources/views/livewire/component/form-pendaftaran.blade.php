@@ -17,7 +17,7 @@
                         </div>
                         <div class="col-12 col-lg-4 text-center pt-5">
                             <span class="text-muted d-block mb-2">Terbuka Hingga:</span>
-                            <b>{{ \Carbon\Carbon::parse($workshop->tgl_selesai)->isoFormat('LL') }}</b>
+                            <b>{{ \Carbon\Carbon::parse($workshop->tgl_mulai)->isoFormat('LL') }}</b>
                             <span class="text-muted d-block mt-3 mb-2">Sisa Kuota:</span>
                             <b>{{$workshop->kuota}} peserta</b>
                         </div>
