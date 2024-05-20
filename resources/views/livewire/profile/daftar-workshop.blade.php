@@ -23,7 +23,7 @@
                             <div class="mb-3"></div>
                             <x-ui.input label='Email' class="lowercase" id="email-{{ $i }}" wire:model='email.{{$i}}' live/>
                             <div class="mb-3"></div>
-                            <x-ui.input label='No. HP' id="no_hp-{{ $i }}" wire:model='telp.{{$i}}' live/>
+                            <x-ui.input label='No. HP' id="no_hp-{{ $i }}" wire:model='telp.{{$i}}' type='number' live/>
                             <div class="mb-3"></div>
                             <x-ui.select label="Baju" id="baju-{{ $i }}" wire:model='baju.{{$i}}' live>
                                 <option value="">Pilih ukuran baju</option>
