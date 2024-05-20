@@ -265,7 +265,11 @@ class PendaftaranController extends Controller
             $paket = $workshop->paket()->where('id', $request->harga)->first();
             $harga = $paket->harga;
             $paket = $paket->nama;
-            $last_no = sprintf("%04d", $workshop->count() + 1);
+            $maxTransaction = $maxTransaction = \App\Models\Transaction::where('workshop_id', $workshop->id)->max('order_id');
+            $maxTransaction = str_replace('-', '', $maxTransaction);
+            $last = substr($maxTransaction, 8, 4);
+            $last_no = sprintf("%04d", (int)$last + 1);
+            // $last_no = sprintf("%04d", $workshop->count() + 1);
             // $last_no = rand(100000, 999999);
             $order_id = date('Ymd') . '-' . $last_no;
 

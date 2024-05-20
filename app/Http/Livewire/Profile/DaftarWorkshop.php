@@ -79,8 +79,8 @@ class DaftarWorkshop extends Component
 
         try {
             $workshop = Workshop::find($this->workshop_id);
-            if ($workshop->tgl_mulai < date('Y-m-d') || $workshop->tgl_selesai < date('Y-m-d')) {
-                $this->alert('warning', 'Workshop sudah berakhir');
+            if ($workshop->tgl_sampai < date('Y-m-d') || $workshop->tgl_selesai < date('Y-m-d')) {
+                $this->alert('warning', 'Pendaftaran workshop sudah berakhir');
                 return;
             }
             if ($workshop->peserta->count() >= $workshop->kuota) {
@@ -97,8 +97,10 @@ class DaftarWorkshop extends Component
             //     $this->alert('warning', 'Anda sudah terdaftar');
             //     return;
             // }
-            $countTransanction = \App\Models\Transaction::where('workshop_id', $this->workshop_id)->count();
-            $last_no = sprintf("%04d", $countTransanction + 1);
+            $maxTransaction = \App\Models\Transaction::where('workshop_id', $this->workshop_id)->max('order_id');
+            $maxTransaction = str_replace('-', '', $maxTransaction);
+            $last = substr($maxTransaction, 8, 4);
+            $last_no = sprintf("%04d", (int)$last + 1);
             // $rand = rand(000000, 999999);
             $order_id = date('Ymd') . '-' . $last_no;
 
