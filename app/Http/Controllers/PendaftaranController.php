@@ -219,7 +219,7 @@ class PendaftaranController extends Controller
             'nama' => 'required',
             'jenis_kelamin' => 'required',
             'email' => 'required|email',
-            'telp' => 'required',
+            'telp' => 'required|numeric',
             'pribadi' => 'required',
             'provinsi' => 'required',
             'kabupaten' => 'required',
