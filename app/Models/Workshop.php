@@ -15,6 +15,7 @@ class Workshop extends Model
         'slug',
         'gambar',
         'tor',
+        'tgl_sampai',
         'tgl_mulai',
         'tgl_selesai',
         'lat',

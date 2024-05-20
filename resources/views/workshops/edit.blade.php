@@ -50,11 +50,19 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <div class="mb-3">
-                                <label for="kuota">Kuota</label>
-                                <input id="kuota" value="{{ $workshop->kuota }}" name="kuota" type="number" class="form-control">
-                                @error('kuota')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                            <div class="d-flex flex-row gap-3">
+                                <div class="mb-3 w-50">
+                                    <label for="kuota">Kuota</label>
+                                    <input id="kuota" value="{{ $workshop->kuota }}" name="kuota" type="number" class="form-control">
+                                    @error('kuota')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                                </div>
+                                <div class="mb-3 w-50">
+                                    <label for="tgl_sampai">Tanggal Batas Pendaftaran</label>
+                                    <input id="tgl_sampai" value="{{ $workshop->tgl_sampai }}" name="tgl_sampai" type="date" class="form-control">
+                                    @error('tgl_sampai')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                                </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="lokasi">Lokasi</label>
                                 <textarea class="form-control" id="lokasi" name="lokasi" rows="4">{{$workshop->lokasi}}</textarea>

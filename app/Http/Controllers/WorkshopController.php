@@ -126,6 +126,7 @@ class WorkshopController extends Controller
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'tor' => 'nullable|mimes:pdf',
                 'lokasi' => 'required',
+                'tgl_sampai' => 'required|date',
                 'tgl_mulai' => 'required|date',
                 'tgl_selesai' => 'required|date',
             ],
@@ -137,6 +138,7 @@ class WorkshopController extends Controller
                 'gambar.mimes' => 'File harus berupa gambar',
                 'tor.mimes' => 'File harus berupa pdf',
                 'lokasi.required' => 'Lokasi tidak boleh kosong',
+                'tgl_sampai.required' => 'Tanggal sampai tidak boleh kosong',
                 'tgl_mulai.required' => 'Tanggal mulai tidak boleh kosong',
                 'tgl_selesai.required' => 'Tanggal selesai tidak boleh kosong',
             ]
@@ -165,6 +167,7 @@ class WorkshopController extends Controller
             $workshop->gambar = $imageName ?? $workshop->gambar;
             $workshop->tor = $torName ?? $workshop->tor;
             $workshop->lokasi = $request->lokasi;
+            $workshop->tgl_sampai = $request->tgl_sampai;
             $workshop->tgl_mulai = $request->tgl_mulai;
             $workshop->tgl_selesai = $request->tgl_selesai;
             $workshop->save();
