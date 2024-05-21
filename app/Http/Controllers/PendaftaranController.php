@@ -326,10 +326,10 @@ class PendaftaranController extends Controller
                 'snap_token' => $snapToken->redirect_url,
             ], 200);
         } catch (\Exception $e) {
-
+            DB::rollBack();
             return response()->json([
                 'status' => 'error',
-                'message' => App::environment('local') ? $e->getMessage() : 'Terjadi kesalahan',
+                'message' => App::environment('local') ? $e->getMessage() : 'Terjadi kesalahan saat membuat transaksi ' . $order_id,
             ], 500);
         }
     }
