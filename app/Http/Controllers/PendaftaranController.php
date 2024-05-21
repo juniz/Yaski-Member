@@ -265,7 +265,7 @@ class PendaftaranController extends Controller
             $paket = $workshop->paket()->where('id', $request->harga)->first();
             $harga = $paket->harga;
             $paket = $paket->nama;
-            $maxTransaction = $maxTransaction = \App\Models\Transaction::where('created_at', date('Y-m-d'))->max('order_id');
+            $maxTransaction = \App\Models\Transaction::where('created_at', date('Y-m-d'))->max('order_id');
             $maxTransaction = str_replace('-', '', $maxTransaction);
             $last = substr($maxTransaction, 8, 4);
             $last_no = sprintf("%04d", (int)$last + 1);
