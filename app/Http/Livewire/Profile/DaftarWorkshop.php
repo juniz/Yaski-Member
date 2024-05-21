@@ -97,7 +97,7 @@ class DaftarWorkshop extends Component
             //     $this->alert('warning', 'Anda sudah terdaftar');
             //     return;
             // }
-            $maxTransaction = \App\Models\Transaction::where('workshop_id', $this->workshop_id)->max('order_id');
+            $maxTransaction = \App\Models\Transaction::where('created_at', date('Y-m-d'))->max('order_id');
             $maxTransaction = str_replace('-', '', $maxTransaction);
             $last = substr($maxTransaction, 8, 4);
             $last_no = sprintf("%04d", (int)$last + 1);
