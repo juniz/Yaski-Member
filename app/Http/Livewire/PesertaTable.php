@@ -17,6 +17,7 @@ use Rappasoft\LaravelLivewireTables\Views\Columns\BooleanColumn;
 class PesertaTable extends DataTableComponent
 {
     public string $idWorkshop;
+    public string $status = '';
     protected $model = Peserta::class;
 
     public function mount($idWorkshop)
@@ -56,6 +57,7 @@ class PesertaTable extends DataTableComponent
                     'batal' => 'Batal',
                 ])
                 ->filter(function (Builder $builder, $value) {
+                    $this->status = $value;
                     if ($value === '') {
                         return;
                     } else if ($value === 'batal') {
@@ -76,7 +78,7 @@ class PesertaTable extends DataTableComponent
 
     public function export()
     {
-        return Excel::download(new PesertaExport($this->idWorkshop), 'peserta.xlsx');
+        return Excel::download(new PesertaExport($this->idWorkshop, $this->status), 'peserta.xlsx');
     }
 
     public function batal($id)
