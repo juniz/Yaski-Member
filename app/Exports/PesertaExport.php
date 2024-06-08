@@ -31,7 +31,7 @@ class PesertaExport implements FromCollection, WithHeadings
         } else {
             return Transaction::join('peserta', 'transaction.id', '=', 'peserta.transaction_id')
                 ->where('transaction.workshop_id', $this->workshop)
-                ->where('peserta.stts', $this->status)
+                ->where('transaction.stts', $this->status)
                 ->orderBy('transaction.order_id', 'asc')
                 ->select('transaction.order_id', 'peserta.nama', 'transaction.stts', 'transaction.nama_rs', 'peserta.jns_kelamin', 'peserta.email', 'peserta.telp', 'peserta.baju', 'peserta.paket', 'peserta.harga')
                 ->get();
