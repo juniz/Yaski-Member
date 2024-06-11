@@ -62,7 +62,7 @@ class PesertaTable extends DataTableComponent
                     if ($value === '') {
                         return;
                     } else if ($value === 'batal') {
-                        $builder->where('peserta.stts', $value)->orWhere('transaction.stts', $value);
+                        $builder->where('transaction.stts', $value);
                     } else {
                         $builder->where('transaction.stts', $value);
                     }
