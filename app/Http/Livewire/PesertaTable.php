@@ -12,6 +12,7 @@ use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PesertaExport;
 use Illuminate\Support\Str;
+use setasign\Fpdi\Fpdi;
 use Rappasoft\LaravelLivewireTables\Views\Columns\BooleanColumn;
 
 class PesertaTable extends DataTableComponent
@@ -89,6 +90,23 @@ class PesertaTable extends DataTableComponent
         $this->emit('refreshDatatable');
     }
 
+    public function generateSertifikat($nama)
+    {
+        // dd($nama);
+        $pdf = new Fpdi();
+        $pdf->AddPage();
+        $pdf->setSourceFile(storage_path('app/public/templates/sertifikat/template.pdf'));
+        $tplIdx = $pdf->importPage(1);
+        $pdf->useTemplate($tplIdx, 0, 0, 210);
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(105, 100);
+        $pdf->Cell(0, 0, $nama, 0, 1, 'C');
+        $pdf->SetXY(105, 110);
+        $pdf->Cell(0, 0, 'Sertifikat', 0, 1, 'C');
+        $pdf->Output('S', 'Sertifikat-' . $nama . '.pdf', true);
+    }
+
     public function columns(): array
     {
         return [
@@ -138,13 +156,17 @@ class PesertaTable extends DataTableComponent
             Column::make("Telp", "telp")
                 ->sortable(),
             Column::make("Baju", "baju")
-                ->sortable(),
+                ->sortable(function (Builder $query, $direction) {
+                    $query->orderBy('baju', $direction);
+                }),
             Column::make("Paket", "paket")
                 ->sortable(),
             Column::make("Harga", "harga")
                 ->sortable(),
             Column::make("Aksi", "id")
                 ->format(function ($value, $row, Column $column) {
+                    $nama = "'" . $row->nama . "'";
+                    $url = url('sertifikat/' . $row->nama);
                     return '
                     <div class="dropdown">
                         <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
@@ -154,6 +176,8 @@ class PesertaTable extends DataTableComponent
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="batal(' . $value . ')" 
                                     href="#">Batal</a></li>
+                            <li><a class="dropdown-item" href="' . $url . '"
+                            >Sertifikat</a></li>
                         </ul>
                     </div>
                     ';
