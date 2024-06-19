@@ -250,13 +250,14 @@ class PendaftaranController extends Controller
 
         try {
             $workshop = Workshop::find($request->workshop_id);
-            if ($workshop->tgl_mulai < now() || $workshop->tgl_selesai < now()) {
+            if ($workshop->tgl_sampai <= now()) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Workshop sudah berakhir',
                 ]);
             }
-            if ($workshop->peserta->count() >= $workshop->kuota) {
+            $jmlTransaction = $workshop->transaction()->where('stts', 'dibayar')->count();
+            if ($jmlTransaction >= $workshop->kuota) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Kuota workshop sudah penuh',

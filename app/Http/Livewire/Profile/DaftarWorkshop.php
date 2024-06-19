@@ -79,11 +79,12 @@ class DaftarWorkshop extends Component
 
         try {
             $workshop = Workshop::find($this->workshop_id);
-            if ($workshop->tgl_sampai < date('Y-m-d') || $workshop->tgl_selesai < date('Y-m-d')) {
+            if ($workshop->tgl_sampai <= now()) {
                 $this->alert('warning', 'Pendaftaran workshop sudah berakhir');
                 return;
             }
-            if ($workshop->peserta->count() >= $workshop->kuota) {
+            $jmlTransaction = $workshop->transaction()->where('stts', 'dibayar')->count();
+            if ($jmlTransaction >= $workshop->kuota) {
                 $this->alert('warning', 'Kuota workshop sudah penuh');
                 return;
             }
