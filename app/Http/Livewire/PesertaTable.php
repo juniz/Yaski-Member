@@ -28,7 +28,20 @@ class PesertaTable extends DataTableComponent
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('id')
+            ->setTrAttributes(function ($model) {
+                if ($model->transaction->stts == 'batal') {
+                    return ['class' => 'table-danger'];
+                } else if ($model->transaction->stts == 'menunggu') {
+                    return ['class' => 'table-warning'];
+                } else if ($model->transaction->stts == 'kadaluarsa') {
+                    return ['class' => 'table-danger'];
+                } else if ($model->transaction->stts == 'dibayar') {
+                    return ['class' => 'table-success'];
+                } else {
+                    return [];
+                }
+            });
         $this->setFiltersStatus(true);
     }
 
