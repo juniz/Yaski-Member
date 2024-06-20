@@ -87,6 +87,9 @@ class PesertaTable extends DataTableComponent
         $peserta = Peserta::find($id);
         $peserta->stts = 'batal';
         $peserta->save();
+        $transaction = $peserta->transaction;
+        $transaction->stts = 'batal';
+        $transaction->save();
         $this->emit('refreshDatatable');
     }
 
