@@ -178,6 +178,11 @@ class PendaftaranController extends Controller
         return view('workshops.index', compact('id'));
     }
 
+    public function daftarHadir($id)
+    {
+        return view('workshops.daftar-hadir', compact('id'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

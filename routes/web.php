@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CertifikatController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Invoice\Transaction;
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class);
 
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
+    Route::get('/workshop/{id}/hadir', [App\Http\Controllers\PendaftaranController::class, 'daftarHadir'])->name('workshop.daftar.hadir');
     Route::get('/paklaring-cek', [App\Http\Controllers\Api\PaklaringController::class, 'cekPic'])->name('paklaring.cek-pic');
 
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
@@ -106,54 +108,6 @@ Route::post('/email/verification-notification', function (Request $request) {
 // });
 
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
+Route::get('/sertifikat/{nama}', [CertifikatController::class, 'index']);
 
-// Route::get('invoice', function () {
-//     $data = [
-//         'costumer' => [
-//             'name' => 'Yudo',
-//             'email' => 'yudojuni93@gmail.com',
-//             'phone' => '08123456789'
-//         ],
-//         'product' => [
-//             'name' => 'Pemrograman',
-//             'description' => 'Twin Bed',
-//             'price' => '3500000',
-//             'quantity' => '1',
-//         ],
-
-//     ];
-//     $invoice = new Transaction();
-//     return $invoice->generateInvoice($data)->stream();
-// });
-
-// Route::get('/test', function () {
-
-//     $beautymail = app()->make(Snowfire\Beautymail\Beautymail::class);
-//     $qr = QrCode::size(300)
-//         ->format('png')
-//         ->merge('assets/images/logo.png', 0.3, true)
-//         ->style('dot')
-//         ->eye('circle')
-//         ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
-//         ->margin(1)
-//         ->errorCorrection('M')
-//         ->generate('83745837hfdyeurf');
-//     // return response($qr)->header('Content-type', 'image/png');
-//     $beautymail->send('emails.welcome', [
-//         'name' => 'Yudo',
-//         'qr' => $qr,
-//         'link' => 'https://yaski.com'
-//     ], function ($message) {
-//         $message
-//             ->from('noreplay@yaski.com')
-//             ->to('yudojuni93@gmail.com', 'Yudo')
-//             ->subject('Berhasil mendaftar workshop');
-//     });
-// });
-
-// // Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
-// Route::get('/mail', function () {
-//     Mail::to('yudojuni93@gmail.com')
-//         ->send(new App\Mail\TransactionMail('123', 'Workshop', 'Yudo', 'Pemrograman', '100000', '1', '100000'));
-//     // return view('emails.mail');
-// })->name('mail');
+// Route::get('test', fn () => phpinfo());
