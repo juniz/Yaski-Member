@@ -17,6 +17,7 @@ class Sertifikat extends Model
         'no_urut',
         'no_sertifikat',
         'nama',
-        'file',
+        'instansi',
+        'file_sertifikat',
     ];
 }
