@@ -111,6 +111,8 @@ class DaftarHadirTable extends DataTableComponent
     public function columns(): array
     {
         return [
+            Column::make("Order ID", "transaction.order_id")
+                ->sortable(),
             Column::make("Nama", "nama")
                 ->sortable(),
             Column::make("Nama RS", "transaction.nama_rs")
