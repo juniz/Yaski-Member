@@ -77,6 +77,7 @@
                                                     <button type="button" wire:click="$emit('openModalHarga', '{{$workshop->id}}')" class="btn btn-sm btn-primary"><i class="bx bx-lock"></i> Harga</button>
                                                     <a href="{{ route('workshop.peserta', $workshop->id) }}" class="btn btn-sm btn-secondary"><i class="bx bx-user"></i> Peserta</a>
                                                     <a href="{{ route('workshop.daftar.hadir', $workshop->id) }}" class="btn btn-sm btn-secondary"><i class="bx bx-user"></i> Daftar Hadir</a>
+                                                    <a href="{{ route('workshop.sertifikat', $workshop->id) }}" class="btn btn-sm btn-secondary"><i class="bx bx-user"></i> Sertifikat</a>
                                                     <button type="button" wire:click="$emit('confirmHapusWorkshop', '{{$workshop->id}}')" class="btn btn-sm btn-danger"><i class="bx bx-trash"></i> Hapus</button>
                                                 </div>
                                             </div>

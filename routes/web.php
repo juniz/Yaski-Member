@@ -69,7 +69,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
     Route::get('/workshop/{id}/hadir', [App\Http\Controllers\PendaftaranController::class, 'daftarHadir'])->name('workshop.daftar.hadir');
     Route::get('/paklaring-cek', [App\Http\Controllers\Api\PaklaringController::class, 'cekPic'])->name('paklaring.cek-pic');
-
+    Route::get('/workshop/sertifikat/{id}', function ($id) {
+        return view('workshops.sertifikat', compact('id'));
+    })->name('workshop.sertifikat');
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
 });
 
@@ -108,6 +110,6 @@ Route::post('/email/verification-notification', function (Request $request) {
 // });
 
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
-Route::get('/sertifikat/{nama}', [CertifikatController::class, 'index']);
-
+Route::get('/sertifikat/{id}', [CertifikatController::class, 'formSertifikat']);
+Route::post('/sertifikat/{id}', [CertifikatController::class, 'simpanSertifikat'])->name('sertifikat.simpan');
 // Route::get('test', fn () => phpinfo());

@@ -20,4 +20,14 @@ class Sertifikat extends Model
         'instansi',
         'file_sertifikat',
     ];
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class);
+    }
+
+    public function workshop()
+    {
+        return $this->belongsTo(Workshop::class);
+    }
 }

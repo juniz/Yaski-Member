@@ -28,7 +28,14 @@ class DaftarHadirTable extends DataTableComponent
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id');
+        $this->setPrimaryKey('id')
+            ->setTrAttributes(function ($model) {
+                if ($model->stts == 'hadir') {
+                    return ['class' => 'table-success'];
+                } else {
+                    return [];
+                }
+            });
         $this->setFiltersStatus(true);
     }
 

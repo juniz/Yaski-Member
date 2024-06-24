@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Crypt;
 use setasign\Fpdi\Fpdi;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use PDF;
@@ -10,6 +12,33 @@ use PDF;
 
 class CertifikatController extends Controller
 {
+    public function formSertifikat($id)
+    {
+        $sertifikat = \App\Models\Sertifikat::find($id);
+        return view('sertifikat.index', compact('sertifikat', 'id'));
+    }
+
+    public function simpanSertifikat($id, Request $request)
+    {
+        $this->validate($request, [
+            'nama' => 'required',
+            'instansi' => 'required',
+        ], [
+            'nama.required' => 'Nama harus diisi',
+            'instansi.required' => 'Instansi harus diisi',
+        ]);
+        try {
+            $sertifikat = \App\Models\Sertifikat::find($id);
+            $sertifikat->nama = $request->nama;
+            $sertifikat->instansi = $request->instansi;
+            $sertifikat->save();
+
+            return redirect()->back()->with('type', 'success')->with('message', 'Data berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('message', App::environment('local') ? $e->getMessage() : 'Terjadi kesalahan')->with('type', 'danger');
+        }
+    }
+
     public function index($nama)
     {
         // $outputfile = public_path('certifikat.pdf');
