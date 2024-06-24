@@ -112,9 +112,11 @@ class DaftarHadirTable extends DataTableComponent
     {
         return [
             Column::make("Order ID", "transaction.order_id")
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
             Column::make("Nama", "nama")
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
             Column::make("Nama RS", "transaction.nama_rs")
                 ->format(function ($value, $row, Column $column) {
                     if ($row->transaction->kd_rs) {
