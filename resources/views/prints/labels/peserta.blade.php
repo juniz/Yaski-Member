@@ -24,6 +24,7 @@
         }
         table {
             width: 100%;
+            table-layout: fixed;
         }
         .header {
             font-size: 12px;
@@ -75,6 +76,11 @@
             display: flex;
             justify-content: space-around;
         }
+        /* #nama-peserta {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        } */
         /* Add your label styling here */
     </style>
 </head>
@@ -108,12 +114,12 @@
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Nama</td>
                                     <td style="width: 5%">:</td>
-                                    <td style="width: 75%; font-size: 8px">{{$data['nama']}}</td>
+                                    <td style="width: 75%; font-size: 8px"><span id="nama-peserta">{{\Illuminate\Support\Str::limit($data['nama'],20)}}</span></td>
                                 </tr>
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Instansi</td>
                                     <td style="width: 5%">:</td>
-                                    <td style="width: 75%; font-size: 8px">{{$data['nama_rs'] ?? '-'}}</td>
+                                    <td style="width: 75%; font-size: 8px">{{\Illuminate\Support\Str::limit($data['nama_rs'],20)}}</td>
                                 </tr>
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Kelamin</td>
