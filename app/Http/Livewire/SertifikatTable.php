@@ -43,7 +43,9 @@ class SertifikatTable extends DataTableComponent
                 ->sortable()
                 ->searchable(),
             Column::make("Nama", "nama")
-                ->sortable()
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder->orderBy('peserta.nama', $direction);
+                })
                 ->searchable(),
             Column::make("Instansi", "instansi")
                 ->sortable()
