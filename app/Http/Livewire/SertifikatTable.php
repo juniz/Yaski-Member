@@ -28,6 +28,7 @@ class SertifikatTable extends DataTableComponent
             ->join('peserta', 'peserta.id', '=', 'sertifikat.peserta_id')
             ->join('workshop', 'workshop.id', '=', 'sertifikat.workshop_id')
             ->where('workshop.id', $this->idWorkshop)
+            ->where('sertifikat.nama', '!=', null)
             ->select('sertifikat.*', 'peserta.nama', 'workshop.nama');
     }
 
@@ -35,12 +36,17 @@ class SertifikatTable extends DataTableComponent
     {
         return [
             Column::make("No urut", "no_urut")
-                ->sortable(),
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder->orderBy('no_urut', $direction);
+                }),
             Column::make("Tgl Checkin", "created_at")
-                ->sortable()
-                ->sortable(),
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder->orderBy('created_at', $direction);
+                }),
             Column::make("No sertifikat", "no_sertifikat")
-                ->sortable()
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder->orderBy('no_sertifikat', $direction);
+                })
                 ->searchable(),
             Column::make("Nama", "nama")
                 ->sortable(function (Builder $builder, $direction) {
@@ -48,10 +54,11 @@ class SertifikatTable extends DataTableComponent
                 })
                 ->searchable(),
             Column::make("Instansi", "instansi")
-                ->sortable()
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder->orderBy('peserta.instansi', $direction);
+                })
                 ->searchable(),
-            Column::make("File sertifikat", "file_sertifikat")
-                ->sortable(),
+            Column::make("File sertifikat", "file_sertifikat"),
         ];
     }
 }
