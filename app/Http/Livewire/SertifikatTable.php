@@ -2,10 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Exports\SertifikatExport;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Sertifikat;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SertifikatTable extends DataTableComponent
 {
@@ -30,6 +32,18 @@ class SertifikatTable extends DataTableComponent
             ->where('workshop.id', $this->idWorkshop)
             ->where('sertifikat.nama', '!=', null)
             ->select('sertifikat.*', 'peserta.nama', 'workshop.nama');
+    }
+
+    public function bulkActions(): array
+    {
+        return [
+            'export' => 'Export',
+        ];
+    }
+
+    public function export()
+    {
+        return Excel::download(new SertifikatExport($this->idWorkshop), 'sertifikat.xlsx');
     }
 
     public function columns(): array
