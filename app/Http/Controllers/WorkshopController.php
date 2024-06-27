@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sertifikat;
 use App\Models\Workshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -196,5 +197,29 @@ class WorkshopController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
         }
+    }
+
+    public function openSetting($id)
+    {
+        return view('workshops.setting', compact('id'));
+    }
+
+    public function simpanSetting(Request $request, $id)
+    {
+        $this->validate($request, [
+            'deskripsi' => 'required',
+            'file_template' => 'required|mimes:pdf|max:2048',
+        ], [
+            'deskripsi.required' => 'Deskripsi tidak boleh kosong',
+            'file_template.required' => 'File template tidak boleh kosong',
+            'file_template.mimes' => 'File harus berupa pdf',
+        ]);
+    }
+
+    public function cekValidasi($id)
+    {
+        $sertifikat = Sertifikat::find($id);
+        // dd($sertifikat);
+        return view('workshops.validasi', compact('sertifikat'));
     }
 }

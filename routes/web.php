@@ -73,6 +73,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('workshops.sertifikat', compact('id'));
     })->name('workshop.sertifikat');
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+
+    Route::get('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'openSetting'])->name('workshop.setting');
+    Route::post('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'simpanSetting'])->name('workshop.setting.simpan');
 });
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
@@ -82,6 +85,7 @@ Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::cla
 Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
 Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
+Route::get('/sertifikat/{id}/validasi', [App\Http\Controllers\WorkshopController::class, 'cekValidasi'])->name('sertifikat.validasi');
 
 // Route::get('/email/verify', function () {
 //     return view('auth.verify');
