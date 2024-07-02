@@ -25,14 +25,14 @@
                             <div class="mb-3"></div>
                             <x-ui.input label='No. HP' id="no_hp-{{ $i }}" wire:model='telp.{{$i}}' type='number' live/>
                             <div class="mb-3"></div>
-                            <x-ui.select label="Baju" id="baju-{{ $i }}" wire:model='baju.{{$i}}' live>
+                            {{-- <x-ui.select label="Baju" id="baju-{{ $i }}" wire:model='baju.{{$i}}' live>
                                 <option value="">Pilih ukuran baju</option>
                                 <option value="S">S</option>
                                 <option value="M">M</option>
                                 <option value="L">L</option>
                                 <option value="XL">XL</option>
                                 <option value="XXL">XXL</option>
-                            </x-ui.select>
+                            </x-ui.select> --}}
                             <div class="mb-3"></div>
                             <x-ui.select label="Harga" id="harga-{{ $i }}" wire:model='harga.{{$i}}' live>
                                 <option value="">Pilih harga</option>

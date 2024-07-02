@@ -63,14 +63,14 @@ class DaftarWorkshop extends Component
     {
         $this->validate([
             'harga' => 'required',
-            'baju' => 'required',
+            // 'baju' => 'required',
             'nama' => 'required',
             'jenis_kelamin' => 'required',
             'email' => 'required',
             'telp' => 'required',
         ], [
             'harga.required' => 'Pilih paket terlebih dahulu',
-            'baju.required' => 'Pilih ukuran baju terlebih dahulu',
+            // 'baju.required' => 'Pilih ukuran baju terlebih dahulu',
             'nama.required' => 'Nama peserta tidak boleh kosong',
             'jenis_kelamin.required' => 'Jenis kelamin peserta tidak boleh kosong',
             'email.required' => 'Email peserta tidak boleh kosong',
@@ -131,7 +131,7 @@ class DaftarWorkshop extends Component
                     'jns_kelamin' => $this->jenis_kelamin[$key],
                     'email' => Str::lower($this->email[$key]),
                     'telp' => $this->telp[$key],
-                    'baju' => $this->baju[$key],
+                    'baju' => $this->baju[$key] ?? 'XL',
                     'paket' => $paketNama,
                     'harga' => $paketHarga,
                 ]);

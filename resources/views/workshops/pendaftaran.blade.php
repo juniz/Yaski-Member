@@ -72,14 +72,14 @@
                     </div>
                     <x-ui.input-row label="Nomor HP" id="telp" />
                     <x-ui.input-row label="Email" type="email" class="lowercase" id="email" />
-                    <x-ui.select-row label="Ukuran Baju" id="baju" placeholder="Pilih ukuran baju">
+                    {{-- <x-ui.select-row label="Ukuran Baju" id="baju" placeholder="Pilih ukuran baju">
                         <option value="">Pilih ukuran baju</option>
                         <option value="S">S</option>
                         <option value="M">M</option>
                         <option value="L">L</option>
                         <option value="XL">XL</option>
                         <option value="XXL">XXL</option>
-                    </x-ui.select>
+                    </x-ui.select> --}}
                     <x-ui.select-row label="Paket Harga" id="harga" placeholder="Pilih paket harga">
                         <option value="">Pilih paket harga</option>
                         @foreach($workshop->paket as $paket)

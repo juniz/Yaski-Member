@@ -229,7 +229,7 @@ class PendaftaranController extends Controller
             'provinsi' => 'required',
             'kabupaten' => 'required',
             'harga' => 'required',
-            'baju' => 'required',
+            // 'baju' => 'required',
         ], [
             'nama.required' => 'Nama tidak boleh kosong',
             'jenis_kelamin.required' => 'Jenis kelamin tidak boleh kosong',
@@ -241,7 +241,7 @@ class PendaftaranController extends Controller
             'provinsi.required' => 'Provinsi tidak boleh kosong',
             'kabupaten.required' => 'Kabupaten tidak boleh kosong',
             'harga.required' => 'Harga tidak boleh kosong',
-            'baju.required' => 'Pilih salah satu',
+            // 'baju.required' => 'Pilih salah satu',
         ]);
 
         // Set your Merchant Server Key
@@ -320,7 +320,7 @@ class PendaftaranController extends Controller
                 'email' => Str::lower($request->email),
                 'telp' => $request->telp,
                 'transaction_id' => $transaksi->id,
-                'baju' => $request->baju,
+                'baju' => $request->baju ?? 'XL',
                 'paket' => $paket,
                 'harga' => $harga,
             ]);
