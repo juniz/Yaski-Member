@@ -29,6 +29,7 @@ Peserta Workshop
         </div>
     </div>
 </div>
+<livewire:component.modal-ubah-pembayaran />
 @endsection
 
 @section('script')
@@ -62,6 +63,14 @@ Peserta Workshop
         // console.log(`Scan result: ${decodedText}`, decodedResult);
         Livewire.emit('get-transaction', decodedText);
     }
+
+    Livewire.on('ubahPeserta', () => {
+        $('#changePaymentModal').modal('show');
+    });
+
+    Livewire.on('pembayaranTersimpan', () => {
+        $('#changePaymentModal').modal('hide');
+    });
 
     var html5QrcodeScanner = new Html5QrcodeScanner(
         "reader", { fps: 10, qrbox: 250 });

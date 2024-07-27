@@ -123,6 +123,11 @@ class PesertaTable extends DataTableComponent
         $pdf->Output('S', 'Sertifikat-' . $nama . '.pdf', true);
     }
 
+    public function ubahPeserta($id, $workshop)
+    {
+        $this->emit('ubahPeserta', $id, $workshop);
+    }
+
     public function columns(): array
     {
         return [
@@ -183,6 +188,7 @@ class PesertaTable extends DataTableComponent
                 ->format(function ($value, $row, Column $column) {
                     $nama = "'" . $row->nama . "'";
                     $url = url('sertifikat/' . $row->nama);
+                    $workshop = $this->idWorkshop;
                     return '
                     <div class="dropdown">
                         <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
@@ -190,10 +196,10 @@ class PesertaTable extends DataTableComponent
                             <i class="bx bx-dots-horizontal-rounded font-size-20"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" wire:click="ubahPeserta(' . $value . ', ' . $workshop . ')" 
+                                    href="#">Ubah</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="batal(' . $value . ')" 
                                     href="#">Batal</a></li>
-                            <li><a class="dropdown-item" href="' . $url . '"
-                            >Sertifikat</a></li>
                         </ul>
                     </div>
                     ';
