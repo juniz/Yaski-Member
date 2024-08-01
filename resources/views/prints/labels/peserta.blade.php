@@ -93,7 +93,7 @@
                         BUKTI REGISTRASI KEDATANGAN
                     </div>
                     <div class="desc">
-                        {{ $workshop }}
+                        {{\Illuminate\Support\Str::limit($workshop,30)}}
                     </div>
                     <div class="identitas">
                         {{-- <div>
