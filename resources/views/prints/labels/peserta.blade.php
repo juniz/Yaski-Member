@@ -114,12 +114,12 @@
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Nama</td>
                                     <td style="width: 5%">:</td>
-                                    <td style="width: 75%; font-size: 8px"><span id="nama-peserta">{{\Illuminate\Support\Str::limit($data['nama'],20)}}</span></td>
+                                    <td style="width: 75%; font-size: 8px"><span id="nama-peserta">{{\Illuminate\Support\Str::limit($data['nama'],10)}}</span></td>
                                 </tr>
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Instansi</td>
                                     <td style="width: 5%">:</td>
-                                    <td style="width: 75%; font-size: 8px">{{\Illuminate\Support\Str::limit($data['nama_rs'],20)}}</td>
+                                    <td style="width: 75%; font-size: 8px">{{\Illuminate\Support\Str::limit($data['nama_rs'],10)}}</td>
                                 </tr>
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Kelamin</td>
