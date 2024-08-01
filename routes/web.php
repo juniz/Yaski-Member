@@ -116,4 +116,4 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 Route::get('/sertifikat/{id}', [CertifikatController::class, 'formSertifikat']);
 Route::post('/sertifikat/{id}', [CertifikatController::class, 'simpanSertifikat'])->name('sertifikat.simpan');
-// Route::get('test', fn () => phpinfo());
+Route::get('/kwitansi', fn () => view('prints.kwitansi.peserta'))->name('kwitansi');
