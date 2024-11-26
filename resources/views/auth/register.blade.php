@@ -78,18 +78,15 @@ Register
                                             <i data-feather="lock"></i>
                                         </div>
                                     </div>
-                                    {{-- <div class="form-floating form-floating-custom mb-4">
-                                        <input type="file" class="form-control @error('avatar') is-invalid @enderror"
-                                            name="avatar" id="input-avatar" required>
-                                        @error('avatar')
+                                    <div class="form-floating form-floating-custom mb-4">
+                                        {!! NoCaptcha::renderJs() !!}
+                                        {!! NoCaptcha::display() !!}
+                                        @error('g-recaptcha-response')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                        <div class="form-floating-icon">
-                                            <i data-feather="file"></i>
-                                        </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="mb-4">
                                         <p class="mb-0"> <a href="#" class="text-primary"></a></p>
                                     </div>

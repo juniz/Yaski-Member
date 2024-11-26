@@ -53,6 +53,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'g-recaptcha-response' => ['required', 'captcha'],
             // 'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
         ], [
             'name.required' => 'Username tidak boleh kosong',
@@ -63,6 +64,7 @@ class RegisterController extends Controller
             'password.required' => 'Password tidak boleh kosong',
             'password.min' => 'Password minimal 6 karakter',
             'password.confirmed' => 'Konfirmasi password tidak sama dengan password',
+            'g-recaptcha-response.required' => 'Captcha tidak boleh kosong',
         ]);
     }
 

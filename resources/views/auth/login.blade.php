@@ -57,6 +57,16 @@ Login
                                         </div>
                                     </div>
 
+                                    <div class="form-floating form-floating-custom mb-4 auth-pass-inputgroup">
+                                        {!! NoCaptcha::renderJs() !!}
+                                        {!! NoCaptcha::display() !!}
+                                        @error('g-recaptcha-response')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
                                     <div class="row mb-4">
                                         <div class="col">
                                             <div class="form-check font-size-15">

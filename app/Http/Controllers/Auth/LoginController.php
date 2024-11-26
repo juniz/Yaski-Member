@@ -37,4 +37,19 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function validateLogin()
+    {
+        return request()->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'g-recaptcha-response' => 'required|captcha',
+        ], [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Email tidak valid',
+            'password.required' => 'Password tidak boleh kosong',
+            'g-recaptcha-response.required' => 'Captcha tidak boleh kosong',
+            'g-recaptcha-response.captcha' => 'Captcha tidak valid',
+        ]);
+    }
 }
