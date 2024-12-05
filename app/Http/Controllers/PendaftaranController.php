@@ -289,7 +289,7 @@ class PendaftaranController extends Controller
                         'id' => $request->workshop_id,
                         'price' => $harga,
                         'quantity' => 1,
-                        'name' => $paket,
+                        'name' => Str::limit($paket, 50),
                     ),
                 ),
                 'customer_details' => array(
