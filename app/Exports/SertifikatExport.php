@@ -47,7 +47,7 @@ class SertifikatExport implements FromCollection, WithHeadings, WithMapping
             $invoice->no_sertifikat,
             $invoice->nama ?? Peserta::where('id', $invoice->peserta_id)->first()->nama,
             $invoice->instansi ?? Transaction::where('workshop_id', $invoice->workshop_id)->first()->nama_rs,
-            $invoice->file_sertifikat,
+            $invoice->url,
         ];
     }
 }
