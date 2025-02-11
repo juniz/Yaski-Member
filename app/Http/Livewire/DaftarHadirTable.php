@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Sertifikat;
+use Spatie\Browsershot\Browsershot;
 use PDF;
 
 class DaftarHadirTable extends DataTableComponent
@@ -95,11 +96,76 @@ class DaftarHadirTable extends DataTableComponent
         }
         $this->emit('refreshDatatable');
         $pdf = PDF::loadView('prints.labels.peserta', ['data' => $data, 'url' => url('sertifikat/' . $idSertifikat), 'workshop' => $workshop->nama, 'no_urut' => $no ?? $cek->no_urut]);
+        mkdir(storage_path('app/public/labels/' . $this->idWorkshop), 0777, true);
         Storage::put('public/labels/' . $this->idWorkshop . '/' . $peserta->nama . '.pdf', $pdf->output());
         $this->emit('openLabel', [
             'nama' => $peserta->nama,
             'url' => url('storage/labels/' . $this->idWorkshop . '/' . $peserta->nama . '.pdf')
         ]);
+    }
+
+    public function penyebut($nilai)
+    {
+        $nilai = abs($nilai);
+        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+        $temp = "";
+        if ($nilai < 12) {
+            $temp = " " . $huruf[$nilai];
+        } else if ($nilai < 20) {
+            $temp = $this->penyebut($nilai - 10) . " belas";
+        } else if ($nilai < 100) {
+            $temp = $this->penyebut($nilai / 10) . " puluh" . $this->penyebut($nilai % 10);
+        } else if ($nilai < 200) {
+            $temp = " seratus" . $this->penyebut($nilai - 100);
+        } else if ($nilai < 1000) {
+            $temp = $this->penyebut($nilai / 100) . " ratus" . $this->penyebut($nilai % 100);
+        } else if ($nilai < 2000) {
+            $temp = " seribu" . $this->penyebut($nilai - 1000);
+        } else if ($nilai < 1000000) {
+            $temp = $this->penyebut($nilai / 1000) . " ribu" . $this->penyebut($nilai % 1000);
+        } else if ($nilai < 1000000000) {
+            $temp = $this->penyebut($nilai / 1000000) . " juta" . $this->penyebut($nilai % 1000000);
+        } else if ($nilai < 1000000000000) {
+            $temp = $this->penyebut($nilai / 1000000000) . " milyar" . $this->penyebut(fmod($nilai, 1000000000));
+        } else if ($nilai < 1000000000000000) {
+            $temp = $this->penyebut($nilai / 1000000000000) . " trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
+        }
+        return $temp;
+    }
+
+    public function terbilang($nilai)
+    {
+        if ($nilai < 0) {
+            $hasil = "minus " . trim($this->penyebut($nilai));
+        } else {
+            $hasil = trim($this->penyebut($nilai));
+        }
+        return $hasil;
+    }
+
+    public function cetakKwitansi($data)
+    {
+        // dd($data);
+        $imagePath = public_path('assets/images/logo.png');
+        $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
+        $imageData = file_get_contents($imagePath);
+        $template = view('prints.kwitansi.peserta', [
+            'logo' => 'data:image/' . $imageType . ';base64,' . base64_encode($imageData),
+            'data' => $data,
+        ])->render();
+        Browsershot::html($template)
+            ->showBackground()
+            ->format('A5')
+            ->pages('1')
+            ->landscape()
+            ->save(storage_path('app/public/kwitansi.pdf'));
+        dd($this->terbilang($data['harga']));
+        $this->emit('openKwitansi', [
+            // 'nama' => $data['nama'],
+            'url' => url('storage/kwitansi.pdf'),
+            'terbilang' => $this->terbilang($data['harga']),
+        ]);
+        // return response()->file(storage_path('app/public/kwitansi.pdf'));
     }
 
     public function tidakHadir($data)
@@ -175,6 +241,8 @@ class DaftarHadirTable extends DataTableComponent
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="hadir(' . $row . ')" 
                                     href="#">Check In</a></li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="cetakKwitansi(' . $row . ')" 
+                                    href="#">Kwitansi</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="tidakHadir(' . $row . ')" 
                                     href="#">Batal</a></li>
                         </ul>
