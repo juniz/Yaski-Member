@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sertifikat;
 use App\Models\Workshop;
+use App\Models\WorkshopSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -208,12 +209,32 @@ class WorkshopController extends Controller
     {
         $this->validate($request, [
             'deskripsi' => 'required',
-            'file_template' => 'required|mimes:pdf|max:2048',
+            'file_template' => 'required|image|max:2048',
         ], [
             'deskripsi.required' => 'Deskripsi tidak boleh kosong',
             'file_template.required' => 'File template tidak boleh kosong',
-            'file_template.mimes' => 'File harus berupa pdf',
+            'file_template.image' => 'File harus berupa gambar',
         ]);
+
+        try {
+            $templateName = null;
+            if (request()->has('file_template')) {
+                $template = request()->file('file_template');
+                $templateName = $template->getClientOriginalName();
+                $template->storeAs('public/workshop/template/' . $id, $templateName);
+            }
+            WorkshopSetting::updateOrCreate(
+                ['workshop_id' => $id],
+                [
+                    'deskripsi' => $request->deskripsi,
+                    'file_template' => $templateName,
+                ]
+            );
+
+            return redirect()->back()->with(['message' => 'Setting berhasil disimpan', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
+        }
     }
 
     public function cekValidasi($id)

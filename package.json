@@ -81,6 +81,7 @@
         "pace-js": "^1.2.4",
         "pdfmake": "^0.1.65",
         "pristinejs": "^0.1.9",
+        "puppeteer": "^24.1.0",
         "rater-js": "^1.0.1",
         "select2": "^4.0.10",
         "simplebar": "^4.2.3",

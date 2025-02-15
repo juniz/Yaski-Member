@@ -53,6 +53,10 @@ Daftar Hadir Peserta Workshop
         window.open($data['url'], "popup_id", windowSizeArray[1])
     })
 
+    Livewire.on('openKwitansi', function($data){
+        window.open($data['url'], "_blank");
+    })
+
     Livewire.on('scanQr', () => {
         $('#qrcode-modal').modal('show');
     });

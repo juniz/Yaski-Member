@@ -13,14 +13,14 @@ Setting Workshop
     <div class="col-12">
         <div class="card">
             <div class="card-body p-4">
-                <form method="POST" action="{{ route('workshop.setting.simpan', ['id' => $id]) }}">
+                <form method="POST"  action="{{ route('workshop.setting.simpan', ['id' => $id]) }}" enctype="multipart/form-data">
                     @csrf
                     {{-- <x-ui.input-row id="id" type="hidden" value="{{ $id }}" /> --}}
                     <x-ui.textarea label="Deskripsi" id="deskripsi" />
                     <div class="my-3">
-                        <label for="Template" class="form-label">Template</label>
-                        <input class="form-control" type="file" id="template" name="template" accept="pplication/pdf">
-                        @error('template')
+                        <label for="file_template" class="form-label">file_template</label>
+                        <input class="form-control" type="file" id="file_template" name="file_template" accept="image/*">
+                        @error('file_template')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

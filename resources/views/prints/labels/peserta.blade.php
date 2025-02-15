@@ -126,11 +126,11 @@
                                     <td style="width: 5%">:</td>
                                     <td style="width: 75%; font-size: 8px">{{$data['jns_kelamin']}}</td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td style="width: 20%; font-size: 8px">Baju</td>
                                     <td style="width: 5%">:</td>
                                     <td style="width: 75%; font-size: 8px">{{$data['baju']}}</td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <td style="width: 20%; font-size: 8px">Paket</td>
                                     <td style="width: 5%">:</td>

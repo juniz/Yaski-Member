@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Sertifikat;
+use Illuminate\Support\Carbon;
 use Spatie\Browsershot\Browsershot;
 use PDF;
 
@@ -96,7 +97,9 @@ class DaftarHadirTable extends DataTableComponent
         }
         $this->emit('refreshDatatable');
         $pdf = PDF::loadView('prints.labels.peserta', ['data' => $data, 'url' => url('sertifikat/' . $idSertifikat), 'workshop' => $workshop->nama, 'no_urut' => $no ?? $cek->no_urut]);
-        mkdir(storage_path('app/public/labels/' . $this->idWorkshop), 0777, true);
+        if (!is_dir(storage_path('app/public/labels/' . $this->idWorkshop))) {
+            mkdir(storage_path('app/public/labels/' . $this->idWorkshop), 0777, true);
+        }
         Storage::put('public/labels/' . $this->idWorkshop . '/' . $peserta->nama . '.pdf', $pdf->output());
         $this->emit('openLabel', [
             'nama' => $peserta->nama,
@@ -145,7 +148,18 @@ class DaftarHadirTable extends DataTableComponent
 
     public function cetakKwitansi($data)
     {
-        // dd($data);
+        $workshop = \App\Models\Workshop::find($this->idWorkshop);
+        // dd($workshop);
+        $data = [
+            'order_id' => $data['order_id'],
+            'nama' => $data['nama'],
+            'terbilang' => $this->terbilang($data['harga']),
+            'harga' => $data['harga'],
+            'workshop' => $workshop->nama,
+            'tgl_mulai' => Carbon::parse($workshop->tgl_mulai)->translatedFormat('d F Y'),
+            'tgl_selesai' => Carbon::parse($workshop->tgl_selesai)->translatedFormat('d F Y'),
+            'lokasi' => $workshop->lokasi
+        ];
         $imagePath = public_path('assets/images/logo.png');
         $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
         $imageData = file_get_contents($imagePath);
@@ -159,11 +173,10 @@ class DaftarHadirTable extends DataTableComponent
             ->pages('1')
             ->landscape()
             ->save(storage_path('app/public/kwitansi.pdf'));
-        dd($this->terbilang($data['harga']));
+        // dd($this->terbilang($data['harga']));
         $this->emit('openKwitansi', [
             // 'nama' => $data['nama'],
             'url' => url('storage/kwitansi.pdf'),
-            'terbilang' => $this->terbilang($data['harga']),
         ]);
         // return response()->file(storage_path('app/public/kwitansi.pdf'));
     }

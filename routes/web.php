@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CertifikatController;
+use App\Http\Controllers\KwitansiController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Invoice\Transaction;
@@ -36,7 +37,7 @@ Route::resource('sub-users', App\Http\Controllers\SubUserController::class);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('root');
-    Route::get('/dashboard', fn () => view('index'))->name('dashboard');
+    Route::get('/dashboard', fn() => view('index'))->name('dashboard');
     //Update User Details
     Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
     Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
@@ -55,15 +56,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('admin.roles.index');
     })->name('roles.index');
 
-    Route::get('/list-workshop', fn () => view('admin.workshop.index'))->name('workshop.index');
+    Route::get('/list-workshop', fn() => view('admin.workshop.index'))->name('workshop.index');
 
-    Route::get('/workshop/create', fn () => view('workshops.create'))->name('workshop.create');
+    Route::get('/workshop/create', fn() => view('workshops.create'))->name('workshop.create');
     Route::post('/workshop/store', [App\Http\Controllers\WorkshopController::class, 'store'])->name('workshop.store');
     Route::get('/workshop/{id}', [App\Http\Controllers\WorkshopController::class, 'show'])->name('workshop.show');
     Route::get('/workshop/{workshop}/edit', [App\Http\Controllers\WorkshopController::class, 'edit'])->name('workshop.edit');
     Route::put('/workshop/{workshop}', [App\Http\Controllers\WorkshopController::class, 'update'])->name('workshop.update');
-    Route::get('/paklaring', fn () => view('paklaring.index'))->name('paklaring.index');
-    Route::get('/mou', fn () => view('mou.index'))->name('mou.index');
+    Route::get('/paklaring', fn() => view('paklaring.index'))->name('paklaring.index');
+    Route::get('/mou', fn() => view('mou.index'))->name('mou.index');
     // Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class);
 
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
@@ -72,19 +73,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/workshop/sertifikat/{id}', function ($id) {
         return view('workshops.sertifikat', compact('id'));
     })->name('workshop.sertifikat');
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
 
     Route::get('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'openSetting'])->name('workshop.setting');
     Route::post('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'simpanSetting'])->name('workshop.setting.simpan');
 });
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
-Route::get('/workshop', fn () => view('workshops.daftar'))->name('workshop.list');
-Route::get('/workshop/detail/{slug}', fn () => view('workshops.detail'))->name('workshop.detail');
+Route::get('/workshop', fn() => view('workshops.daftar'))->name('workshop.list');
+Route::get('/workshop/detail/{slug}', fn() => view('workshops.detail'))->name('workshop.detail');
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])->name('pendaftaran.index');
 Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
-Route::get('/transaksi-sukses', fn () => view('workshops.transaction-success'))->name('pendaftaran.success');
+Route::get('/transaksi-sukses', fn() => view('workshops.transaction-success'))->name('pendaftaran.success');
 Route::get('/sertifikat/{id}/validasi', [App\Http\Controllers\WorkshopController::class, 'cekValidasi'])->name('sertifikat.validasi');
 
 // Route::get('/email/verify', function () {
@@ -116,4 +117,4 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 Route::get('/sertifikat/{id}', [CertifikatController::class, 'formSertifikat']);
 Route::post('/sertifikat/{id}', [CertifikatController::class, 'simpanSertifikat'])->name('sertifikat.simpan');
-Route::get('/kwitansi', fn () => view('prints.kwitansi.peserta'))->name('kwitansi');
+Route::get('/kwitansi', [KwitansiController::class, 'index'])->name('kwitansi');
