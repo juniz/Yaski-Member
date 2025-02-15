@@ -168,8 +168,6 @@ class DaftarHadirTable extends DataTableComponent
             'data' => $data,
         ])->render();
         Browsershot::html($template)
-            ->setNodeBinary('/usr/bin/node')
-            ->setNpmBinary('/usr/bin/npm')
             ->showBackground()
             ->format('A5')
             ->pages('1')
