@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Sertifikat;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Carbon;
 use Spatie\Browsershot\Browsershot;
 use PDF;
@@ -163,10 +164,14 @@ class DaftarHadirTable extends DataTableComponent
         $imagePath = public_path('assets/images/logo.png');
         $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
         $imageData = file_get_contents($imagePath);
+
         $template = view('prints.kwitansi.peserta', [
             'logo' => 'data:image/' . $imageType . ';base64,' . base64_encode($imageData),
             'data' => $data,
         ])->render();
+        // FacadePdf::loadHTML($template)
+        //     ->setPaper('A4', 'landscape')
+        //     ->save(storage_path('app/public/kwitansi.pdf'));
         Browsershot::html($template)
             ->setNodeBinary('/home/yaskimember.org/node/v22.13.0/bin/node')
             ->setNpmBinary('/home/yaskimember.org/node/v22.13.0/bin/npm')
@@ -175,6 +180,9 @@ class DaftarHadirTable extends DataTableComponent
             ->format('A5')
             ->pages('1')
             ->landscape()
+            ->setOption('args', ['--disable-web-security'])
+            ->ignoreHttpsErrors()
+            ->noSandbox()
             ->save(storage_path('app/public/kwitansi.pdf'));
         // dd($this->terbilang($data['harga']));
         $this->emit('openKwitansi', [
