@@ -170,7 +170,7 @@ class DaftarHadirTable extends DataTableComponent
         Browsershot::html($template)
             ->setNodeBinary('/home/yaskimember.org/node/v22.13.0/bin/node')
             ->setNpmBinary('/home/yaskimember.org/node/v22.13.0/bin/npm')
-            ->setChromePath('/root/.cache/puppeteer/chrome/linux-133.0.6943.98/chrome-linux64/chrome')
+            ->setChromePath('/home/yaskimember.org/puppeteer/chrome/linux-133.0.6943.98/chrome-linux64/chrome')
             ->showBackground()
             ->format('A5')
             ->pages('1')
