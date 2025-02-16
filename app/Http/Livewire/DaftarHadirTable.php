@@ -168,7 +168,7 @@ class DaftarHadirTable extends DataTableComponent
             'data' => $data,
         ])->render();
         Browsershot::html($template)
-            ->setIncludePath('$PATH:/home/yaskimember.org/bin')
+            ->setIncludePath('$PATH:/home/yaskimember.org/node/v22.13.0/bin')
             ->showBackground()
             ->format('A5')
             ->pages('1')
