@@ -172,21 +172,22 @@ class DaftarHadirTable extends DataTableComponent
         // FacadePdf::loadHTML($template)
         //     ->setPaper('A4', 'landscape')
         //     ->save(storage_path('app/public/kwitansi.pdf'));
-        Browsershot::html($template)
-            ->setNodeBinary('/home/yaskimember.org/node/v22.13.0/bin/node')
-            ->setNpmBinary('/home/yaskimember.org/node/v22.13.0/bin/npm')
-            ->setChromePath('/home/yaskimember.org/puppeteer/chrome/linux-133.0.6943.98/chrome-linux64/chrome')
-            ->showBackground()
-            ->format('A5')
-            ->pages('1')
-            ->landscape()
-            ->setOption('args', ['--disable-web-security'])
-            ->ignoreHttpsErrors()
-            ->noSandbox()
-            ->save(storage_path('app/public/kwitansi.pdf'));
+        // Browsershot::html($template)
+        //     ->setNodeBinary('/home/yaskimember.org/node/v22.13.0/bin/node')
+        //     ->setNpmBinary('/home/yaskimember.org/node/v22.13.0/bin/npm')
+        //     ->setChromePath('/home/yaskimember.org/puppeteer/chrome/linux-133.0.6943.98/chrome-linux64/chrome')
+        //     ->showBackground()
+        //     ->format('A5')
+        //     ->pages('1')
+        //     ->landscape()
+        //     ->setOption('args', ['--disable-web-security'])
+        //     ->ignoreHttpsErrors()
+        //     ->noSandbox()
+        //     ->save(storage_path('app/public/kwitansi.pdf'));
         // dd($this->terbilang($data['harga']));
         $this->emit('openKwitansi', [
             // 'nama' => $data['nama'],
+            'template' => $template,
             'url' => url('storage/kwitansi.pdf'),
         ]);
         // return response()->file(storage_path('app/public/kwitansi.pdf'));

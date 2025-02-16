@@ -10,6 +10,11 @@
             margin: 0;
         }
 
+        body{
+            -webkit-print-color-adjust:exact !important;
+            print-color-adjust:exact !important;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 15mm;
