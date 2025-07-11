@@ -173,15 +173,18 @@ class PesertaTable extends DataTableComponent
             Column::make("Jenis Kelamin", "jns_kelamin")
                 ->sortable(),
             Column::make("Email", "email")
-                ->sortable(),
+                ->searchable()
+                ->searchable(),
             Column::make("Telp", "telp")
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
             Column::make("Baju", "baju")
                 ->sortable(function (Builder $query, $direction) {
                     $query->orderBy('baju', $direction);
                 }),
             Column::make("Paket", "paket")
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
             Column::make("Harga", "harga")
                 ->sortable(),
             Column::make("Aksi", "id")
