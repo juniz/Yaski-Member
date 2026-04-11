@@ -125,7 +125,13 @@ Setting Template Sertifikat
                         <div class="col-lg-4">
                             {{-- Nama Config --}}
                             <div class="config-section">
-                                <h6><span class="element-badge badge-nama">●</span> Nama Peserta</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0"><span class="element-badge badge-nama">●</span> Nama Peserta</h6>
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input pos-input" type="checkbox" id="nama_enabled" name="nama_enabled"
+                                               {{ ($setting->nama_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                    </div>
+                                </div>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <label class="form-label small">X</label>
@@ -155,7 +161,13 @@ Setting Template Sertifikat
 
                             {{-- No Sertifikat Config --}}
                             <div class="config-section">
-                                <h6><span class="element-badge badge-nosertifikat">●</span> No. Sertifikat</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0"><span class="element-badge badge-nosertifikat">●</span> No. Sertifikat</h6>
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input pos-input" type="checkbox" id="no_sertifikat_enabled" name="no_sertifikat_enabled"
+                                               {{ ($setting->no_sertifikat_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                    </div>
+                                </div>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <label class="form-label small">X</label>
@@ -185,7 +197,13 @@ Setting Template Sertifikat
 
                             {{-- Instansi Config --}}
                             <div class="config-section">
-                                <h6><span class="element-badge badge-instansi">●</span> Instansi</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0"><span class="element-badge badge-instansi">●</span> Instansi</h6>
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input pos-input" type="checkbox" id="instansi_enabled" name="instansi_enabled"
+                                               {{ ($setting->instansi_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                    </div>
+                                </div>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <label class="form-label small">X</label>
@@ -277,6 +295,7 @@ Setting Template Sertifikat
             getY: () => parseInt(document.getElementById('nama_y').value) || 400,
             getFontSize: () => parseInt(document.getElementById('nama_font_size').value) || 40,
             getColor: () => document.getElementById('nama_color').value || '#000000',
+            isEnabled: () => document.getElementById('nama_enabled').checked,
             setX: (v) => { document.getElementById('nama_x').value = v; },
             setY: (v) => { document.getElementById('nama_y').value = v; },
         },
@@ -287,6 +306,7 @@ Setting Template Sertifikat
             getY: () => parseInt(document.getElementById('no_sertifikat_y').value) || 350,
             getFontSize: () => parseInt(document.getElementById('no_sertifikat_font_size').value) || 20,
             getColor: () => document.getElementById('no_sertifikat_color').value || '#333333',
+            isEnabled: () => document.getElementById('no_sertifikat_enabled').checked,
             setX: (v) => { document.getElementById('no_sertifikat_x').value = v; },
             setY: (v) => { document.getElementById('no_sertifikat_y').value = v; },
         },
@@ -297,6 +317,7 @@ Setting Template Sertifikat
             getY: () => parseInt(document.getElementById('instansi_y').value) || 460,
             getFontSize: () => parseInt(document.getElementById('instansi_font_size').value) || 24,
             getColor: () => document.getElementById('instansi_color').value || '#333333',
+            isEnabled: () => document.getElementById('instansi_enabled').checked,
             setX: (v) => { document.getElementById('instansi_x').value = v; },
             setY: (v) => { document.getElementById('instansi_y').value = v; },
         },
@@ -393,9 +414,11 @@ Setting Template Sertifikat
         ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
         // Draw text elements
-        drawElement('nama');
-        drawElement('no_sertifikat');
-        drawElement('instansi');
+        ['nama', 'no_sertifikat', 'instansi'].forEach(key => {
+            if (elements[key].isEnabled()) {
+                drawElement(key);
+            }
+        });
 
         // Draw QR element
         if (elements.qr.isEnabled()) {
@@ -535,6 +558,8 @@ Setting Template Sertifikat
         // Check text elements
         for (const key of ['nama', 'no_sertifikat', 'instansi']) {
             const el = elements[key];
+            if (!el.isEnabled()) continue;
+            
             const x = el.getX() * scale;
             const y = el.getY() * scale;
             const fontSize = el.getFontSize() * scale;

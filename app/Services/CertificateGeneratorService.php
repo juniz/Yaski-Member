@@ -61,31 +61,47 @@ class CertificateGeneratorService
         $fontPath = public_path('assets/fonts/arial.ttf');
         $useTTF = file_exists($fontPath);
 
-        // If no TTF font, try to find one
+        // Define search paths for fonts (Windows & Linux)
         if (!$useTTF) {
-            $windowsFonts = [
+            $searchPaths = [
+                // Project local
+                public_path('assets/fonts/arial.ttf'),
+                // Windows
                 'C:/Windows/Fonts/arial.ttf',
                 'C:/Windows/Fonts/calibri.ttf',
                 'C:/Windows/Fonts/segoeui.ttf',
+                // Linux (Ubuntu/Debian standard paths)
+                '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+                '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+                '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+                '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
             ];
-            foreach ($windowsFonts as $wf) {
-                if (file_exists($wf)) {
-                    $fontPath = $wf;
+            foreach ($searchPaths as $path) {
+                if (file_exists($path)) {
+                    $fontPath = $path;
                     $useTTF = true;
                     break;
                 }
             }
         }
 
+        // --- Perbaikan Skalasi Font ---
+        // Editor menggunakan lebar referensi 800px. 
+        // Agar ukuran font di gambar asli proporsional dengan yang terlihat di editor, 
+        // kita kalikan fontSize dengan rasio (lebar_asli / 800).
+        $imageWidth = $imageInfo[0];
+        $fontSizeFactor = $imageWidth / 800;
+
         // Draw nama peserta
         $namaText = $sertifikat->nama ?? $sertifikat->peserta->nama ?? '';
-        if ($namaText) {
+        $namaEnabled = $setting->nama_enabled ?? true;
+        if ($namaText && $namaEnabled) {
             $this->drawText(
                 $image,
                 $namaText,
                 $setting->nama_x ?? 500,
                 $setting->nama_y ?? 400,
-                $setting->nama_font_size ?? 40,
+                ($setting->nama_font_size ?? 40) * $fontSizeFactor,
                 $setting->nama_color ?? '#000000',
                 $fontPath,
                 $useTTF,
@@ -95,13 +111,14 @@ class CertificateGeneratorService
 
         // Draw no sertifikat
         $noSertifikatText = $sertifikat->no_sertifikat ?? '';
-        if ($noSertifikatText) {
+        $noSertifikatEnabled = $setting->no_sertifikat_enabled ?? true;
+        if ($noSertifikatText && $noSertifikatEnabled) {
             $this->drawText(
                 $image,
                 $noSertifikatText,
                 $setting->no_sertifikat_x ?? 500,
                 $setting->no_sertifikat_y ?? 350,
-                $setting->no_sertifikat_font_size ?? 20,
+                ($setting->no_sertifikat_font_size ?? 20) * $fontSizeFactor,
                 $setting->no_sertifikat_color ?? '#333333',
                 $fontPath,
                 $useTTF,
@@ -111,13 +128,14 @@ class CertificateGeneratorService
 
         // Draw instansi
         $instansiText = $sertifikat->instansi ?? $sertifikat->peserta->transaction->nama_rs ?? '';
-        if ($instansiText) {
+        $instansiEnabled = $setting->instansi_enabled ?? true;
+        if ($instansiText && $instansiEnabled) {
             $this->drawText(
                 $image,
                 $instansiText,
                 $setting->instansi_x ?? 500,
                 $setting->instansi_y ?? 460,
-                $setting->instansi_font_size ?? 24,
+                ($setting->instansi_font_size ?? 24) * $fontSizeFactor,
                 $setting->instansi_color ?? '#333333',
                 $fontPath,
                 $useTTF,
