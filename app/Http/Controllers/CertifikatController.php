@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sertifikat;
+use App\Services\CertificateGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Crypt;
@@ -33,28 +35,72 @@ class CertifikatController extends Controller
             $sertifikat->instansi = $request->instansi;
             $sertifikat->save();
 
-            return redirect()->back()->with('type', 'success')->with('message', 'Data berhasil disimpan');
+            // Auto-generate sertifikat image setelah data disimpan
+            $service = new CertificateGeneratorService();
+            $generated = $service->generate($id);
+
+            $message = 'Data berhasil disimpan';
+            if ($generated) {
+                $message .= ' dan sertifikat berhasil di-generate';
+            }
+
+            return redirect()->back()->with('type', 'success')->with('message', $message);
         } catch (\Exception $e) {
             return redirect()->back()->with('message', App::environment('local') ? $e->getMessage() : 'Terjadi kesalahan')->with('type', 'danger');
         }
     }
 
+    public function previewSertifikat($id)
+    {
+        $sertifikat = Sertifikat::with('workshop')->find($id);
+        if (!$sertifikat) {
+            abort(404, 'Sertifikat tidak ditemukan');
+        }
+
+        $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $sertifikat->file_sertifikat);
+
+        if (!$sertifikat->file_sertifikat || !file_exists($filePath)) {
+            // Try to generate on the fly
+            $service = new CertificateGeneratorService();
+            $generated = $service->generate($id);
+            if ($generated) {
+                $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $generated);
+            } else {
+                abort(404, 'File sertifikat tidak ditemukan. Pastikan template sudah diupload di setting workshop.');
+            }
+        }
+
+        return response()->file($filePath, [
+            'Content-Type' => 'image/png',
+        ]);
+    }
+
+    public function downloadSertifikat($id)
+    {
+        $sertifikat = Sertifikat::with(['workshop', 'peserta'])->find($id);
+        if (!$sertifikat) {
+            abort(404, 'Sertifikat tidak ditemukan');
+        }
+
+        $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $sertifikat->file_sertifikat);
+
+        if (!$sertifikat->file_sertifikat || !file_exists($filePath)) {
+            // Try to generate on the fly
+            $service = new CertificateGeneratorService();
+            $generated = $service->generate($id);
+            if ($generated) {
+                $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $generated);
+            } else {
+                abort(404, 'File sertifikat tidak ditemukan. Pastikan template sudah diupload di setting workshop.');
+            }
+        }
+
+        $downloadName = 'Sertifikat-' . ($sertifikat->nama ?? $sertifikat->peserta->nama ?? 'peserta') . '.png';
+        return response()->download($filePath, $downloadName);
+    }
+
     public function index($nama)
     {
-        // $outputfile = public_path('certifikat.pdf');
-        // $this->fillPDF(storage_path('app/public/templates/sertifikat/template2.pdf'), $outputfile, $nama);
-
-        // return response()->file($outputfile);
-        // return view('prints.labels.peserta', compact('nama'));
-        // $qr = QrCode::size(250)
-        //     ->format('png')
-        //     ->merge('assets/images/logo.png', 0.3, true)
-        //     ->style('dot')
-        //     ->eye('circle')
-        //     ->gradient(255, 0, 0, 0, 0, 255, 'diagonal')
-        //     ->margin(1)
-        //     ->errorCorrection('M')
-        //     ->generate('83745837hfdyeurf');
         $pdf = PDF::loadView('prints.labels.peserta', compact('nama'));
         return $pdf->stream('certifikat.pdf');
     }

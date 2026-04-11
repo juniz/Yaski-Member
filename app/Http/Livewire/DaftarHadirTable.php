@@ -17,6 +17,7 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Carbon;
 use Spatie\Browsershot\Browsershot;
 use PDF;
+use App\Services\CertificateGeneratorService;
 
 class DaftarHadirTable extends DataTableComponent
 {
@@ -93,8 +94,18 @@ class DaftarHadirTable extends DataTableComponent
                 'peserta_id' => $data['id'],
                 'no_sertifikat' => $no_sertifikat,
                 'no_urut' => $no,
+                'nama' => $peserta->nama,
             ]);
             $idSertifikat = $sertifikat->id;
+
+            // Auto-generate sertifikat image
+            try {
+                $certService = new CertificateGeneratorService();
+                $certService->generate($idSertifikat);
+            } catch (\Exception $e) {
+                // Log error tapi jangan gagalkan check-in
+                \Log::warning('Gagal generate sertifikat: ' . $e->getMessage());
+            }
         }
         $this->emit('refreshDatatable');
         $pdf = PDF::loadView('prints.labels.peserta', ['data' => $data, 'url' => url('sertifikat/' . $idSertifikat), 'workshop' => $workshop->nama, 'no_urut' => $no ?? $cek->no_urut]);

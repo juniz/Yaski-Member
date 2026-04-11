@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sertifikat;
 use App\Models\Workshop;
 use App\Models\WorkshopSetting;
+use App\Services\CertificateGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -202,36 +203,111 @@ class WorkshopController extends Controller
 
     public function openSetting($id)
     {
-        return view('workshops.setting', compact('id'));
+        $setting = WorkshopSetting::where('workshop_id', $id)->first();
+        $workshop = Workshop::find($id);
+        return view('workshops.setting', compact('id', 'setting', 'workshop'));
     }
 
     public function simpanSetting(Request $request, $id)
     {
         $this->validate($request, [
-            'deskripsi' => 'required',
-            'file_template' => 'required|image|max:2048',
+            'deskripsi' => 'nullable',
+            'file_template' => 'nullable|image|max:5120',
+            'nama_x' => 'required|integer',
+            'nama_y' => 'required|integer',
+            'nama_font_size' => 'required|integer|min:8|max:120',
+            'nama_color' => 'required|string|max:7',
+            'no_sertifikat_x' => 'required|integer',
+            'no_sertifikat_y' => 'required|integer',
+            'no_sertifikat_font_size' => 'required|integer|min:8|max:120',
+            'no_sertifikat_color' => 'required|string|max:7',
+            'instansi_x' => 'required|integer',
+            'instansi_y' => 'required|integer',
+            'instansi_font_size' => 'required|integer|min:8|max:120',
+            'instansi_color' => 'required|string|max:7',
+            'qr_x' => 'required|integer',
+            'qr_y' => 'required|integer',
+            'qr_size' => 'required|integer|min:50|max:500',
         ], [
-            'deskripsi.required' => 'Deskripsi tidak boleh kosong',
-            'file_template.required' => 'File template tidak boleh kosong',
             'file_template.image' => 'File harus berupa gambar',
+            'file_template.max' => 'Ukuran file maksimal 5MB',
         ]);
 
         try {
             $templateName = null;
-            if (request()->has('file_template')) {
-                $template = request()->file('file_template');
-                $templateName = $template->getClientOriginalName();
+            if ($request->hasFile('file_template')) {
+                $template = $request->file('file_template');
+                $templateName = 'template-' . time() . '.' . $template->getClientOriginalExtension();
                 $template->storeAs('public/workshop/template/' . $id, $templateName);
             }
+
+            $data = [
+                'deskripsi' => $request->deskripsi ?? '',
+                'nama_x' => $request->nama_x,
+                'nama_y' => $request->nama_y,
+                'nama_font_size' => $request->nama_font_size,
+                'nama_color' => $request->nama_color,
+                'no_sertifikat_x' => $request->no_sertifikat_x,
+                'no_sertifikat_y' => $request->no_sertifikat_y,
+                'no_sertifikat_font_size' => $request->no_sertifikat_font_size,
+                'no_sertifikat_color' => $request->no_sertifikat_color,
+                'instansi_x' => $request->instansi_x,
+                'instansi_y' => $request->instansi_y,
+                'instansi_font_size' => $request->instansi_font_size,
+                'instansi_color' => $request->instansi_color,
+                'qr_x' => $request->qr_x,
+                'qr_y' => $request->qr_y,
+                'qr_size' => $request->qr_size,
+                'qr_enabled' => $request->has('qr_enabled') ? 1 : 0,
+            ];
+
+            if ($templateName) {
+                $data['file_template'] = $templateName;
+            }
+
             WorkshopSetting::updateOrCreate(
                 ['workshop_id' => $id],
-                [
-                    'deskripsi' => $request->deskripsi,
-                    'file_template' => $templateName,
-                ]
+                $data
             );
 
-            return redirect()->back()->with(['message' => 'Setting berhasil disimpan', 'type' => 'success']);
+            return redirect()->back()->with(['message' => 'Setting sertifikat berhasil disimpan', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
+        }
+    }
+
+    public function generateSertifikat($id)
+    {
+        try {
+            $service = new CertificateGeneratorService();
+            $result = $service->generateBulk($id);
+
+            $message = "Generate selesai: {$result['success']} berhasil";
+            if ($result['failed'] > 0) {
+                $message .= ", {$result['failed']} gagal";
+            }
+            if ($result['skipped'] > 0) {
+                $message .= ", {$result['skipped']} sudah ada";
+            }
+
+            return redirect()->back()->with(['message' => $message, 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
+        }
+    }
+
+    public function regenerateSertifikat($id)
+    {
+        try {
+            $service = new CertificateGeneratorService();
+            $result = $service->regenerateBulk($id);
+
+            $message = "Regenerate selesai: {$result['success']} berhasil";
+            if ($result['failed'] > 0) {
+                $message .= ", {$result['failed']} gagal";
+            }
+
+            return redirect()->back()->with(['message' => $message, 'type' => 'success']);
         } catch (\Exception $e) {
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Terjadi kesalahan', 'type' => 'danger']);
         }
@@ -239,8 +315,46 @@ class WorkshopController extends Controller
 
     public function cekValidasi($id)
     {
-        $sertifikat = Sertifikat::find($id);
-        // dd($sertifikat);
+        $sertifikat = Sertifikat::with(['peserta.transaction', 'workshop'])->find($id);
         return view('workshops.validasi', compact('sertifikat'));
+    }
+
+    public function downloadSertifikatBulkPdf($id)
+    {
+        $workshop = Workshop::findOrFail($id);
+        $sertifikats = Sertifikat::where('workshop_id', $id)
+            ->whereNotNull('file_sertifikat')
+            ->orderBy('no_urut', 'asc')
+            ->get();
+
+        if ($sertifikats->isEmpty()) {
+            return redirect()->back()->with(['message' => 'Belum ada sertifikat yang di-generate', 'type' => 'warning']);
+        }
+
+        // Initialize FPDF
+        // We'll use a dynamic page size based on the first image found
+        $pdf = new \FPDF();
+
+        foreach ($sertifikats as $s) {
+            $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat);
+
+            if (file_exists($filePath)) {
+                // Get image dimensions
+                $size = getimagesize($filePath);
+                $width = $size[0];
+                $height = $size[1];
+
+                // Convert pixels to mm (assuming 96 DPI)
+                $wMm = $width * 0.264583;
+                $hMm = $height * 0.264583;
+
+                // Add page with custom size
+                $orientation = ($wMm > $hMm) ? 'L' : 'P';
+                $pdf->AddPage($orientation, [$wMm, $hMm]);
+                $pdf->Image($filePath, 0, 0, $wMm, $hMm);
+            }
+        }
+
+        return $pdf->Output('D', 'Semua_Sertifikat_' . \Illuminate\Support\Str::slug($workshop->nama) . '.pdf');
     }
 }

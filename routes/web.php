@@ -77,6 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'openSetting'])->name('workshop.setting');
     Route::post('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'simpanSetting'])->name('workshop.setting.simpan');
+    Route::post('/workshop/{id}/generate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'generateSertifikat'])->name('workshop.generate.sertifikat');
+    Route::post('/workshop/{id}/regenerate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'regenerateSertifikat'])->name('workshop.regenerate.sertifikat');
+    Route::get('/workshop/{id}/sertifikat-bulk-pdf', [App\Http\Controllers\WorkshopController::class, 'downloadSertifikatBulkPdf'])->name('workshop.download-bulk-pdf');
 });
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
@@ -117,4 +120,6 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 Route::get('/sertifikat/{id}', [CertifikatController::class, 'formSertifikat']);
 Route::post('/sertifikat/{id}', [CertifikatController::class, 'simpanSertifikat'])->name('sertifikat.simpan');
+Route::get('/sertifikat/{id}/preview', [CertifikatController::class, 'previewSertifikat'])->name('sertifikat.preview');
+Route::get('/sertifikat/{id}/download', [CertifikatController::class, 'downloadSertifikat'])->name('sertifikat.download');
 Route::get('/kwitansi', [KwitansiController::class, 'index'])->name('kwitansi');
