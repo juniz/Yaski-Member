@@ -75,6 +75,24 @@ class CertifikatController extends Controller
         ]);
     }
 
+    public function previewSertifikatBack($id)
+    {
+        $sertifikat = Sertifikat::find($id);
+        if (!$sertifikat || !$sertifikat->file_sertifikat_belakang) {
+            abort(404, 'File sertifikat belakang tidak ditemukan');
+        }
+
+        $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $sertifikat->file_sertifikat_belakang);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File sertifikat belakang tidak ditemukan di storage');
+        }
+
+        return response()->file($filePath, [
+            'Content-Type' => 'image/png',
+        ]);
+    }
+
     public function downloadSertifikat($id)
     {
         $sertifikat = Sertifikat::with(['workshop', 'peserta'])->find($id);
@@ -82,21 +100,47 @@ class CertifikatController extends Controller
             abort(404, 'Sertifikat tidak ditemukan');
         }
 
+        // 1. Ensure front side is generated
         $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $sertifikat->file_sertifikat);
-
         if (!$sertifikat->file_sertifikat || !file_exists($filePath)) {
-            // Try to generate on the fly
             $service = new CertificateGeneratorService();
             $generated = $service->generate($id);
             if ($generated) {
                 $filePath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $generated);
             } else {
-                abort(404, 'File sertifikat tidak ditemukan. Pastikan template sudah diupload di setting workshop.');
+                abort(404, 'Gagal generate file sertifikat.');
             }
         }
 
-        $downloadName = 'Sertifikat-' . ($sertifikat->nama ?? $sertifikat->peserta->nama ?? 'peserta') . '.png';
-        return response()->download($filePath, $downloadName);
+        // 2. Generate PDF
+        $pdf = new \FPDF();
+        
+        // Add Front Page
+        $size = getimagesize($filePath);
+        $wMm = $size[0] * 0.264583;
+        $hMm = $size[1] * 0.264583;
+        $orientation = ($wMm > $hMm) ? 'L' : 'P';
+        $pdf->AddPage($orientation, [$wMm, $hMm]);
+        $pdf->Image($filePath, 0, 0, $wMm, $hMm);
+
+        // Add Back Page if exists
+        if ($sertifikat->file_sertifikat_belakang) {
+            $backPath = storage_path('app/public/sertifikat/' . $sertifikat->workshop_id . '/' . $sertifikat->file_sertifikat_belakang);
+            if (file_exists($backPath)) {
+                $sizeBack = getimagesize($backPath);
+                $wBack = $sizeBack[0] * 0.264583;
+                $hBack = $sizeBack[1] * 0.264583;
+                $pdf->AddPage($orientation, [$wBack, $hBack]);
+                $pdf->Image($backPath, 0, 0, $wBack, $hBack);
+            }
+        }
+
+        $downloadName = 'Sertifikat-' . \Str::slug($sertifikat->nama ?? $sertifikat->peserta->nama ?? 'peserta') . '.pdf';
+        
+        if (ob_get_length()) ob_end_clean();
+        return response($pdf->Output('S', $downloadName))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $downloadName . '"');
     }
 
     public function index($nama)

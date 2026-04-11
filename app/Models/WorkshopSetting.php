@@ -14,6 +14,7 @@ class WorkshopSetting extends Model
         'workshop_id',
         'deskripsi',
         'file_template',
+        'file_template_belakang',
         'nama_x',
         'nama_y',
         'nama_font_size',

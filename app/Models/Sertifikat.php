@@ -19,6 +19,7 @@ class Sertifikat extends Model
         'nama',
         'instansi',
         'file_sertifikat',
+        'file_sertifikat_belakang',
     ];
 
     public function peserta()

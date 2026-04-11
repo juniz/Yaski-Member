@@ -91,14 +91,45 @@ Setting Template Sertifikat
                             <div class="config-section">
                                 <h6><i class="bx bx-image"></i> Template Desain Sertifikat</h6>
 
-                                <div class="mb-3">
-                                    <label for="file_template" class="form-label fw-bold">Upload Template</label>
-                                    <input class="form-control" type="file" id="file_template" name="file_template"
-                                           accept="image/jpeg,image/png,image/jpg">
-                                    <small class="text-muted">Format: JPG/PNG, Maks: 5MB. Disarankan resolusi tinggi.</small>
-                                    @error('file_template')
-                                        <span class="text-danger d-block mt-1">{{ $message }}</span>
-                                    @enderror
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label for="file_template" class="form-label fw-bold">Upload Template Depan</label>
+                                            @if($setting && $setting->file_template)
+                                                <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('depan')">
+                                                    <i class="bx bx-trash"></i> Hapus
+                                                </button>
+                                            @endif
+                                        </div>
+                                        <input class="form-control" type="file" id="file_template" name="file_template"
+                                               accept="image/jpeg,image/png,image/jpg">
+                                        <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
+                                        @if($setting && $setting->file_template)
+                                            <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template }}</p>
+                                        @endif
+                                        @error('file_template')
+                                            <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label for="file_template_belakang" class="form-label fw-bold">Upload Template Belakang</label>
+                                            @if($setting && $setting->file_template_belakang)
+                                                <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('belakang')">
+                                                    <i class="bx bx-trash"></i> Hapus
+                                                </button>
+                                            @endif
+                                        </div>
+                                        <input class="form-control" type="file" id="file_template_belakang" name="file_template_belakang"
+                                               accept="image/jpeg,image/png,image/jpg">
+                                        <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
+                                        @if($setting && $setting->file_template_belakang)
+                                            <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template_belakang }}</p>
+                                        @endif
+                                        @error('file_template_belakang')
+                                            <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <div class="drag-info">
@@ -110,8 +141,24 @@ Setting Template Sertifikat
                                     <span class="element-badge badge-qr">QR Code</span>
                                 </div>
 
-                                <div class="template-canvas-wrapper" id="canvasWrapper">
-                                    <canvas id="mainCanvas" width="800" height="400" style="max-width:100%;"></canvas>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="mb-1 fw-bold">Preview Depan:</p>
+                                        <div class="template-canvas-wrapper mb-3" id="canvasWrapper">
+                                            <canvas id="mainCanvas" width="800" height="400" style="max-width:100%;"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p class="mb-1 fw-bold">Preview Belakang (Statik):</p>
+                                        <div class="template-canvas-wrapper" id="backPreviewWrapper" style="background:#f1f1f1; min-height:100px; display: flex; align-items: center; justify-content: center;">
+                                            @if($setting && $setting->file_template_belakang)
+                                                <img id="backPreviewImg" src="{{ asset('storage/workshop/template/' . $id . '/' . $setting->file_template_belakang) }}" style="max-width:100%; border-radius: 4px;">
+                                            @else
+                                                <div id="backPlaceholder" class="p-4 text-center text-muted">Belum ada template belakang</div>
+                                                <img id="backPreviewImg" src="" style="max-width:100%; border-radius: 4px; display:none;">
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -372,6 +419,21 @@ Setting Template Sertifikat
                     render();
                 };
                 templateImg.src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    // Back template preview
+    document.getElementById('file_template_belakang').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = document.getElementById('backPreviewImg');
+                const placeholder = document.getElementById('backPlaceholder');
+                img.src = ev.target.result;
+                img.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
             };
             reader.readAsDataURL(e.target.files[0]);
         }
@@ -694,6 +756,22 @@ Setting Template Sertifikat
             render();
         }
     });
+
+    // Confirmation for Delete Template
+    window.confirmDelete = function(type) {
+        if (confirm('Apakah Anda yakin ingin menghapus template ' + type + '? File akan dihapus permanen.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ route('workshop.setting.hapus-template', ['id' => $id, 'type' => 'REPLACE_TYPE']) }}".replace('REPLACE_TYPE', type);
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = "{{ csrf_token() }}";
+            form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    };
 
     // Polyfill for roundRect if needed
     if (!ctx.roundRect) {

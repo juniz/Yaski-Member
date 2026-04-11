@@ -177,8 +177,37 @@ class CertificateGeneratorService
         imagepng($image, $outputPath, 5);
         imagedestroy($image);
 
+        // --- Handle Back Side ---
+        $filenameBack = null;
+        if ($setting->file_template_belakang) {
+            $templateBackPath = storage_path('app/public/workshop/template/' . $sertifikat->workshop_id . '/' . $setting->file_template_belakang);
+            if (file_exists($templateBackPath)) {
+                $filenameBack = 'sertifikat-' . $sertifikat->id . '-back.png';
+                $outputPathBack = storage_path('app/' . $outputDir . '/' . $filenameBack);
+                
+                // Since it's static, we can just copy it or re-save it via GD
+                $backImageInfo = getimagesize($templateBackPath);
+                if ($backImageInfo) {
+                    $backMime = $backImageInfo['mime'];
+                    $imageBack = null;
+                    switch ($backMime) {
+                        case 'image/jpeg': $imageBack = imagecreatefromjpeg($templateBackPath); break;
+                        case 'image/png': $imageBack = imagecreatefrompng($templateBackPath); break;
+                    }
+                    if ($imageBack) {
+                        imagepng($imageBack, $outputPathBack, 5);
+                        imagedestroy($imageBack);
+                    }
+                }
+            }
+        }
+
         // Update sertifikat record
         $sertifikat->file_sertifikat = $filename;
+        if ($filenameBack) {
+            $sertifikat->file_sertifikat_belakang = $filenameBack;
+        }
+        
         if ($sertifikat->exists) {
             $sertifikat->save();
         }

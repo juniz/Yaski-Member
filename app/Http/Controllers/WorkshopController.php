@@ -213,6 +213,7 @@ class WorkshopController extends Controller
         $this->validate($request, [
             'deskripsi' => 'nullable',
             'file_template' => 'nullable|image|max:5120',
+            'file_template_belakang' => 'nullable|image|max:5120',
             'nama_x' => 'required|integer',
             'nama_y' => 'required|integer',
             'nama_font_size' => 'required|integer|min:8|max:120',
@@ -231,6 +232,8 @@ class WorkshopController extends Controller
         ], [
             'file_template.image' => 'File harus berupa gambar',
             'file_template.max' => 'Ukuran file maksimal 5MB',
+            'file_template_belakang.image' => 'File harus berupa gambar',
+            'file_template_belakang.max' => 'Ukuran file maksimal 5MB',
         ]);
 
         try {
@@ -239,6 +242,12 @@ class WorkshopController extends Controller
                 $template = $request->file('file_template');
                 $templateName = 'template-' . time() . '.' . $template->getClientOriginalExtension();
                 $template->storeAs('public/workshop/template/' . $id, $templateName);
+            }
+            $templateBackName = null;
+            if ($request->hasFile('file_template_belakang')) {
+                $templateBack = $request->file('file_template_belakang');
+                $templateBackName = 'template-back-' . time() . '.' . $templateBack->getClientOriginalExtension();
+                $templateBack->storeAs('public/workshop/template/' . $id, $templateBackName);
             }
 
             $data = [
@@ -266,6 +275,9 @@ class WorkshopController extends Controller
 
             if ($templateName) {
                 $data['file_template'] = $templateName;
+            }
+            if ($templateBackName) {
+                $data['file_template_belakang'] = $templateBackName;
             }
 
             WorkshopSetting::updateOrCreate(
@@ -354,6 +366,15 @@ class WorkshopController extends Controller
                 $orientation = ($wMm > $hMm) ? 'L' : 'P';
                 $pdf->AddPage($orientation, [$wMm, $hMm]);
                 $pdf->Image($filePath, 0, 0, $wMm, $hMm);
+
+                // Add back page if exists
+                if ($s->file_sertifikat_belakang) {
+                    $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat_belakang);
+                    if (file_exists($backPath)) {
+                        $pdf->AddPage($orientation, [$wMm, $hMm]);
+                        $pdf->Image($backPath, 0, 0, $wMm, $hMm);
+                    }
+                }
             }
         }
 
@@ -371,27 +392,73 @@ class WorkshopController extends Controller
 
         // Create dummy certificate object
         $dummySertifikat = new Sertifikat();
-        $dummySertifikat->id = 'dummy-id';
+        $dummySertifikat->id = 'preview-id';
         $dummySertifikat->nama = 'Nama Peserta Contoh';
         $dummySertifikat->no_sertifikat = '2026/YASKI/04/001';
         $dummySertifikat->instansi = 'RS Contoh Instansi';
         $dummySertifikat->workshop_id = $id;
 
-        // Generate dummy image
-        $image = $generator->generate($dummySertifikat, true);
-
-        if (!$image) {
-            return redirect()->back()->with(['message' => 'Gagal generate preview', 'type' => 'danger']);
+        // 1. Generate front image with dummy data
+        $frontImage = $generator->generate($dummySertifikat, true);
+        if (!$frontImage) {
+            return redirect()->back()->with(['message' => 'Gagal generate preview depan', 'type' => 'danger']);
         }
 
-        // Clean output buffer to ensure clean PNG output
-        if (ob_get_length()) ob_end_clean();
+        // Save front image to temp file for FPDF
+        $tempFront = storage_path('app/public/temp_preview_front_' . time() . '.png');
+        imagepng($frontImage, $tempFront);
+        imagedestroy($frontImage);
 
-        // Output as PNG
-        header('Content-Type: image/png');
-        header('Content-Disposition: inline; filename="preview-sertifikat.png"');
-        imagepng($image);
-        imagedestroy($image);
-        exit;
+        // 2. Prepare FPDF
+        $pdf = new \FPDF();
+
+        // Add Front Page
+        $sizeFront = getimagesize($tempFront);
+        $wMm = $sizeFront[0] * 0.264583;
+        $hMm = $sizeFront[1] * 0.264583;
+        $orientation = ($wMm > $hMm) ? 'L' : 'P';
+        $pdf->AddPage($orientation, [$wMm, $hMm]);
+        $pdf->Image($tempFront, 0, 0, $wMm, $hMm);
+
+        // Add Back Page if exists
+        if ($setting->file_template_belakang) {
+            $backPath = storage_path('app/public/workshop/template/' . $id . '/' . $setting->file_template_belakang);
+            if (file_exists($backPath)) {
+                $sizeBack = getimagesize($backPath);
+                $wBack = $sizeBack[0] * 0.264583;
+                $hBack = $sizeBack[1] * 0.264583;
+                $pdf->AddPage($orientation, [$wBack, $hBack]);
+                $pdf->Image($backPath, 0, 0, $wBack, $hBack);
+            }
+        }
+
+        // Cleanup temp file
+        if (file_exists($tempFront)) unlink($tempFront);
+
+        // Output as PDF Inline
+        if (ob_get_length()) ob_end_clean();
+        return $pdf->Output('I', 'Preview_Sertifikat.pdf');
+    }
+
+    public function hapusTemplate($id, $type)
+    {
+        try {
+            $setting = WorkshopSetting::where('workshop_id', $id)->firstOrFail();
+            $field = ($type === 'depan') ? 'file_template' : 'file_template_belakang';
+            $fileName = $setting->$field;
+
+            if ($fileName) {
+                $filePath = 'public/workshop/template/' . $id . '/' . $fileName;
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                }
+                $setting->$field = null;
+                $setting->save();
+            }
+
+            return redirect()->back()->with(['message' => 'Template ' . $type . ' berhasil dihapus', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Gagal menghapus template', 'type' => 'danger']);
+        }
     }
 }

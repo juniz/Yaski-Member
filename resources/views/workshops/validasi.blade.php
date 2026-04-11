@@ -69,12 +69,26 @@ Validasi Sertifikat
                     <h1>Sertifikat Valid</h1>
                 </div>
                 <div class="card-body p-0">
-                    {{-- Preview sertifikat image --}}
+                    {{-- Preview sertifikat images --}}
                     @if($sertifikat->file_sertifikat)
                         <div class="p-3">
-                            <div class="sertifikat-preview">
-                                <img src="{{ url('sertifikat/' . $sertifikat->id . '/preview') }}"
-                                     alt="Sertifikat" class="img-fluid w-100">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <p class="small text-muted mb-1"><i class="bx bx-image"></i> Halaman Depan:</p>
+                                    <div class="sertifikat-preview">
+                                        <img src="{{ url('sertifikat/' . $sertifikat->id . '/preview') }}"
+                                             alt="Sertifikat Depan" class="img-fluid w-100">
+                                    </div>
+                                </div>
+                                @if($sertifikat->file_sertifikat_belakang)
+                                    <div class="col-12 mb-2">
+                                        <p class="small text-muted mb-1"><i class="bx bx-image"></i> Halaman Belakang:</p>
+                                        <div class="sertifikat-preview">
+                                            <img src="{{ url('sertifikat/' . $sertifikat->id . '/preview-back') }}"
+                                                 alt="Sertifikat Belakang" class="img-fluid w-100">
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endif
