@@ -82,243 +82,365 @@ Setting Template Sertifikat
                 </h5>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ route('workshop.setting.simpan', ['id' => $id]) }}" enctype="multipart/form-data" id="settingForm">
-                    @csrf
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs nav-tabs-custom nav-justified mb-4" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#setting-sertifikat" role="tab">
+                            <span class="d-flex align-items-center">
+                                <i class="bx bx-certification fs-4 me-2"></i>
+                                <span class="d-none d-sm-block">Setting Sertifikat</span>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#materi-workshop" role="tab">
+                            <span class="d-flex align-items-center">
+                                <i class="bx bx-book-content fs-4 me-2"></i>
+                                <span class="d-none d-sm-block">Materi Workshop</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
 
-                    <div class="row">
-                        {{-- Left: Template Upload & Interactive Preview --}}
-                        <div class="col-lg-8">
-                            <div class="config-section">
-                                <h6><i class="bx bx-image"></i> Template Desain Sertifikat</h6>
+                <!-- Tab panes -->
+                <div class="tab-content text-muted">
+                    <div class="tab-pane active" id="setting-sertifikat" role="tabpanel">
+                        <form method="POST" action="{{ route('workshop.setting.simpan', ['id' => $id]) }}" enctype="multipart/form-data" id="settingForm">
+                            @csrf
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <label for="file_template" class="form-label fw-bold">Upload Template Depan</label>
-                                            @if($setting && $setting->file_template)
-                                                <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('depan')">
-                                                    <i class="bx bx-trash"></i> Hapus
+                            <div class="row">
+                                {{-- Left: Template Upload & Interactive Preview --}}
+                                <div class="col-lg-8">
+                                    <div class="config-section">
+                                        <h6><i class="bx bx-image"></i> Template Desain Sertifikat</h6>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <label for="file_template" class="form-label fw-bold">Upload Template Depan</label>
+                                                    @if($setting && $setting->file_template)
+                                                        <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('depan')">
+                                                            <i class="bx bx-trash"></i> Hapus
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                                <input class="form-control" type="file" id="file_template" name="file_template"
+                                                       accept="image/jpeg,image/png,image/jpg">
+                                                <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
+                                                @if($setting && $setting->file_template)
+                                                    <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template }}</p>
+                                                @endif
+                                                @error('file_template')
+                                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <label for="file_template_belakang" class="form-label fw-bold">Upload Template Belakang</label>
+                                                    @if($setting && $setting->file_template_belakang)
+                                                        <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('belakang')">
+                                                            <i class="bx bx-trash"></i> Hapus
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                                <input class="form-control" type="file" id="file_template_belakang" name="file_template_belakang"
+                                                       accept="image/jpeg,image/png,image/jpg">
+                                                <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
+                                                @if($setting && $setting->file_template_belakang)
+                                                    <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template_belakang }}</p>
+                                                @endif
+                                                @error('file_template_belakang')
+                                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="drag-info">
+                                            <i class="bx bx-move"></i> <strong>Drag & Drop</strong> — Klik dan seret elemen di preview untuk mengatur posisi.
+                                            Legenda:
+                                            <span class="element-badge badge-nama">Nama</span>
+                                            <span class="element-badge badge-nosertifikat">No. Sertifikat</span>
+                                            <span class="element-badge badge-instansi">Instansi</span>
+                                            <span class="element-badge badge-qr">QR Code</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p class="mb-1 fw-bold">Preview Depan:</p>
+                                                <div class="template-canvas-wrapper mb-3" id="canvasWrapper">
+                                                    <canvas id="mainCanvas" width="800" height="400" style="max-width:100%;"></canvas>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <p class="mb-1 fw-bold">Preview Belakang (Statik):</p>
+                                                <div class="template-canvas-wrapper" id="backPreviewWrapper" style="background:#f1f1f1; min-height:100px; display: flex; align-items: center; justify-content: center;">
+                                                    @if($setting && $setting->file_template_belakang)
+                                                        <img id="backPreviewImg" src="{{ asset('storage/workshop/template/' . $id . '/' . $setting->file_template_belakang) }}" style="max-width:100%; border-radius: 4px;">
+                                                    @else
+                                                        <div id="backPlaceholder" class="p-4 text-center text-muted">Belum ada template belakang</div>
+                                                        <img id="backPreviewImg" src="" style="max-width:100%; border-radius: 4px; display:none;">
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="config-section">
+                                        <h6><i class="bx bx-text"></i> Deskripsi Workshop (Opsional)</h6>
+                                        <textarea class="form-control" name="deskripsi" rows="2" placeholder="Deskripsi workshop...">{{ $setting->deskripsi ?? '' }}</textarea>
+                                    </div>
+                                </div>
+
+                                {{-- Right: Properties Panel --}}
+                                <div class="col-lg-4">
+                                    {{-- Nama Config --}}
+                                    <div class="config-section">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0"><span class="element-badge badge-nama">●</span> Nama Peserta</h6>
+                                            <div class="form-check form-switch p-0 m-0">
+                                                <input class="form-check-input pos-input" type="checkbox" id="nama_enabled" name="nama_enabled"
+                                                       {{ ($setting->nama_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="form-label small">X</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="nama_x"
+                                                       id="nama_x" value="{{ $setting->nama_x ?? 500 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Y</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="nama_y"
+                                                       id="nama_y" value="{{ $setting->nama_y ?? 400 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Font Size</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="nama_font_size"
+                                                       id="nama_font_size" value="{{ $setting->nama_font_size ?? 40 }}" min="8" max="120">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Warna</label>
+                                                <div class="color-input-group">
+                                                    <input type="color" class="pos-input" name="nama_color" id="nama_color"
+                                                           value="{{ $setting->nama_color ?? '#000000' }}">
+                                                    <small id="nama_color_label">{{ $setting->nama_color ?? '#000000' }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- No Sertifikat Config --}}
+                                    <div class="config-section">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0"><span class="element-badge badge-nosertifikat">●</span> No. Sertifikat</h6>
+                                            <div class="form-check form-switch p-0 m-0">
+                                                <input class="form-check-input pos-input" type="checkbox" id="no_sertifikat_enabled" name="no_sertifikat_enabled"
+                                                       {{ ($setting->no_sertifikat_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="form-label small">X</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_x"
+                                                       id="no_sertifikat_x" value="{{ $setting->no_sertifikat_x ?? 500 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Y</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_y"
+                                                       id="no_sertifikat_y" value="{{ $setting->no_sertifikat_y ?? 350 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Font Size</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_font_size"
+                                                       id="no_sertifikat_font_size" value="{{ $setting->no_sertifikat_font_size ?? 20 }}" min="8" max="120">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Warna</label>
+                                                <div class="color-input-group">
+                                                    <input type="color" class="pos-input" name="no_sertifikat_color" id="no_sertifikat_color"
+                                                           value="{{ $setting->no_sertifikat_color ?? '#333333' }}">
+                                                    <small id="no_sertifikat_color_label">{{ $setting->no_sertifikat_color ?? '#333333' }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Instansi Config --}}
+                                    <div class="config-section">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0"><span class="element-badge badge-instansi">●</span> Instansi</h6>
+                                            <div class="form-check form-switch p-0 m-0">
+                                                <input class="form-check-input pos-input" type="checkbox" id="instansi_enabled" name="instansi_enabled"
+                                                       {{ ($setting->instansi_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="form-label small">X</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="instansi_x"
+                                                       id="instansi_x" value="{{ $setting->instansi_x ?? 500 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Y</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="instansi_y"
+                                                       id="instansi_y" value="{{ $setting->instansi_y ?? 460 }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Font Size</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="instansi_font_size"
+                                                       id="instansi_font_size" value="{{ $setting->instansi_font_size ?? 24 }}" min="8" max="120">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small">Warna</label>
+                                                <div class="color-input-group">
+                                                    <input type="color" class="pos-input" name="instansi_color" id="instansi_color"
+                                                           value="{{ $setting->instansi_color ?? '#333333' }}">
+                                                    <small id="instansi_color_label">{{ $setting->instansi_color ?? '#333333' }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- QR Code Config --}}
+                                    <div class="config-section">
+                                        <h6><span class="element-badge badge-qr">●</span> QR Code Validasi</h6>
+                                        <div class="mb-2">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input pos-input" type="checkbox" id="qr_enabled" name="qr_enabled"
+                                                       {{ ($setting->qr_enabled ?? true) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="qr_enabled">Tampilkan QR Code</label>
+                                            </div>
+                                            <small class="text-muted">QR berisi link validasi sertifikat</small>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-4">
+                                                <label class="form-label small">X</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="qr_x"
+                                                       id="qr_x" value="{{ $setting->qr_x ?? 900 }}">
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label small">Y</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="qr_y"
+                                                       id="qr_y" value="{{ $setting->qr_y ?? 500 }}">
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label small">Ukuran</label>
+                                                <input type="number" class="form-control form-control-sm pos-input" name="qr_size"
+                                                       id="qr_size" value="{{ $setting->qr_size ?? 150 }}" min="50" max="500">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="bx bx-save"></i> Simpan Setting
+                                        </button>
+                                        <a href="{{ route('workshop.setting.preview', $id) }}" target="_blank" class="btn btn-outline-info">
+                                            <i class="bx bx-download"></i> Preview Hasil Cetak
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="materi-workshop" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="card border border-primary shadow-sm">
+                                    <div class="card-header bg-soft-primary border-primary">
+                                        <h5 class="my-0 text-primary"><i class="bx bx-plus me-2"></i>Tambah Materi</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ route('workshop.material.store', $id) }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Judul Materi</label>
+                                                <input type="text" name="materi_title" class="form-control" placeholder="Contoh: Modul Workshop Hari 1" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Tipe Materi</label>
+                                                <select name="materi_type" class="form-select" id="materi_type" onchange="toggleMateriInput(this.value)">
+                                                    <option value="file">File (PDF/Gambar/Dokumen)</option>
+                                                    <option value="link">Link (YouTube/Google Drive/dll)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3" id="input_file">
+                                                <label class="form-label fw-bold">File Materi</label>
+                                                <input type="file" name="materi_file" class="form-control">
+                                                <small class="text-muted">Maksimal 20MB</small>
+                                            </div>
+                                            <div class="mb-3" id="input_link" style="display:none;">
+                                                <label class="form-label fw-bold">URL Link Materi</label>
+                                                <input type="url" name="materi_link" class="form-control" placeholder="https://youtube.com/...">
+                                            </div>
+                                            <div class="text-end">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bx bx-save me-1"></i> Simpan Materi
                                                 </button>
-                                            @endif
-                                        </div>
-                                        <input class="form-control" type="file" id="file_template" name="file_template"
-                                               accept="image/jpeg,image/png,image/jpg">
-                                        <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
-                                        @if($setting && $setting->file_template)
-                                            <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template }}</p>
-                                        @endif
-                                        @error('file_template')
-                                            <span class="text-danger d-block mt-1">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <label for="file_template_belakang" class="form-label fw-bold">Upload Template Belakang</label>
-                                            @if($setting && $setting->file_template_belakang)
-                                                <button type="button" class="btn btn-sm btn-outline-danger mb-1" onclick="confirmDelete('belakang')">
-                                                    <i class="bx bx-trash"></i> Hapus
-                                                </button>
-                                            @endif
-                                        </div>
-                                        <input class="form-control" type="file" id="file_template_belakang" name="file_template_belakang"
-                                               accept="image/jpeg,image/png,image/jpg">
-                                        <small class="text-muted">Format: JPG/PNG, Maks: 5MB.</small>
-                                        @if($setting && $setting->file_template_belakang)
-                                            <p class="mt-1 small text-success"><i class="bx bx-check-circle"></i> Terupload: {{ $setting->file_template_belakang }}</p>
-                                        @endif
-                                        @error('file_template_belakang')
-                                            <span class="text-danger d-block mt-1">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="drag-info">
-                                    <i class="bx bx-move"></i> <strong>Drag & Drop</strong> — Klik dan seret elemen di preview untuk mengatur posisi.
-                                    Legenda:
-                                    <span class="element-badge badge-nama">Nama</span>
-                                    <span class="element-badge badge-nosertifikat">No. Sertifikat</span>
-                                    <span class="element-badge badge-instansi">Instansi</span>
-                                    <span class="element-badge badge-qr">QR Code</span>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="mb-1 fw-bold">Preview Depan:</p>
-                                        <div class="template-canvas-wrapper mb-3" id="canvasWrapper">
-                                            <canvas id="mainCanvas" width="800" height="400" style="max-width:100%;"></canvas>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <p class="mb-1 fw-bold">Preview Belakang (Statik):</p>
-                                        <div class="template-canvas-wrapper" id="backPreviewWrapper" style="background:#f1f1f1; min-height:100px; display: flex; align-items: center; justify-content: center;">
-                                            @if($setting && $setting->file_template_belakang)
-                                                <img id="backPreviewImg" src="{{ asset('storage/workshop/template/' . $id . '/' . $setting->file_template_belakang) }}" style="max-width:100%; border-radius: 4px;">
-                                            @else
-                                                <div id="backPlaceholder" class="p-4 text-center text-muted">Belum ada template belakang</div>
-                                                <img id="backPreviewImg" src="" style="max-width:100%; border-radius: 4px; display:none;">
-                                            @endif
-                                        </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="config-section">
-                                <h6><i class="bx bx-text"></i> Deskripsi Workshop (Opsional)</h6>
-                                <textarea class="form-control" name="deskripsi" rows="2" placeholder="Deskripsi workshop...">{{ $setting->deskripsi ?? '' }}</textarea>
-                            </div>
-                        </div>
-
-                        {{-- Right: Properties Panel --}}
-                        <div class="col-lg-4">
-                            {{-- Nama Config --}}
-                            <div class="config-section">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0"><span class="element-badge badge-nama">●</span> Nama Peserta</h6>
-                                    <div class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input pos-input" type="checkbox" id="nama_enabled" name="nama_enabled"
-                                               {{ ($setting->nama_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
-                                    </div>
+                            <div class="col-md-7">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered mb-0">
+                                        <thead class="table-light text-center">
+                                            <tr>
+                                                <th style="width: 50px;">No</th>
+                                                <th>Materi</th>
+                                                <th>Tipe</th>
+                                                <th style="width: 120px;">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($workshop->materials as $material)
+                                            <tr>
+                                                <td class="text-center">{{ $loop->iteration }}</td>
+                                                <td><strong>{{ $material->title }}</strong></td>
+                                                <td class="text-center">
+                                                    @if($material->type == 'file')
+                                                        <span class="badge bg-soft-info text-info"><i class="bx bx-file me-1"></i>File</span>
+                                                    @else
+                                                        <span class="badge bg-soft-warning text-warning"><i class="bx bx-link me-1"></i>Link</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        @if($material->type == 'file')
+                                                            <a href="{{ asset('storage/workshop/material/' . $id . '/' . $material->file_path) }}" target="_blank" class="btn btn-sm btn-soft-info" title="Preview/Download">
+                                                                <i class="bx bx-show"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ $material->link_url }}" target="_blank" class="btn btn-sm btn-soft-info" title="Buka Link">
+                                                                <i class="bx bx-link-external"></i>
+                                                            </a>
+                                                        @endif
+                                                        <form action="{{ route('workshop.material.destroy', $material->id) }}" method="POST" onsubmit="return confirm('Hapus materi ini?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-soft-danger" title="Hapus">
+                                                                <i class="bx bx-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center py-4 text-muted">
+                                                    <i class="bx bx-info-circle fs-2 d-block mb-2"></i>
+                                                    Belum ada materi workshop yang ditambahkan.
+                                                </td>
+                                            </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <label class="form-label small">X</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="nama_x"
-                                               id="nama_x" value="{{ $setting->nama_x ?? 500 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Y</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="nama_y"
-                                               id="nama_y" value="{{ $setting->nama_y ?? 400 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Font Size</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="nama_font_size"
-                                               id="nama_font_size" value="{{ $setting->nama_font_size ?? 40 }}" min="8" max="120">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Warna</label>
-                                        <div class="color-input-group">
-                                            <input type="color" class="pos-input" name="nama_color" id="nama_color"
-                                                   value="{{ $setting->nama_color ?? '#000000' }}">
-                                            <small id="nama_color_label">{{ $setting->nama_color ?? '#000000' }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- No Sertifikat Config --}}
-                            <div class="config-section">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0"><span class="element-badge badge-nosertifikat">●</span> No. Sertifikat</h6>
-                                    <div class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input pos-input" type="checkbox" id="no_sertifikat_enabled" name="no_sertifikat_enabled"
-                                               {{ ($setting->no_sertifikat_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <label class="form-label small">X</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_x"
-                                               id="no_sertifikat_x" value="{{ $setting->no_sertifikat_x ?? 500 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Y</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_y"
-                                               id="no_sertifikat_y" value="{{ $setting->no_sertifikat_y ?? 350 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Font Size</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="no_sertifikat_font_size"
-                                               id="no_sertifikat_font_size" value="{{ $setting->no_sertifikat_font_size ?? 20 }}" min="8" max="120">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Warna</label>
-                                        <div class="color-input-group">
-                                            <input type="color" class="pos-input" name="no_sertifikat_color" id="no_sertifikat_color"
-                                                   value="{{ $setting->no_sertifikat_color ?? '#333333' }}">
-                                            <small id="no_sertifikat_color_label">{{ $setting->no_sertifikat_color ?? '#333333' }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Instansi Config --}}
-                            <div class="config-section">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0"><span class="element-badge badge-instansi">●</span> Instansi</h6>
-                                    <div class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input pos-input" type="checkbox" id="instansi_enabled" name="instansi_enabled"
-                                               {{ ($setting->instansi_enabled ?? true) ? 'checked' : '' }} style="margin-left: 0;">
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <label class="form-label small">X</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="instansi_x"
-                                               id="instansi_x" value="{{ $setting->instansi_x ?? 500 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Y</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="instansi_y"
-                                               id="instansi_y" value="{{ $setting->instansi_y ?? 460 }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Font Size</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="instansi_font_size"
-                                               id="instansi_font_size" value="{{ $setting->instansi_font_size ?? 24 }}" min="8" max="120">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Warna</label>
-                                        <div class="color-input-group">
-                                            <input type="color" class="pos-input" name="instansi_color" id="instansi_color"
-                                                   value="{{ $setting->instansi_color ?? '#333333' }}">
-                                            <small id="instansi_color_label">{{ $setting->instansi_color ?? '#333333' }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- QR Code Config --}}
-                            <div class="config-section">
-                                <h6><span class="element-badge badge-qr">●</span> QR Code Validasi</h6>
-                                <div class="mb-2">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input pos-input" type="checkbox" id="qr_enabled" name="qr_enabled"
-                                               {{ ($setting->qr_enabled ?? true) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="qr_enabled">Tampilkan QR Code</label>
-                                    </div>
-                                    <small class="text-muted">QR berisi link validasi sertifikat</small>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-4">
-                                        <label class="form-label small">X</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="qr_x"
-                                               id="qr_x" value="{{ $setting->qr_x ?? 900 }}">
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="form-label small">Y</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="qr_y"
-                                               id="qr_y" value="{{ $setting->qr_y ?? 500 }}">
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="form-label small">Ukuran</label>
-                                        <input type="number" class="form-control form-control-sm pos-input" name="qr_size"
-                                               id="qr_size" value="{{ $setting->qr_size ?? 150 }}" min="50" max="500">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bx bx-save"></i> Simpan Setting
-                                </button>
-                                <a href="{{ route('workshop.setting.preview', $id) }}" target="_blank" class="btn btn-outline-info">
-                                    <i class="bx bx-download"></i> Preview Hasil Cetak
-                                </a>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -770,6 +892,16 @@ Setting Template Sertifikat
             form.appendChild(csrf);
             document.body.appendChild(form);
             form.submit();
+        }
+    };
+
+    window.toggleMateriInput = function(type) {
+        if (type === 'file') {
+            document.getElementById('input_file').style.display = 'block';
+            document.getElementById('input_link').style.display = 'none';
+        } else {
+            document.getElementById('input_file').style.display = 'none';
+            document.getElementById('input_link').style.display = 'block';
         }
     };
 

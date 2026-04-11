@@ -37,4 +37,9 @@ class Workshop extends Model
     {
         return $this->hasManyThrough(Peserta::class, Transaction::class);
     }
+
+    public function materials()
+    {
+        return $this->hasMany(WorkshopMaterial::class, 'workshop_id', 'id');
+    }
 }

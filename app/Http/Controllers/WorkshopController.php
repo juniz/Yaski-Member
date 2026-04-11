@@ -461,4 +461,54 @@ class WorkshopController extends Controller
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Gagal menghapus template', 'type' => 'danger']);
         }
     }
+
+    public function storeMaterial(Request $request, $id)
+    {
+        $this->validate($request, [
+            'materi_title' => 'required|string|max:255',
+            'materi_type' => 'required|in:file,link',
+            'materi_file' => 'nullable|file|max:20480', // Max 20MB
+            'materi_link' => 'nullable|url',
+        ]);
+
+        try {
+            $material = new \App\Models\WorkshopMaterial();
+            $material->workshop_id = $id;
+            $material->title = $request->materi_title;
+            $material->type = $request->materi_type;
+
+            if ($request->materi_type === 'file' && $request->hasFile('materi_file')) {
+                $file = $request->file('materi_file');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/workshop/material/' . $id, $fileName);
+                $material->file_path = $fileName;
+            } elseif ($request->materi_type === 'link') {
+                $material->link_url = $request->materi_link;
+            }
+
+            $material->save();
+
+            return redirect()->back()->with(['message' => 'Materi berhasil ditambahkan', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Gagal menambahkan materi', 'type' => 'danger']);
+        }
+    }
+
+    public function destroyMaterial($id)
+    {
+        try {
+            $material = \App\Models\WorkshopMaterial::findOrFail($id);
+            if ($material->type === 'file' && $material->file_path) {
+                $filePath = 'public/workshop/material/' . $material->workshop_id . '/' . $material->file_path;
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                }
+            }
+            $material->delete();
+
+            return redirect()->back()->with(['message' => 'Materi berhasil dihapus', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['message' => $e->getMessage() ?? 'Gagal menghapus materi', 'type' => 'danger']);
+        }
+    }
 }

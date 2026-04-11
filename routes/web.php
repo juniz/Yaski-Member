@@ -82,6 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/workshop/{id}/generate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'generateSertifikat'])->name('workshop.generate.sertifikat');
     Route::post('/workshop/{id}/regenerate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'regenerateSertifikat'])->name('workshop.regenerate.sertifikat');
     Route::get('/workshop/{id}/sertifikat-bulk-pdf', [App\Http\Controllers\WorkshopController::class, 'downloadSertifikatBulkPdf'])->name('workshop.download-bulk-pdf');
+
+    // Materials
+    Route::post('/workshop/{id}/material', [App\Http\Controllers\WorkshopController::class, 'storeMaterial'])->name('workshop.material.store');
+    Route::delete('/workshop/material/{id}', [App\Http\Controllers\WorkshopController::class, 'destroyMaterial'])->name('workshop.material.destroy');
 });
 
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');

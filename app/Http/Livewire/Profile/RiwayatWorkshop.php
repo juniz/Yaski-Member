@@ -9,10 +9,18 @@ use App\Models\Transaction;
 class RiwayatWorkshop extends Component
 {
     public $transactions = [];
+    public $selectedWorkshop = null;
     protected $listeners = ['load-riwayat-workshop' => 'getWorkshop'];
+
     public function render()
     {
         return view('livewire.profile.riwayat-workshop');
+    }
+
+    public function showMateri($workshopId)
+    {
+        $this->selectedWorkshop = \App\Models\Workshop::with('materials')->find($workshopId);
+        $this->dispatchBrowserEvent('openMateriModal');
     }
 
     public function getWorkshop()
