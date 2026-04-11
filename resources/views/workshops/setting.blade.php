@@ -261,10 +261,13 @@ Setting Template Sertifikat
                                 </div>
                             </div>
 
-                            <div class="d-grid">
+                            <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="bx bx-save"></i> Simpan Setting
                                 </button>
+                                <a href="{{ route('workshop.setting.preview', $id) }}" target="_blank" class="btn btn-outline-info">
+                                    <i class="bx bx-download"></i> Preview Hasil Cetak
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -430,7 +433,7 @@ Setting Template Sertifikat
         const el = elements[key];
         const x = el.getX() * scale;
         const y = el.getY() * scale;
-        const fontSize = el.getFontSize() * scale;
+        const fontSize = el.getFontSize(); // Use raw fontSize directly, canvas buffer is displayW
         const textColor = el.getColor();
         const isHover = (hovering === key);
         const isDrag = (dragging === key);
@@ -562,7 +565,7 @@ Setting Template Sertifikat
             
             const x = el.getX() * scale;
             const y = el.getY() * scale;
-            const fontSize = el.getFontSize() * scale;
+            const fontSize = el.getFontSize(); 
 
             ctx.font = `bold ${Math.max(10, fontSize)}px Arial, sans-serif`;
             const tw = ctx.measureText(el.label).width;

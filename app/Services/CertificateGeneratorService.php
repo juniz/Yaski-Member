@@ -11,14 +11,18 @@ use BaconQrCode\Common\ErrorCorrectionLevel;
 class CertificateGeneratorService
 {
     /**
-     * Generate sertifikat image untuk satu peserta
-     *
-     * @param string $sertifikatId
-     * @return string|null Path file sertifikat yang di-generate
+     * @param mixed $sertifikatId ID string or Sertifikat instance
+     * @param bool $preview Jika true, kembalikan image resource dan jangan simpan file/db
+     * @return mixed string filename (default) atau image resource (preview)
      */
-    public function generate($sertifikatId)
+    public function generate($sertifikatId, $preview = false)
     {
-        $sertifikat = Sertifikat::with(['workshop', 'peserta.transaction'])->find($sertifikatId);
+        if ($sertifikatId instanceof Sertifikat) {
+            $sertifikat = $sertifikatId;
+        } else {
+            $sertifikat = Sertifikat::with(['workshop', 'peserta.transaction'])->find($sertifikatId);
+        }
+
         if (!$sertifikat) {
             return null;
         }
@@ -156,6 +160,11 @@ class CertificateGeneratorService
             );
         }
 
+        // --- Handle Preview Mode ---
+        if ($preview) {
+            return $image;
+        }
+
         // Output directory
         $outputDir = 'public/sertifikat/' . $sertifikat->workshop_id;
         if (!Storage::exists($outputDir)) {
@@ -171,7 +180,9 @@ class CertificateGeneratorService
 
         // Update sertifikat record
         $sertifikat->file_sertifikat = $filename;
-        $sertifikat->save();
+        if ($sertifikat->exists) {
+            $sertifikat->save();
+        }
 
         return $filename;
     }
@@ -313,17 +324,30 @@ class CertificateGeneratorService
         $color = imagecolorallocate($image, $r, $g, $b);
 
         if ($useTTF && $fontPath) {
+            // Get bounding box
             $bbox = imagettfbbox($fontSize, 0, $fontPath, $text);
+            
+            // Width calculation
             $textWidth = abs($bbox[2] - $bbox[0]);
             $textX = $x - ($textWidth / 2);
-            $textY = $y;
+            
+            // Height calculation for vertical centering (Middle Alignment)
+            // In imagettftext, Y is the baseline. 
+            // We need to offset the 'y' (which is the center) by half the font height.
+            $textHeight = abs($bbox[7] - $bbox[1]);
+            $textY = $y + ($textHeight / 2) - abs($bbox[1]); 
+
             imagettftext($image, $fontSize, 0, (int)$textX, (int)$textY, $color, $fontPath, $text);
         } else {
             $builtinFontSize = min(5, max(1, intval($fontSize / 10)));
             $charWidth = imagefontwidth($builtinFontSize);
+            $charHeight = imagefontheight($builtinFontSize);
             $textWidth = strlen($text) * $charWidth;
+            
             $textX = $x - ($textWidth / 2);
-            imagestring($image, $builtinFontSize, (int)$textX, (int)$y, $text, $color);
+            $textY = $y - ($charHeight / 2);
+            
+            imagestring($image, $builtinFontSize, (int)$textX, (int)$textY, $text, $color);
         }
     }
 }

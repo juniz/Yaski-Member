@@ -77,6 +77,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'openSetting'])->name('workshop.setting');
     Route::post('/workshop/{id}/setting', [App\Http\Controllers\WorkshopController::class, 'simpanSetting'])->name('workshop.setting.simpan');
+    Route::get('/workshop/{id}/setting/preview', [App\Http\Controllers\WorkshopController::class, 'previewSertifikat'])->name('workshop.setting.preview');
     Route::post('/workshop/{id}/generate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'generateSertifikat'])->name('workshop.generate.sertifikat');
     Route::post('/workshop/{id}/regenerate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'regenerateSertifikat'])->name('workshop.regenerate.sertifikat');
     Route::get('/workshop/{id}/sertifikat-bulk-pdf', [App\Http\Controllers\WorkshopController::class, 'downloadSertifikatBulkPdf'])->name('workshop.download-bulk-pdf');

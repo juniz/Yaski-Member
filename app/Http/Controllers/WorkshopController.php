@@ -327,7 +327,7 @@ class WorkshopController extends Controller
         $workshop = Workshop::findOrFail($id);
         $sertifikats = Sertifikat::where('workshop_id', $id)
             ->whereNotNull('file_sertifikat')
-            ->orderBy('no_urut', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         if ($sertifikats->isEmpty()) {
@@ -335,7 +335,6 @@ class WorkshopController extends Controller
         }
 
         // Initialize FPDF
-        // We'll use a dynamic page size based on the first image found
         $pdf = new \FPDF();
 
         foreach ($sertifikats as $s) {
@@ -359,5 +358,40 @@ class WorkshopController extends Controller
         }
 
         return $pdf->Output('D', 'Semua_Sertifikat_' . \Illuminate\Support\Str::slug($workshop->nama) . '.pdf');
+    }
+
+    public function previewSertifikat($id, CertificateGeneratorService $generator)
+    {
+        $workshop = Workshop::findOrFail($id);
+        $setting = WorkshopSetting::where('workshop_id', $id)->first();
+
+        if (!$setting || !$setting->file_template) {
+            return redirect()->back()->with(['message' => 'Template belum disetting', 'type' => 'danger']);
+        }
+
+        // Create dummy certificate object
+        $dummySertifikat = new Sertifikat();
+        $dummySertifikat->id = 'dummy-id';
+        $dummySertifikat->nama = 'Nama Peserta Contoh';
+        $dummySertifikat->no_sertifikat = '2026/YASKI/04/001';
+        $dummySertifikat->instansi = 'RS Contoh Instansi';
+        $dummySertifikat->workshop_id = $id;
+
+        // Generate dummy image
+        $image = $generator->generate($dummySertifikat, true);
+
+        if (!$image) {
+            return redirect()->back()->with(['message' => 'Gagal generate preview', 'type' => 'danger']);
+        }
+
+        // Clean output buffer to ensure clean PNG output
+        if (ob_get_length()) ob_end_clean();
+
+        // Output as PNG
+        header('Content-Type: image/png');
+        header('Content-Disposition: inline; filename="preview-sertifikat.png"');
+        imagepng($image);
+        imagedestroy($image);
+        exit;
     }
 }
