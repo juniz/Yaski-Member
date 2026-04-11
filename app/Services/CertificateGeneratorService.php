@@ -90,11 +90,10 @@ class CertificateGeneratorService
         }
 
         // --- Perbaikan Skalasi Font ---
-        // Editor menggunakan lebar referensi 800px. 
-        // Agar ukuran font di gambar asli proporsional dengan yang terlihat di editor, 
-        // kita kalikan fontSize dengan rasio (lebar_asli / 800).
+        // Editor sekarang menggunakan standar lebar referensi 1000px. 
+        // 0.75 adalah faktor koreksi untuk menyamakan pixel browser dengan point GD (96 DPI vs 72 DPI).
         $imageWidth = $imageInfo[0];
-        $fontSizeFactor = $imageWidth / 800;
+        $fontSizeFactor = ($imageWidth / 1000) * 0.75;
 
         // Draw nama peserta
         $namaText = $sertifikat->nama ?? $sertifikat->peserta->nama ?? '';

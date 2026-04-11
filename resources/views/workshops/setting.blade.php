@@ -433,7 +433,8 @@ Setting Template Sertifikat
         const el = elements[key];
         const x = el.getX() * scale;
         const y = el.getY() * scale;
-        const fontSize = el.getFontSize(); // Use raw fontSize directly, canvas buffer is displayW
+        // Base-1000 scaling: scale font relative to a 1000px base width
+        const fontSize = el.getFontSize() * (canvas.width / 1000); 
         const textColor = el.getColor();
         const isHover = (hovering === key);
         const isDrag = (dragging === key);
@@ -565,7 +566,8 @@ Setting Template Sertifikat
             
             const x = el.getX() * scale;
             const y = el.getY() * scale;
-            const fontSize = el.getFontSize(); 
+            // Base-1000 scaling for hit-testing
+            const fontSize = el.getFontSize() * (canvas.width / 1000); 
 
             ctx.font = `bold ${Math.max(10, fontSize)}px Arial, sans-serif`;
             const tw = ctx.measureText(el.label).width;
