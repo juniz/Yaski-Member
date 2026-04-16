@@ -32,7 +32,7 @@
                     @forelse($paklarings as $paklaring)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $paklaring->fasyankes->name }}</td>
+                        <td>{{ $paklaring->fasyankes->fasyankes->nama ?? $paklaring->fasyankes->name ?? '-' }}</td>
                         <td>{{ $paklaring->no_surat }}</td> 
                         <td>
                             @if($paklaring->stts == 'disetujui')

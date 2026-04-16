@@ -17,5 +17,8 @@
         <li class="nav-item">
             <a class="nav-link px-3" data-bs-toggle="tab" id="workshop-tab-btn" href="#workshop-tabpanel" role="tab">Riwayat Workshop</a>
         </li> 
+        <li class="nav-item">
+            <a class="nav-link px-3" data-bs-toggle="tab" id="inhouse-training-tab-btn" href="#inhouse-training-tabpanel" role="tab">Riwayat Inhouse Training</a>
+        </li> 
     </ul>
 </div>

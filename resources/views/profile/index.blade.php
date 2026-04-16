@@ -229,6 +229,9 @@
             <div class="tab-pane" id="workshop-tabpanel" role="tabpanel">
                 <livewire:profile.riwayat-workshop />
             </div>
+            <div class="tab-pane" id="inhouse-training-tabpanel" role="tabpanel">
+                <livewire:profile.riwayat-inhouse-training />
+            </div>
         </div>
         <!-- end tab content -->
     </div>

@@ -22,9 +22,9 @@ class Table extends Component
     public function render()
     {
         if ($this->jenis == 'all') {
-            $data = Paklaring::where('no_surat', 'like', '%' . $this->search . '%')->orderBy('created_at', 'desc')->paginate(10);
+            $data = Paklaring::with('fasyankes.fasyankes')->where('no_surat', 'like', '%' . $this->search . '%')->orderBy('created_at', 'desc')->paginate(10);
         } else {
-            $data = Paklaring::where('no_surat', 'like', '%' . $this->search . '%')->where('stts', $this->jenis)->orderBy('created_at', 'desc')->paginate(10);
+            $data = Paklaring::with('fasyankes.fasyankes')->where('no_surat', 'like', '%' . $this->search . '%')->where('stts', $this->jenis)->orderBy('created_at', 'desc')->paginate(10);
         }
         return view('livewire.paklaring.table', [
             'paklarings' => $data

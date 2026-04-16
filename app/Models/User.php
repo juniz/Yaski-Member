@@ -69,4 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Mou::class);
     }
+
+    public function inhouseTrainingRequest()
+    {
+        return $this->hasOne(InhouseTrainingRequest::class);
+    }
 }

@@ -22,9 +22,9 @@ class Table extends Component
     public function render()
     {
         if ($this->jenis == 'all') {
-            $data = Mou::where('no_surat', 'like', '%' . $this->search . '%')->orderBy('created_at', 'desc')->paginate(10);
+            $data = Mou::with('user.fasyankes')->where('no_surat', 'like', '%' . $this->search . '%')->orderBy('created_at', 'desc')->paginate(10);
         } else {
-            $data = Mou::where('no_surat', 'like', '%' . $this->search . '%')->where('stts', $this->jenis)->orderBy('created_at', 'desc')->paginate(10);
+            $data = Mou::with('user.fasyankes')->where('no_surat', 'like', '%' . $this->search . '%')->where('stts', $this->jenis)->orderBy('created_at', 'desc')->paginate(10);
         }
         return view('livewire.mou.table', [
             'mous' => $data

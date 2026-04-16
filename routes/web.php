@@ -65,6 +65,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/workshop/{workshop}', [App\Http\Controllers\WorkshopController::class, 'update'])->name('workshop.update');
     Route::get('/paklaring', fn() => view('paklaring.index'))->name('paklaring.index');
     Route::get('/mou', fn() => view('mou.index'))->name('mou.index');
+    Route::get('/inhouse-training', fn() => view('inhouse-training.index', ['mode' => 'admin']))->name('inhouse-training.index');
+    Route::get('/inhouse-training/permintaan', fn() => view('inhouse-training.index', ['mode' => 'request']))->name('inhouse-training.request');
     // Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class);
 
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
@@ -96,6 +98,17 @@ Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
 Route::get('/transaksi-sukses', fn() => view('workshops.transaction-success'))->name('pendaftaran.success');
 Route::get('/sertifikat/{id}/validasi', [App\Http\Controllers\WorkshopController::class, 'cekValidasi'])->name('sertifikat.validasi');
+Route::get('/inhouse-training/surat/{requestInhouse}/{type}/validasi', function ($requestInhouse, $type) {
+    $requestInhouse = \App\Models\InhouseTrainingRequest::with('user.fasyankes')->find($requestInhouse);
+    $allowedTypes = ['balasan', 'tugas'];
+    $fileField = $type === 'tugas' ? 'file_tugas' : 'file_balasan';
+    $isValid = $requestInhouse
+        && in_array($type, $allowedTypes)
+        && $requestInhouse->stts === 'disetujui'
+        && !empty($requestInhouse->{$fileField});
+
+    return view('inhouse-training.validasi', compact('requestInhouse', 'type', 'isValid'));
+})->name('inhouse-training.surat.validasi');
 
 // Route::get('/email/verify', function () {
 //     return view('auth.verify');

@@ -32,7 +32,7 @@
                     @forelse($mous as $mou)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $mou->user->fasyankes->nama }}</td>
+                        <td>{{ $mou->user->fasyankes->nama ?? $mou->user->name ?? '-' }}</td>
                         <td>{{ $mou->no_surat }}</td> 
                         <td>
                             @if($mou->stts == 'disetujui')
