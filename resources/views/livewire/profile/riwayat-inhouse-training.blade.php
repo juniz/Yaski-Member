@@ -38,10 +38,12 @@
                                         <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#profile-detail-inhouse-training-modal-{{ $requestInhouse->id }}">
                                             <i class="bx bx-file me-1"></i> Detail
                                         </button>
-                                    @else
+                                    @elseif($requestInhouse->file)
                                         <a href="{{ asset('storage/inhouse-training/'. $requestInhouse->file) }}" target="_blank" class="btn btn-outline-secondary btn-sm waves-effect waves-light">
                                             <i class="bx bx-show me-1"></i> Lihat Surat
                                         </a>
+                                    @else
+                                        <span class="badge bg-soft-info text-info">Manual Admin</span>
                                     @endif
                                 </td>
                             </tr>
@@ -67,7 +69,13 @@
                         </div>
                         <div class="modal-body">
                             <h6>Surat Permintaan</h6>
-                            <iframe src="{{ asset('storage/inhouse-training/'. $requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                            @if($requestInhouse->file)
+                                <iframe src="{{ asset('storage/inhouse-training/'. $requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                            @else
+                                <div class="alert alert-info" role="alert">
+                                    Permintaan ini dibuat manual oleh admin tanpa upload surat permintaan.
+                                </div>
+                            @endif
 
                             @if($requestInhouse->file_balasan)
                                 <h6 class="mt-4">Surat Balasan</h6>

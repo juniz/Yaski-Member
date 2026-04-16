@@ -5,6 +5,7 @@ namespace App\Http\Livewire\InhouseTraining;
 use App\Models\InhouseTrainingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,7 +18,10 @@ class Table extends Component
     public $jenis = 'all';
     protected $queryString = ['search'];
     protected $paginationTheme = 'bootstrap';
-    protected $listeners = ['refreshInhouseTrainingTable' => '$refresh'];
+    protected $listeners = [
+        'refreshInhouseTrainingTable' => '$refresh',
+        'hapusInhouseTraining',
+    ];
 
     public function updatingSearch()
     {
@@ -129,6 +133,47 @@ class Table extends Component
         $this->dispatchBrowserEvent('openWa', [
             'url' => 'https://wa.me/' . $phone . '?text=' . rawurlencode($message),
         ]);
+    }
+
+    public function confirmHapus($id)
+    {
+        $this->confirm('Apakah anda yakin ingin menghapus permintaan inhouse training ini?', [
+            'onConfirmed' => 'hapusInhouseTraining',
+            'inputAttributes' => ['id' => $id],
+            'confirmButtonText' => 'Ya, hapus',
+            'cancelButtonText' => 'Batal',
+        ]);
+    }
+
+    public function hapusInhouseTraining($data)
+    {
+        $id = $data['data']['inputAttributes']['id'] ?? null;
+        $request = InhouseTrainingRequest::find($id);
+
+        if (!$request) {
+            $this->alert('error', 'Data tidak ditemukan');
+            return;
+        }
+
+        try {
+            if ($request->file) {
+                Storage::delete('public/inhouse-training/' . $request->file);
+            }
+
+            if ($request->file_balasan) {
+                Storage::delete('public/inhouse-training-balasan/' . $request->file_balasan);
+            }
+
+            if ($request->file_tugas) {
+                Storage::delete('public/inhouse-training-tugas/' . $request->file_tugas);
+            }
+
+            $request->delete();
+            $this->resetPage();
+            $this->alert('success', 'Permintaan inhouse training berhasil dihapus');
+        } catch (\Throwable $th) {
+            $this->alert('error', 'Permintaan gagal dihapus: ' . $th->getMessage());
+        }
     }
 
     private function messageText($request)

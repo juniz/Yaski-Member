@@ -1,6 +1,9 @@
 <div class="card">
     <div class="card-body">
-        <div class="d-flex flex-row-reverse" style="gap: 10px">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <button type="button" wire:click='$emit("openManualInhouseTraining")' class="btn btn-primary">
+                <i class="bx bx-plus me-1"></i> Tambah Permintaan
+            </button>
             <div class="col-md-5">
                 <div class="d-flex flex-row gap-2">
                     <div class="col-md-4">
@@ -34,6 +37,7 @@
                     @forelse($requests as $request)
                     @php
                         $fasyankes = $request->user->fasyankes ?? null;
+                        $manualFasyankes = $request->data_surat['manual_fasyankes'] ?? null;
                         $email = $fasyankes->email ?? $request->user->email ?? '';
                         $phone = preg_replace('/[^0-9]/', '', $fasyankes->telp ?? '');
                         if (substr($phone, 0, 1) === '0') {
@@ -42,7 +46,7 @@
                     @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $request->user->fasyankes->nama ?? $request->user->name ?? '-' }}</td>
+                        <td>{{ $manualFasyankes ?: ($request->user->fasyankes->nama ?? $request->user->name ?? '-') }}</td>
                         <td>{{ $request->nama_kegiatan ?? '-' }}</td>
                         <td>{{ $request->no_surat }}</td>
                         <td>{{ date('d-m-Y', strtotime($request->tgl_surat)) }}</td>
@@ -80,6 +84,10 @@
                                     <i class="bx bx-edit"></i>
                                 </button>
                                 @endif
+                                <button type="button" wire:key='hapus-{{$request->id}}'
+                                    wire:click='confirmHapus({{ $request->id }})' class="btn btn-sm btn-danger">
+                                    <i class="bx bx-trash"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>

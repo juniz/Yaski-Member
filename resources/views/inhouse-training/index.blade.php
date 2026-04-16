@@ -72,8 +72,16 @@
     window.addEventListener('editSuratInhouseTraining', event => {
         $('#setuju-inhouse-training-modal').modal('show');
     })
+    window.addEventListener('openManualInhouseTraining', event => {
+        $('#manual-inhouse-training-modal').modal('show');
+    })
+    window.addEventListener('manualInhouseTrainingCreated', event => {
+        $('#manual-inhouse-training-modal').modal('hide');
+        $('#setuju-inhouse-training-modal').modal('show');
+    })
     window.addEventListener('simpanPersetujuanInhouseTraining', event => {
         $('#inhouse-training-modal').modal('hide');
+        $('#manual-inhouse-training-modal').modal('hide');
         $('#setuju-inhouse-training-modal').modal('hide');
         $('#tolak-inhouse-training-modal').modal('hide');
     })

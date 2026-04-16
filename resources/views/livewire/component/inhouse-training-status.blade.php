@@ -54,7 +54,13 @@
                             </div>
                             <div class="modal-body">
                                 <h6>Surat Permintaan</h6>
-                                <iframe src="{{ asset('storage/inhouse-training/'. $requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                                @if($requestInhouse->file)
+                                    <iframe src="{{ asset('storage/inhouse-training/'. $requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                                @else
+                                    <div class="alert alert-info" role="alert">
+                                        Permintaan ini dibuat manual oleh admin tanpa upload surat permintaan.
+                                    </div>
+                                @endif
 
                                 @if($requestInhouse->file_balasan)
                                 <h6 class="mt-4">Surat Balasan</h6>

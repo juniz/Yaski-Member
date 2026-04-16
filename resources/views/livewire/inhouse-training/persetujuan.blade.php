@@ -1,4 +1,75 @@
 <div>
+    <div wire:ignore.self id="manual-inhouse-training-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Permintaan Inhouse Training</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" wire:submit.prevent='simpanManual'>
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label d-block">Tujuan Permintaan</label>
+                            <div class="btn-group w-100" role="group" aria-label="Tujuan Permintaan">
+                                <input type="radio" class="btn-check" id="manual_mode_registered" value="registered" wire:model="manual_tujuan_mode">
+                                <label class="btn btn-outline-primary" for="manual_mode_registered">Fasyankes Terdaftar</label>
+
+                                <input type="radio" class="btn-check" id="manual_mode_freetext" value="freetext" wire:model="manual_tujuan_mode">
+                                <label class="btn btn-outline-primary" for="manual_mode_freetext">Fasyankes Belum Terdaftar</label>
+                            </div>
+                        </div>
+                        @if($manual_tujuan_mode == 'registered')
+                            <div class="mb-3">
+                                <label for="manual_user_id" class="form-label">Fasyankes/User Terdaftar</label>
+                                <select class="form-control @error('manual_user_id') is-invalid @enderror" id="manual_user_id" wire:model.defer='manual_user_id'>
+                                    <option value="">Pilih Fasyankes/User</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->fasyankes->nama ?? $user->name }} - {{ $user->email }}</option>
+                                    @endforeach
+                                </select>
+                                @error('manual_user_id')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                            </div>
+                        @else
+                            <div class="mb-3">
+                                <label for="manual_fasyankes" class="form-label">Nama Fasyankes</label>
+                                <input type="text" class="form-control @error('manual_fasyankes') is-invalid @enderror" id="manual_fasyankes" wire:model.defer='manual_fasyankes'>
+                                @error('manual_fasyankes')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                            </div>
+                        @endif
+                        <div class="mb-3">
+                            <label for="manual_nama_kegiatan" class="form-label">Nama Kegiatan</label>
+                            <input type="text" class="form-control @error('manual_nama_kegiatan') is-invalid @enderror" id="manual_nama_kegiatan" wire:model.defer='manual_nama_kegiatan'>
+                            @error('manual_nama_kegiatan')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="manual_no_surat" class="form-label">Nomor Surat Masuk</label>
+                                    <input type="text" class="form-control @error('manual_no_surat') is-invalid @enderror" id="manual_no_surat" wire:model.defer='manual_no_surat'>
+                                    @error('manual_no_surat')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="manual_tgl_surat" class="form-label">Tanggal</label>
+                                    <input type="date" class="form-control @error('manual_tgl_surat') is-invalid @enderror" id="manual_tgl_surat" wire:model.defer='manual_tgl_surat'>
+                                    @error('manual_tgl_surat')<div><span class="text-danger">{{ $message }}</span></div>@enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 d-grid">
+                            <button class="btn btn-primary waves-effect waves-light" type="submit">Simpan dan Generate Surat</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div wire:ignore.self id="inhouse-training-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -9,7 +80,13 @@
                 <div class="modal-body">
                     <div class="container">
                         @if($requestInhouse)
-                        <iframe src="{{ asset('storage/inhouse-training/'.$requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                            @if($requestInhouse->file)
+                                <iframe src="{{ asset('storage/inhouse-training/'.$requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                            @else
+                                <div class="alert alert-info mb-0" role="alert">
+                                    Permintaan ini dibuat manual oleh admin tanpa upload surat permintaan.
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -159,7 +236,13 @@
                     <div class="container">
                         @if($requestInhouse)
                         <h6>Surat Permintaan</h6>
-                        <iframe src="{{ asset('storage/inhouse-training/'.$requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                        @if($requestInhouse->file)
+                            <iframe src="{{ asset('storage/inhouse-training/'.$requestInhouse->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+                        @else
+                            <div class="alert alert-info" role="alert">
+                                Permintaan ini dibuat manual oleh admin tanpa upload surat permintaan.
+                            </div>
+                        @endif
                             @if($requestInhouse->file_balasan)
                             <h6 class="mt-4">Surat Balasan</h6>
                             <iframe src="{{ asset('storage/inhouse-training-balasan/'.$requestInhouse->file_balasan) }}" width="100%" height="600px" frameborder="0"></iframe>

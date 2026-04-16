@@ -6,7 +6,7 @@
     ];
     $tanggal = \Carbon\Carbon::parse($dataSurat['tanggal_surat']);
     $tanggalSurat = $tanggal->format('d') . ' ' . $bulan[(int) $tanggal->format('m')] . ' ' . $tanggal->format('Y');
-    $pemohon = $requestInhouse->user->fasyankes->nama ?? $requestInhouse->user->name ?? '-';
+    $pemohon = $dataSurat['manual_fasyankes'] ?? $requestInhouse->user->fasyankes->nama ?? $requestInhouse->user->name ?? '-';
 @endphp
 <!doctype html>
 <html>
@@ -48,6 +48,14 @@
 
     <div class="content">
         <p>Dengan hormat,</p>
+        @if(empty($requestInhouse->file))
+        <p>
+            Sehubungan dengan permintaan pendampingan <span class="bold">{{ $requestInhouse->nama_kegiatan ?? $dataSurat['perihal'] }}</span>,
+            maka dengan ini kami sampaikan bahwa kami bersedia menugaskan perwakilan dari Yayasan SIMRS Khanza Indonesia
+            dengan jadwal <span class="bold">{{ $dataSurat['bulan_kegiatan'] }}</span> dan susunan petugas
+            sebagaimana terlampir pada surat tugas.
+        </p>
+        @else
         <p>
             Sehubungan adanya surat masuk dengan nomor <span class="bold">{{ $requestInhouse->no_surat }}</span>
             dengan perihal {{ $requestInhouse->nama_kegiatan ?? $dataSurat['perihal'] }}, maka dengan ini kami
@@ -55,6 +63,7 @@
             dengan jadwal <span class="bold">{{ $dataSurat['bulan_kegiatan'] }}</span> dan susunan petugas
             sebagaimana terlampir pada surat tugas.
         </p>
+        @endif
         <p>
             Dalam pelaksanaan kegiatan, transport, akomodasi, dan honor narasumber selama kegiatan dapat
             disesuaikan dengan ketentuan yang berlaku di instansi pengundang. Untuk administrasi pembayaran
