@@ -106,8 +106,11 @@ Route::get('/inhouse-training/surat/{requestInhouse}/{type}/validasi', function 
         && in_array($type, $allowedTypes)
         && $requestInhouse->stts === 'disetujui'
         && !empty($requestInhouse->{$fileField});
+    $folder = $type === 'tugas' ? 'inhouse-training-tugas' : 'inhouse-training-balasan';
+    $documentUrl = $isValid ? asset('storage/' . $folder . '/' . $requestInhouse->{$fileField}) : null;
+    $documentName = $type === 'tugas' ? 'Surat-Tugas-Inhouse-Training.pdf' : 'Surat-Balasan-Inhouse-Training.pdf';
 
-    return view('inhouse-training.validasi', compact('requestInhouse', 'type', 'isValid'));
+    return view('inhouse-training.validasi', compact('requestInhouse', 'type', 'isValid', 'documentUrl', 'documentName'));
 })->name('inhouse-training.surat.validasi');
 
 // Route::get('/email/verify', function () {

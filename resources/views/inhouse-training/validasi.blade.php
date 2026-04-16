@@ -7,6 +7,20 @@
     <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/css/icons.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/css/app.min.css') }}" rel="stylesheet">
+    <style>
+        .document-preview {
+            width: 100%;
+            height: 720px;
+            border: 1px solid #e9e9ef;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 576px) {
+            .document-preview {
+                height: 520px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container py-5">
@@ -28,7 +42,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered mb-0">
+                                <table class="table table-bordered mb-3">
                                     <tr>
                                         <th style="width: 220px;">Jenis Surat</th>
                                         <td>{{ $type == 'tugas' ? 'Surat Tugas' : 'Surat Balasan' }}</td>
@@ -55,6 +69,22 @@
                                     </tr>
                                 </table>
                             </div>
+
+                            @if($documentUrl)
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <a href="#preview-dokumen" class="btn btn-primary">
+                                        <i class="bx bx-show me-1"></i> Preview Dokumen
+                                    </a>
+                                    <a href="{{ $documentUrl }}" class="btn btn-success" download="{{ $documentName }}">
+                                        <i class="bx bx-download me-1"></i> Download Dokumen
+                                    </a>
+                                </div>
+
+                                <div id="preview-dokumen">
+                                    <h5 class="mb-3">Preview Dokumen</h5>
+                                    <iframe src="{{ $documentUrl }}" class="document-preview" frameborder="0"></iframe>
+                                </div>
+                            @endif
                         @else
                             <div class="d-flex align-items-center">
                                 <div class="avatar-md me-3">
