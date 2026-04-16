@@ -29,6 +29,7 @@
                         <th>Kegiatan</th>
                         <th>No Surat</th>
                         <th>Tanggal Surat</th>
+                        <th>Petugas</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -43,6 +44,7 @@
                         if (substr($phone, 0, 1) === '0') {
                             $phone = '62' . substr($phone, 1);
                         }
+                        $petugas = collect($request->data_surat['petugas'] ?? [])->pluck('nama')->filter();
                     @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
@@ -50,6 +52,17 @@
                         <td>{{ $request->nama_kegiatan ?? '-' }}</td>
                         <td>{{ $request->no_surat }}</td>
                         <td>{{ date('d-m-Y', strtotime($request->tgl_surat)) }}</td>
+                        <td>
+                            @if($request->stts == 'disetujui' && $petugas->count())
+                                <ul class="mb-0 ps-3">
+                                    @foreach($petugas as $namaPetugas)
+                                        <li><small>{{ $namaPetugas }}</small></li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td>
                             @if($request->stts == 'disetujui')
                             <span class="badge bg-success text-white font-size-11"><i class="bx bx-check"></i> {{ $request->stts }}</span>
@@ -93,7 +106,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td class="text-center" colspan="7">
+                        <td class="text-center" colspan="8">
                             <h6>Data Tidak ada</h6>
                         </td>
                     </tr>
