@@ -29,11 +29,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
-                            <select wire:model.defer='roleUser' class="form-select @error('role') is-invalid @enderror"
+                            <select wire:model.defer='role' class="form-select @error('role') is-invalid @enderror"
                                 autofocus>
                                 <option value="">Pilih Role</option>
                                 @foreach($roles as $role)
-                                <option wire:key='{{$role->id}}' value="{{ $role->id }}">{{
+                                <option wire:key='{{$role->id}}' value="{{ $role->name }}">{{
                                     $role->name }}</option>
                                 @endforeach
                             </select>

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class EditUser extends Component
 {
     use LivewireAlert, WithFileUploads;
-    public $idUser, $name, $email, $password, $password_confirmation, $role, $roleUser, $avatar;
+    public $idUser, $name, $email, $password, $password_confirmation, $role, $avatar;
     public $verifEmail = false;
     protected $listeners = ['edit-user' => 'ubah'];
 
@@ -48,12 +48,13 @@ class EditUser extends Component
         $this->validate([
             'name' => 'required',
             'email' => 'required',
-            'role' => 'required',
+            'role' => 'required|exists:roles,name',
             'avatar' => 'image|max:1024|nullable',
         ], [
             'name.required' => 'Nama tidak boleh kosong',
             'email.required' => 'Email tidak boleh kosong',
             'role.required' => 'Role tidak boleh kosong',
+            'role.exists' => 'Role tidak valid',
             'avatar.image' => 'Avatar harus berupa gambar',
             'avatar.max' => 'Ukuran avatar maksimal 1MB',
         ]);
@@ -73,7 +74,7 @@ class EditUser extends Component
                 'avatar' => $avatar
             ]);
             $user->syncRoles($this->role);
-            $this->reset(['name', 'email', 'password', 'password_confirmation', 'avatar']);
+            $this->reset(['name', 'email', 'password', 'password_confirmation', 'role', 'avatar']);
             $this->emit('refreshMembers');
             $this->dispatchBrowserEvent('closeModalEditUser');
             $this->alert('success', 'Berhasil mengubah data', [
