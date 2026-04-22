@@ -17,32 +17,36 @@
 
         body {
             font-family: Arial, sans-serif;
-            margin: 15mm;
+            margin: 0;
             width: 210mm;
-            height: 148mm;
-            font-size: 12px;
+            min-height: 148mm;
+            font-size: 10px;
+            color: #000;
         }
         
         .container {
-            max-width: 210mm;
-            padding: 10px;
+            width: 210mm;
+            height: 148mm;
+            box-sizing: border-box;
+            padding: 8mm 12mm 7mm;
             margin: 0 auto;
+            overflow: hidden;
         }
 
         .header {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 0;
+            gap: 12mm;
+            margin-bottom: 2mm;
             width: 100%;
         }
 
         .logo {
-            width: 100px;
+            width: 25mm;
             height: auto;
             object-fit: contain;
-            margin: 30px;
-            flex-shrink: 0; /* Prevent logo from shrinking */
+            margin: 0 8mm 0 0;
+            flex-shrink: 0;
         }
 
         .header-content {
@@ -54,46 +58,46 @@
         }
 
         .org-name {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 2mm;
             background-color: #4CAF50;
             color: white;
-            padding: 5px;
-            border-radius: 3px;
+            padding: 2mm;
+            border-radius: 2px;
             width: 100%;
             text-decoration: underline 1px;
-            /* Removed inline-block to work with flex */
         }
 
         .address {
-            line-height: 1.3;
-            margin-bottom: 10px;
-            font-size: 11px;
-            text-align: center; /* Center address text */
+            line-height: 1.25;
+            margin-bottom: 1mm;
+            font-size: 9px;
+            text-align: center;
             width: 100%;
         }
 
         .invoice-info {
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
-            font-size: 11px;
+            align-items: center;
+            margin: 2mm 0 3mm;
+            font-size: 10px;
         }
 
         .receipt-title {
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .payment-details {
-            margin: 15px 0;
-            line-height: 1.8;
-            font-size: 12px;
+            margin: 0;
+            line-height: 1.45;
+            font-size: 10.5px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 1.5mm;
         }
 
         .amount-in-words {
@@ -102,37 +106,69 @@
 
         .bank-info {
             background-color: #f5f5f5;
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 3px;
-            font-size: 11px;
+            padding: 3mm;
+            margin: 5mm 0 4mm;
+            border-radius: 2px;
+            font-size: 9.5px;
         }
         .amount-footer-container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            /* align-items: flex-end; */
-            margin: 20px 0;
+            align-items: flex-start;
+            margin: 0;
         }
 
         .amount-number {
-            font-size: 16px;
+            font-size: 13px;
+            font-weight: bold;
             background-color: #f5f5f5;
             border-top: 1px solid #060606;
             border-bottom: 1px solid #060606;
-            padding: 8px 15px;
+            padding: 3mm 6mm;
             margin: 0;
-            width: fit-content; /* Add this */
-            display: inline-block; /* Change from flex */
+            width: 42mm;
+            display: inline-block;
+            text-align: center;
         }
         
         .footer-note {
-            text-align: right;
+            width: 58mm;
+            text-align: center;
             flex-shrink: 0;
             margin-top: 0;
             display: flex;
             flex-direction: column;
-            gap: 60px;
+            gap: 1.5mm;
+            align-items: center;
+            font-size: 9.5px;
+        }
+
+        .signature-qr {
+            width: 28mm;
+            height: 28mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .signature-qr svg {
+            width: 28mm;
+            height: 28mm;
+        }
+
+        .qr-logo {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 5mm;
+            height: 5mm;
+            padding: 0.5mm;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 1mm;
+            transform: translate(-50%, -50%);
         }
 
         .bold {
@@ -145,9 +181,9 @@
         }
 
         .payment-left {
-            flex-grow: 0;     /* do not grow   - initial value: 0 */
-            flex-shrink: 0;   /* do not shrink - initial value: 1 */
-            flex-basis: 15em;
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: 42mm;
         }
 
         .payment-right {
@@ -155,13 +191,14 @@
             flex-shrink: 1;   /* shrink       - initial value: 1 */
             flex-basis: 0;
             text-decoration: underline black 1px;
-            text-underline-offset: 4px;
+            text-underline-offset: 2px;
+            overflow-wrap: anywhere;
         }
 
         .name-sign {
             text-align: center;
             text-decoration: underline black 1px;
-            text-underline-offset: 4px;
+            text-underline-offset: 2px;
         }
 
         .divider {
@@ -172,7 +209,7 @@
         @media print {
             body {
                 margin: 0;
-                padding: 15mm;
+                padding: 0;
             }
         }
     </style>
@@ -197,14 +234,14 @@
         <hr class="divider">
 
         <div class="invoice-info">
-            <div class="payment-left">NO. {{ $data['order_id'] }}</div>
+            <div class="payment-left">NO. {{ $data['no_kwitansi'] ?? $data['order_id'] }}</div>
             <div class="receipt-title payment-right">KWITANSI</div>
         </div>
 
         <div class="payment-details">
             <div class="flex">
                 <div class="payment-left">Telah terima dari</div>
-                <div class="payment-right">: {{ $data['nama'] }}</div>
+                <div class="payment-right">: {{ $data['penerima'] ?? $data['nama'] }}</div>
             </div>
 
             <div class="flex">
@@ -229,9 +266,24 @@
             
             <div class="footer-note">
                 <div>Kabupaten Kuningan, Jawa Barat</div>
+                @if(!empty($qr))
+                    <div class="signature-qr">
+                        {!! $qr !!}
+                        @if(!empty($logo))
+                            <img src="{{ $logo }}" alt="Yaski" class="qr-logo">
+                        @endif
+                    </div>
+                @endif
                 <div class="name-sign">( Haris Rochmatullah, S.Kom )</div>
             </div>
         </div>
     </div>
+    @if(!empty($print))
+        <script>
+            window.addEventListener('load', function () {
+                window.print();
+            });
+        </script>
+    @endif
 </body>
 </html>

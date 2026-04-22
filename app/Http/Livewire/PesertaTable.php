@@ -191,6 +191,8 @@ class PesertaTable extends DataTableComponent
                 ->format(function ($value, $row, Column $column) {
                     $nama = "'" . $row->nama . "'";
                     $url = url('sertifikat/' . $row->nama);
+                    $kwitansiUrl = route('kwitansi.cetak', $value);
+                    $validasiKwitansiUrl = route('kwitansi.validasi', $value);
                     $workshop = $this->idWorkshop;
                     return '
                     <div class="dropdown">
@@ -201,6 +203,8 @@ class PesertaTable extends DataTableComponent
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" wire:click="ubahPeserta(' . $value . ', ' . $workshop . ')" 
                                     href="#">Ubah</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="' . $kwitansiUrl . '">Cetak Kwitansi</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="' . $validasiKwitansiUrl . '">Validasi Kwitansi</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="batal(' . $value . ')" 
                                     href="#">Batal</a></li>
                         </ul>

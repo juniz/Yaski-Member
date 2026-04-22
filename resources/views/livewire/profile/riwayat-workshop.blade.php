@@ -44,6 +44,11 @@
                                     <button class="btn btn-success btn-sm waves-effect waves-light" wire:click="showSertifikat('{{ $transaction->id }}')">
                                         <i class="bx bx-medal me-1"></i> Sertifikat
                                     </button>
+                                    @foreach($transaction->peserta as $peserta)
+                                        <a href="{{ route('kwitansi.cetak', $peserta->id) }}" target="_blank" class="btn btn-outline-success btn-sm waves-effect waves-light">
+                                            <i class="bx bx-receipt me-1"></i> Kwitansi {{ $loop->iteration }}
+                                        </a>
+                                    @endforeach
                                 </div>
                             </td>
                         </tr>

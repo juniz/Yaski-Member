@@ -71,6 +71,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
     Route::get('/workshop/{id}/hadir', [App\Http\Controllers\PendaftaranController::class, 'daftarHadir'])->name('workshop.daftar.hadir');
+    Route::get('/workshop/{id}/kwitansi', [KwitansiController::class, 'workshop'])->name('workshop.kwitansi');
+    Route::get('/workshop/{id}/kwitansi/download-pdf', [KwitansiController::class, 'downloadWorkshop'])->name('workshop.kwitansi.download-pdf');
     Route::get('/paklaring-cek', [App\Http\Controllers\Api\PaklaringController::class, 'cekPic'])->name('paklaring.cek-pic');
     Route::get('/workshop/sertifikat/{id}', function ($id) {
         return view('workshops.sertifikat', compact('id'));
@@ -146,3 +148,5 @@ Route::get('/sertifikat/{id}/preview', [CertifikatController::class, 'previewSer
 Route::get('/sertifikat/{id}/preview-back', [CertifikatController::class, 'previewSertifikatBack'])->name('sertifikat.preview-back');
 Route::get('/sertifikat/{id}/download', [CertifikatController::class, 'downloadSertifikat'])->name('sertifikat.download');
 Route::get('/kwitansi', [KwitansiController::class, 'index'])->name('kwitansi');
+Route::get('/kwitansi/{id}/cetak', [KwitansiController::class, 'cetak'])->name('kwitansi.cetak');
+Route::get('/kwitansi/{id}/validasi', [KwitansiController::class, 'validasi'])->name('kwitansi.validasi');

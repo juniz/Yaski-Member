@@ -163,14 +163,17 @@ class DaftarHadirTable extends DataTableComponent
         $workshop = \App\Models\Workshop::find($this->idWorkshop);
         // dd($workshop);
         $data = [
+            'id' => $data['id'],
+            'no_kwitansi' => 'KWT/' . date('Y') . '/' . str_pad($workshop->id, 3, '0', STR_PAD_LEFT) . '/' . str_pad($data['id'], 5, '0', STR_PAD_LEFT),
             'order_id' => $data['order_id'],
             'nama' => $data['nama'],
+            'penerima' => $data['nama_rs'] ?: $data['nama'],
             'terbilang' => $this->terbilang($data['harga']),
             'harga' => $data['harga'],
-            'workshop' => $workshop->nama,
+            'workshop' => $this->plainText($workshop->nama),
             'tgl_mulai' => Carbon::parse($workshop->tgl_mulai)->translatedFormat('d F Y'),
             'tgl_selesai' => Carbon::parse($workshop->tgl_selesai)->translatedFormat('d F Y'),
-            'lokasi' => $workshop->lokasi
+            'lokasi' => $this->plainText($workshop->lokasi)
         ];
         $imagePath = public_path('assets/images/logo.png');
         $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
@@ -178,6 +181,11 @@ class DaftarHadirTable extends DataTableComponent
 
         $template = view('prints.kwitansi.peserta', [
             'logo' => 'data:image/' . $imageType . ';base64,' . base64_encode($imageData),
+            'qr' => QrCode::format('svg')
+                ->size(180)
+                ->margin(2)
+                ->errorCorrection('H')
+                ->generate(route('kwitansi.validasi', $data['id'])),
             'data' => $data,
         ])->render();
         // FacadePdf::loadHTML($template)
@@ -202,6 +210,15 @@ class DaftarHadirTable extends DataTableComponent
             'url' => url('storage/kwitansi.pdf'),
         ]);
         // return response()->file(storage_path('app/public/kwitansi.pdf'));
+    }
+
+    private function plainText($value): string
+    {
+        $value = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $value = preg_replace('/<\s*br\s*\/?\s*>/i', ' ', $value);
+        $value = strip_tags($value);
+
+        return trim(preg_replace('/\s+/', ' ', $value));
     }
 
     public function tidakHadir($data)
@@ -268,6 +285,8 @@ class DaftarHadirTable extends DataTableComponent
                 ->format(function ($value, $row, Column $column) {
                     $nama = "'" . $row->nama . "'";
                     $url = url('sertifikat/' . $row->nama);
+                    $kwitansiUrl = route('kwitansi.cetak', $value);
+                    $validasiKwitansiUrl = route('kwitansi.validasi', $value);
                     return '
                     <div class="dropdown">
                         <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
@@ -279,6 +298,8 @@ class DaftarHadirTable extends DataTableComponent
                                     href="#">Check In</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="cetakKwitansi(' . $row . ')" 
                                     href="#">Kwitansi</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="' . $kwitansiUrl . '">Cetak Kwitansi</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="' . $validasiKwitansiUrl . '">Validasi Kwitansi</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="tidakHadir(' . $row . ')" 
                                     href="#">Batal</a></li>
                         </ul>
