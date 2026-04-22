@@ -76,34 +76,39 @@ class KwitansiController extends Controller
     public function validasi($id)
     {
         $peserta = Peserta::with(['transaction.workshop'])->find($id);
+        $data = null;
+
+        if ($peserta && $peserta->transaction && $peserta->transaction->workshop) {
+            $data = $this->buildData($peserta);
+        }
 
         return view('workshops.validasi-kwitansi', [
             'peserta' => $peserta,
-            'data' => $peserta ? $this->buildData($peserta) : null,
+            'data' => $data,
         ]);
     }
 
     private function buildData(Peserta $peserta): array
     {
         $transaction = $peserta->transaction;
-        $workshop = $transaction->workshop;
+        $workshop = $transaction ? $transaction->workshop : null;
         $harga = (int) ($peserta->harga ?? 0);
 
         Carbon::setLocale('id');
 
         return [
-            'no_kwitansi' => 'KWT/' . date('Y') . '/' . str_pad($workshop->id, 3, '0', STR_PAD_LEFT) . '/' . str_pad($peserta->id, 5, '0', STR_PAD_LEFT),
-            'order_id' => $transaction->order_id ?? '-',
+            'no_kwitansi' => 'KWT/' . date('Y') . '/' . str_pad($workshop ? $workshop->id : 0, 3, '0', STR_PAD_LEFT) . '/' . str_pad($peserta->id, 5, '0', STR_PAD_LEFT),
+            'order_id' => $transaction ? ($transaction->order_id ?? '-') : '-',
             'nama' => $peserta->nama,
-            'penerima' => $transaction->nama_rs ?: $peserta->nama,
+            'penerima' => $transaction && $transaction->nama_rs ? $transaction->nama_rs : $peserta->nama,
             'terbilang' => $this->terbilang($harga),
             'harga' => $harga,
-            'workshop' => $this->plainText($workshop->nama),
+            'workshop' => $this->plainText($workshop ? $workshop->nama : '-'),
             'paket' => $this->plainText($peserta->paket),
-            'tgl_mulai' => $workshop->tgl_mulai ? Carbon::parse($workshop->tgl_mulai)->translatedFormat('d F Y') : '-',
-            'tgl_selesai' => ($workshop->tgl_selesai ?: $workshop->tgl_sampai) ? Carbon::parse($workshop->tgl_selesai ?: $workshop->tgl_sampai)->translatedFormat('d F Y') : '-',
-            'lokasi' => $this->plainText($workshop->lokasi ?? '-'),
-            'status' => $transaction->stts ?? '-',
+            'tgl_mulai' => $workshop && $workshop->tgl_mulai ? Carbon::parse($workshop->tgl_mulai)->translatedFormat('d F Y') : '-',
+            'tgl_selesai' => $workshop && ($workshop->tgl_selesai ?: $workshop->tgl_sampai) ? Carbon::parse($workshop->tgl_selesai ?: $workshop->tgl_sampai)->translatedFormat('d F Y') : '-',
+            'lokasi' => $this->plainText($workshop ? ($workshop->lokasi ?? '-') : '-'),
+            'status' => $transaction ? ($transaction->stts ?? '-') : '-',
             'validasi_url' => route('kwitansi.validasi', $peserta->id),
         ];
     }
