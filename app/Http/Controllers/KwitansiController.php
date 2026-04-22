@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peserta;
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -139,23 +141,63 @@ class KwitansiController extends Controller
 
     private function qrCodeImage(string $url): string
     {
-        $svg = QrCode::format('svg')
-            ->size(360)
-            ->margin(2)
-            ->errorCorrection('H')
-            ->generate($url);
+        if (!function_exists('imagecreatetruecolor')) {
+            $svg = QrCode::format('svg')
+                ->size(260)
+                ->margin(2)
+                ->errorCorrection('H')
+                ->generate($url);
+
+            return 'data:image/svg+xml;base64,' . base64_encode($svg);
+        }
+
+        $size = 260;
+        $qrCode = Encoder::encode($url, ErrorCorrectionLevel::H());
+        $matrix = $qrCode->getMatrix();
+        $matrixWidth = $matrix->getWidth();
+        $moduleSize = max(1, (int) floor(($size - 24) / $matrixWidth));
+        $actualSize = $moduleSize * $matrixWidth;
+        $border = (int) floor(($size - $actualSize) / 2);
+
+        $image = imagecreatetruecolor($size, $size);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        imagefill($image, 0, 0, $white);
+
+        for ($row = 0; $row < $matrixWidth; $row++) {
+            for ($col = 0; $col < $matrixWidth; $col++) {
+                if ($matrix->get($col, $row) === 1) {
+                    imagefilledrectangle(
+                        $image,
+                        $border + ($col * $moduleSize),
+                        $border + ($row * $moduleSize),
+                        $border + (($col + 1) * $moduleSize) - 1,
+                        $border + (($row + 1) * $moduleSize) - 1,
+                        $black
+                    );
+                }
+            }
+        }
 
         $logoPath = public_path('assets/images/logo.png');
         if (file_exists($logoPath)) {
-            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
-            $overlay = '
-                <rect x="154" y="154" width="52" height="52" rx="8" ry="8" fill="#ffffff"/>
-                <image href="' . $logo . '" x="162" y="162" width="36" height="36" preserveAspectRatio="xMidYMid meet"/>
-            ';
-            $svg = str_replace('</svg>', $overlay . '</svg>', $svg);
+            $logo = @imagecreatefrompng($logoPath);
+            if ($logo) {
+                $logoSize = 42;
+                $logoX = (int) (($size - $logoSize) / 2);
+                $logoY = (int) (($size - $logoSize) / 2);
+                imagefilledrectangle($image, $logoX - 6, $logoY - 6, $logoX + $logoSize + 6, $logoY + $logoSize + 6, $white);
+                imagecopyresampled($image, $logo, $logoX, $logoY, 0, 0, $logoSize, $logoSize, imagesx($logo), imagesy($logo));
+                imagedestroy($logo);
+            }
         }
 
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+        ob_start();
+        imagepng($image);
+        $png = ob_get_clean();
+        imagedestroy($image);
+
+        return 'data:image/png;base64,' . base64_encode($png);
     }
 
     private function penyebut($nilai): string
