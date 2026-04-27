@@ -278,6 +278,31 @@ Sertifikat Workshop
                 }
             });
         }
+
+        window.addEventListener('editNamaSertifikatAdmin', async function (event) {
+            const payload = event.detail || {};
+            const result = await Swal.fire({
+                title: 'Edit Nama Sertifikat',
+                input: 'text',
+                inputValue: payload.nama || '',
+                inputLabel: 'Nama yang akan tampil di sertifikat',
+                inputPlaceholder: 'Masukkan nama sertifikat',
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value || !value.trim()) {
+                        return 'Nama sertifikat wajib diisi';
+                    }
+                },
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            Livewire.emitTo(payload.component, 'simpanNamaSertifikat', payload.sertifikat_id, result.value);
+        });
     })();
 </script>
 @endsection

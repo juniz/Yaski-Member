@@ -21,6 +21,7 @@ use App\Services\CertificateGeneratorService;
 
 class DaftarHadirTable extends DataTableComponent
 {
+    protected $listeners = ['simpanNamaSertifikat' => 'simpanNamaSertifikat'];
     public string $idWorkshop;
     public string $status = '';
     protected $model = Peserta::class;
@@ -101,8 +102,28 @@ class DaftarHadirTable extends DataTableComponent
     {
         $peserta = Peserta::findOrFail($pesertaId);
         $sertifikat = $this->getOrCreateSertifikat($pesertaId, $peserta);
+        $this->dispatchBrowserEvent('editNamaSertifikatAdmin', [
+            'component' => 'daftar-hadir-table',
+            'sertifikat_id' => $sertifikat->id,
+            'nama' => $sertifikat->nama ?: $peserta->nama ?: '',
+        ]);
+    }
 
-        return redirect()->to(url('sertifikat/' . $sertifikat->id));
+    public function simpanNamaSertifikat($sertifikatId, $nama)
+    {
+        $sertifikat = Sertifikat::where('workshop_id', $this->idWorkshop)->findOrFail($sertifikatId);
+        $sertifikat->nama = trim((string) $nama);
+        $sertifikat->save();
+
+        try {
+            $certService = new CertificateGeneratorService();
+            $certService->generate($sertifikat->id);
+        } catch (\Throwable $e) {
+            \Log::warning('Gagal regenerate sertifikat setelah ubah nama: ' . $e->getMessage());
+        }
+
+        $this->emit('refreshDatatable');
+        $this->emit('alert', ['type' => 'success', 'message' => 'Nama sertifikat berhasil diperbarui']);
     }
 
     public function penyebut($nilai)
@@ -320,16 +341,12 @@ class DaftarHadirTable extends DataTableComponent
                             <i class="bx bx-dots-horizontal-rounded font-size-20"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="hadir(' . $row . ')" 
-                                    href="#">Check In</a></li>
-                            <li><a class="dropdown-item" wire:click="editNamaSertifikat(' . $value . ')" 
-                                    href="#">Edit Nama Sertifikat</a></li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="cetakKwitansi(' . $row . ')" 
-                                    href="#">Kwitansi</a></li>
+                            <li><button type="button" class="dropdown-item" data-bs-toggle="modal" wire:click.prevent="hadir(' . $row . ')">Check In</button></li>
+                            <li><button type="button" class="dropdown-item" wire:click.prevent="editNamaSertifikat(' . $value . ')">Edit Nama Sertifikat</button></li>
+                            <li><button type="button" class="dropdown-item" data-bs-toggle="modal" wire:click.prevent="cetakKwitansi(' . $row . ')">Kwitansi</button></li>
                             <li><a class="dropdown-item" target="_blank" href="' . $kwitansiUrl . '">Cetak Kwitansi</a></li>
                             <li><a class="dropdown-item" target="_blank" href="' . $validasiKwitansiUrl . '">Validasi Kwitansi</a></li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="tidakHadir(' . $row . ')" 
-                                    href="#">Batal</a></li>
+                            <li><button type="button" class="dropdown-item" data-bs-toggle="modal" wire:click.prevent="tidakHadir(' . $row . ')">Batal</button></li>
                         </ul>
                     </div>
                     ';

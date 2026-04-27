@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class SertifikatTable extends DataTableComponent
 {
     protected $model = Sertifikat::class;
+    protected $listeners = ['simpanNamaSertifikat' => 'simpanNamaSertifikat'];
     public $idWorkshop;
 
     public function mount($idWorkshop)
@@ -101,6 +102,37 @@ class SertifikatTable extends DataTableComponent
         }
     }
 
+    public function editNamaSertifikat($id)
+    {
+        $sertifikat = Sertifikat::with('peserta')->findOrFail($id);
+
+        $this->dispatchBrowserEvent('editNamaSertifikatAdmin', [
+            'component' => 'sertifikat-table',
+            'sertifikat_id' => $sertifikat->id,
+            'nama' => $sertifikat->nama ?: optional($sertifikat->peserta)->nama ?: '',
+        ]);
+    }
+
+    public function simpanNamaSertifikat($sertifikatId, $nama)
+    {
+        $sertifikat = Sertifikat::where('workshop_id', $this->idWorkshop)->findOrFail($sertifikatId);
+        $sertifikat->nama = trim((string) $nama);
+        $sertifikat->save();
+
+        try {
+            $service = new CertificateGeneratorService();
+            $service->generate($sertifikat->id);
+        } catch (\Throwable $e) {
+            Log::warning('Gagal regenerate sertifikat setelah ubah nama', [
+                'sertifikat_id' => $sertifikat->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+        $this->emit('refreshDatatable');
+        $this->emit('alert', ['type' => 'success', 'message' => 'Nama sertifikat berhasil diperbarui']);
+    }
+
     public function columns(): array
     {
         return [
@@ -164,13 +196,12 @@ class SertifikatTable extends DataTableComponent
                 ->html(),
             Column::make("Aksi", "id")
                 ->format(function ($value, $row, Column $column) {
-                    $editUrl = url('sertifikat/' . $value);
                     return '
                     <div class="btn-group btn-group-sm">
-                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm" title="Edit Nama Sertifikat">
+                        <button type="button" wire:click.prevent="editNamaSertifikat(\'' . $value . '\')" class="btn btn-warning btn-sm" title="Edit Nama Sertifikat">
                             <i class="bx bx-pencil"></i>
-                        </a>
-                        <button wire:click="generateSingle(\'' . $value . '\')" class="btn btn-primary btn-sm" title="Generate Sertifikat">
+                        </button>
+                        <button type="button" wire:click.prevent="generateSingle(\'' . $value . '\')" class="btn btn-primary btn-sm" title="Generate Sertifikat">
                             <i class="bx bx-refresh"></i>
                         </button>
                     </div>';

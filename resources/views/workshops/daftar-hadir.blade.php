@@ -63,6 +63,31 @@ Daftar Hadir Peserta Workshop
         $('#qrcode-modal').modal('show');
     });
 
+    window.addEventListener('editNamaSertifikatAdmin', async function (event) {
+        const payload = event.detail || {};
+        const result = await Swal.fire({
+            title: 'Edit Nama Sertifikat',
+            input: 'text',
+            inputValue: payload.nama || '',
+            inputLabel: 'Nama yang akan tampil di sertifikat',
+            inputPlaceholder: 'Masukkan nama sertifikat',
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            cancelButtonText: 'Batal',
+            inputValidator: (value) => {
+                if (!value || !value.trim()) {
+                    return 'Nama sertifikat wajib diisi';
+                }
+            },
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        Livewire.emitTo(payload.component, 'simpanNamaSertifikat', payload.sertifikat_id, result.value);
+    });
+
     $("#qrcode-button").click(function () {
         let transaction = $(this).data('id');
         Livewire.emit('transaction-set', transaction);
