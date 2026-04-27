@@ -229,7 +229,7 @@
     <div class="container">
         @if(!empty($data['no_urut_sertifikat']))
             <div class="certificate-order">
-                No. Urut: {{ $data['no_urut_sertifikat'] }}
+                {{ $data['no_urut_sertifikat'] }}
             </div>
         @endif
 
