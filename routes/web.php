@@ -72,6 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/transaksi/{id}', [App\Http\Controllers\PendaftaranController::class, 'show'])->name('workshop.peserta');
     Route::get('/workshop/{id}/hadir', [App\Http\Controllers\PendaftaranController::class, 'daftarHadir'])->name('workshop.daftar.hadir');
     Route::get('/workshop/{id}/kwitansi', [KwitansiController::class, 'workshop'])->name('workshop.kwitansi');
+    Route::post('/workshop/{id}/kwitansi/download-pdf/start', [KwitansiController::class, 'startBulkDownloadProgress'])->name('workshop.kwitansi.download-pdf.start');
+    Route::post('/workshop/{id}/kwitansi/download-pdf/process', [KwitansiController::class, 'processBulkDownloadProgress'])->name('workshop.kwitansi.download-pdf.process');
+    Route::get('/workshop/{id}/kwitansi/download-pdf/{token}', [KwitansiController::class, 'downloadPreparedWorkshop'])->name('workshop.kwitansi.download-ready');
     Route::get('/workshop/{id}/kwitansi/download-pdf', [KwitansiController::class, 'downloadWorkshop'])->name('workshop.kwitansi.download-pdf');
     Route::get('/paklaring-cek', [App\Http\Controllers\Api\PaklaringController::class, 'cekPic'])->name('paklaring.cek-pic');
     Route::get('/workshop/sertifikat/{id}', function ($id) {

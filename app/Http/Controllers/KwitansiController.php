@@ -7,6 +7,9 @@ use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Encoder\Encoder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -37,21 +40,7 @@ class KwitansiController extends Controller
 
     public function downloadWorkshop($id)
     {
-        $pesertas = Peserta::with(['transaction.workshop'])
-            ->whereHas('transaction', function ($query) use ($id) {
-                $query->where('workshop_id', $id)
-                    ->where('stts', 'dibayar');
-            })
-            ->join('transaction', 'transaction.id', '=', 'peserta.transaction_id')
-            ->leftJoin('sertifikat', function ($join) {
-                $join->on('sertifikat.peserta_id', '=', 'peserta.id')
-                    ->on('sertifikat.workshop_id', '=', 'transaction.workshop_id');
-            })
-            ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ASC')
-            ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ASC')
-            ->orderBy('transaction.order_id', 'asc')
-            ->select('peserta.*')
-            ->get();
+        $pesertas = $this->getWorkshopReceiptsQuery($id)->get();
 
         if ($pesertas->isEmpty()) {
             return redirect()->back()->with([
@@ -77,6 +66,156 @@ class KwitansiController extends Controller
         ])
             ->setPaper([0, 0, 595.28, 419.53])
             ->download($filename);
+    }
+
+    public function startBulkDownloadProgress($id)
+    {
+        $pesertas = $this->getWorkshopReceiptsQuery($id)->get(['peserta.id']);
+
+        if ($pesertas->isEmpty()) {
+            return response()->json([
+                'message' => 'Belum ada kwitansi dengan status dibayar untuk workshop ini.',
+            ], 422);
+        }
+
+        $token = Str::uuid()->toString();
+        $state = [
+            'workshop_id' => (int) $id,
+            'token' => $token,
+            'peserta_ids' => $pesertas->pluck('id')->all(),
+            'receipts' => [],
+            'total' => $pesertas->count(),
+            'processed' => 0,
+            'failed' => 0,
+            'completed' => false,
+            'download_ready' => false,
+            'download_url' => null,
+            'message' => 'Menyiapkan data kwitansi...',
+        ];
+
+        Cache::put($this->bulkKwitansiDownloadKey($id), $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkKwitansiDownloadProgress($state));
+    }
+
+    public function processBulkDownloadProgress($id)
+    {
+        $cacheKey = $this->bulkKwitansiDownloadKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state) {
+            return response()->json([
+                'message' => 'Progress download kwitansi tidak ditemukan. Silakan mulai ulang prosesnya.',
+            ], 404);
+        }
+
+        if (!empty($state['completed'])) {
+            return response()->json($this->formatBulkKwitansiDownloadProgress($state));
+        }
+
+        $chunkSize = 10;
+        $remainingIds = $state['peserta_ids'] ?? [];
+        $currentBatch = array_splice($remainingIds, 0, $chunkSize);
+
+        foreach ($currentBatch as $pesertaId) {
+            try {
+                $peserta = Peserta::with(['transaction.workshop'])->find($pesertaId);
+                if (!$peserta) {
+                    $state['processed']++;
+                    $state['failed']++;
+                    continue;
+                }
+
+                $state['receipts'][] = [
+                    'data' => $this->buildData($peserta),
+                    'qr' => $this->qrCodeImage(route('kwitansi.validasi', $peserta->id)),
+                ];
+                $state['processed']++;
+            } catch (\Throwable $e) {
+                $state['processed']++;
+                $state['failed']++;
+                Log::error('Gagal memproses kwitansi bulk', [
+                    'workshop_id' => $id,
+                    'peserta_id' => $pesertaId,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $state['peserta_ids'] = $remainingIds;
+
+        if (empty($remainingIds)) {
+            try {
+                $logo = $this->logoDataUri();
+                $receipts = $state['receipts'] ?? [];
+
+                if (empty($receipts)) {
+                    throw new \RuntimeException('Tidak ada data kwitansi yang valid untuk dibuat PDF');
+                }
+
+                $workshopName = $receipts[0]['data']['workshop'] ?? 'workshop';
+                $pdfPath = storage_path('app/temp-kwitansi-' . $state['token'] . '.pdf');
+
+                file_put_contents($pdfPath, Pdf::loadView('prints.kwitansi.bulk', [
+                    'logo' => $logo,
+                    'receipts' => $receipts,
+                ])->setPaper([0, 0, 595.28, 419.53])->output());
+
+                $state['completed'] = true;
+                $state['download_ready'] = true;
+                $state['pdf_path'] = $pdfPath;
+                $state['filename'] = 'Kwitansi-' . Str::slug($workshopName) . '.pdf';
+                $state['download_url'] = route('workshop.kwitansi.download-ready', [
+                    'id' => $id,
+                    'token' => $state['token'],
+                ]);
+                $state['message'] = 'PDF kwitansi siap diunduh';
+            } catch (\Throwable $e) {
+                Log::error('Gagal finalisasi PDF kwitansi bulk', [
+                    'workshop_id' => $id,
+                    'message' => $e->getMessage(),
+                ]);
+
+                $state['completed'] = true;
+                $state['download_ready'] = false;
+                $state['message'] = 'Gagal membuat PDF kwitansi';
+            }
+        } else {
+            $state['message'] = 'Sedang menyiapkan data kwitansi...';
+        }
+
+        Cache::put($cacheKey, $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkKwitansiDownloadProgress($state));
+    }
+
+    public function downloadPreparedWorkshop($id, $token)
+    {
+        $cacheKey = $this->bulkKwitansiDownloadKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state || ($state['token'] ?? null) !== $token || empty($state['download_ready']) || empty($state['pdf_path'])) {
+            return redirect()->back()->with([
+                'type' => 'warning',
+                'message' => 'File PDF kwitansi tidak ditemukan atau sudah kedaluwarsa.',
+            ]);
+        }
+
+        $pdfPath = $state['pdf_path'];
+        if (!file_exists($pdfPath)) {
+            Cache::forget($cacheKey);
+
+            return redirect()->back()->with([
+                'type' => 'warning',
+                'message' => 'File PDF kwitansi tidak ditemukan di server.',
+            ]);
+        }
+
+        Cache::forget($cacheKey);
+
+        return response()->download($pdfPath, $state['filename'] ?? ('Kwitansi-workshop-' . $id . '.pdf'), [
+            'Content-Type' => 'application/pdf',
+        ])->deleteFileAfterSend(true);
     }
 
     public function validasi($id)
@@ -260,5 +399,48 @@ class KwitansiController extends Controller
         $hasil = $nilai < 0 ? 'minus ' . trim($this->penyebut($nilai)) : trim($this->penyebut($nilai));
 
         return (string) Str::of($hasil)->squish();
+    }
+
+    private function getWorkshopReceiptsQuery($workshopId)
+    {
+        return Peserta::with(['transaction.workshop'])
+            ->whereHas('transaction', function ($query) use ($workshopId) {
+                $query->where('workshop_id', $workshopId)
+                    ->where('stts', 'dibayar');
+            })
+            ->join('transaction', 'transaction.id', '=', 'peserta.transaction_id')
+            ->leftJoin('sertifikat', function ($join) {
+                $join->on('sertifikat.peserta_id', '=', 'peserta.id')
+                    ->on('sertifikat.workshop_id', '=', 'transaction.workshop_id');
+            })
+            ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ASC')
+            ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ASC')
+            ->orderBy('transaction.order_id', 'asc')
+            ->select('peserta.*');
+    }
+
+    private function bulkKwitansiDownloadKey($workshopId)
+    {
+        $userId = Auth::id() ?? 'guest';
+
+        return 'bulk_kwitansi_download_' . $userId . '_' . $workshopId;
+    }
+
+    private function formatBulkKwitansiDownloadProgress(array $state)
+    {
+        $total = max(1, (int) ($state['total'] ?? 0));
+        $processed = (int) ($state['processed'] ?? 0);
+        $percent = (int) floor(($processed / $total) * 100);
+
+        return [
+            'total' => (int) ($state['total'] ?? 0),
+            'processed' => $processed,
+            'failed' => (int) ($state['failed'] ?? 0),
+            'completed' => (bool) ($state['completed'] ?? false),
+            'download_ready' => (bool) ($state['download_ready'] ?? false),
+            'download_url' => $state['download_url'] ?? null,
+            'percent' => min(100, $percent),
+            'message' => $state['message'] ?? '',
+        ];
     }
 }
