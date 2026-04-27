@@ -31,13 +31,17 @@
             padding: 8mm 12mm 7mm;
             margin: 0 auto;
             overflow: hidden;
+            position: relative;
         }
 
         .certificate-order {
-            font-size: 8px;
-            line-height: 1.2;
-            margin-bottom: 2mm;
+            font-size: 6px;
+            line-height: 1;
+            position: absolute;
+            top: 2mm;
+            left: 2.5mm;
             text-align: left;
+            color: #777;
         }
 
         .header {
