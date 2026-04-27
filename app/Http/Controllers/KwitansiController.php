@@ -43,6 +43,12 @@ class KwitansiController extends Controller
                     ->where('stts', 'dibayar');
             })
             ->join('transaction', 'transaction.id', '=', 'peserta.transaction_id')
+            ->leftJoin('sertifikat', function ($join) {
+                $join->on('sertifikat.peserta_id', '=', 'peserta.id')
+                    ->on('sertifikat.workshop_id', '=', 'transaction.workshop_id');
+            })
+            ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ASC')
+            ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ASC')
             ->orderBy('transaction.order_id', 'asc')
             ->select('peserta.*')
             ->get();
@@ -93,10 +99,18 @@ class KwitansiController extends Controller
         $transaction = $peserta->transaction;
         $workshop = $transaction ? $transaction->workshop : null;
         $harga = (int) ($peserta->harga ?? 0);
+        $sertifikat = null;
+
+        if ($transaction) {
+            $sertifikat = \App\Models\Sertifikat::where('workshop_id', $transaction->workshop_id)
+                ->where('peserta_id', $peserta->id)
+                ->first();
+        }
 
         Carbon::setLocale('id');
 
         return [
+            'no_urut_sertifikat' => $sertifikat->no_urut ?? null,
             'no_kwitansi' => 'KWT/' . date('Y') . '/' . str_pad($workshop ? $workshop->id : 0, 3, '0', STR_PAD_LEFT) . '/' . str_pad($peserta->id, 5, '0', STR_PAD_LEFT),
             'order_id' => $transaction ? ($transaction->order_id ?? '-') : '-',
             'nama' => $peserta->nama,

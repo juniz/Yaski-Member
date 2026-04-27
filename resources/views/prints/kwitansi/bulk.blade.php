@@ -205,6 +205,13 @@
                 <div class="receipt-title">KWITANSI</div>
             </div>
 
+            @if(!empty($data['no_urut_sertifikat']))
+                <div class="payment-row">
+                    <div class="payment-left">No. Urut Sertifikat</div>
+                    <div class="payment-right">: {{ $data['no_urut_sertifikat'] }}</div>
+                </div>
+            @endif
+
             <div class="payment-row">
                 <div class="payment-left">Telah terima dari</div>
                 <div class="payment-right">: {{ $data['penerima'] ?? $data['nama'] }}</div>

@@ -238,6 +238,15 @@
             <div class="receipt-title payment-right">KWITANSI</div>
         </div>
 
+        @if(!empty($data['no_urut_sertifikat']))
+            <div class="payment-details" style="margin-bottom: 2mm;">
+                <div class="flex">
+                    <div class="payment-left">No. Urut Sertifikat</div>
+                    <div class="payment-right">: {{ $data['no_urut_sertifikat'] }}</div>
+                </div>
+            </div>
+        @endif
+
         <div class="payment-details">
             <div class="flex">
                 <div class="payment-left">Telah terima dari</div>

@@ -27,20 +27,36 @@ class KwitansiTable extends DataTableComponent
     {
         return Peserta::query()
             ->join('transaction', 'transaction.id', '=', 'peserta.transaction_id')
+            ->leftJoin('sertifikat', function ($join) {
+                $join->on('sertifikat.peserta_id', '=', 'peserta.id')
+                    ->on('sertifikat.workshop_id', '=', 'transaction.workshop_id');
+            })
             ->where('transaction.workshop_id', $this->idWorkshop)
             ->where('transaction.stts', 'dibayar')
+            ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ASC')
+            ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ASC')
             ->orderBy('transaction.order_id', 'asc')
             ->select(
                 'peserta.*',
                 'transaction.order_id',
                 'transaction.nama_rs',
-                'transaction.stts'
+                'transaction.stts',
+                'sertifikat.no_urut as sertifikat_no_urut'
             );
     }
 
     public function columns(): array
     {
         return [
+            Column::make('No. Urut', 'sertifikat_no_urut')
+                ->format(fn ($value) => e($value ?: '-'))
+                ->html()
+                ->sortable(function (Builder $builder, $direction) {
+                    return $builder
+                        ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ' . $direction)
+                        ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ' . $direction);
+                })
+                ->searchable(),
             Column::make('No. Order', 'transaction.order_id')
                 ->sortable()
                 ->searchable(),
