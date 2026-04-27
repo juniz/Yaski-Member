@@ -87,6 +87,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/workshop/{id}/regenerate-sertifikat', [App\Http\Controllers\WorkshopController::class, 'regenerateSertifikat'])->name('workshop.regenerate.sertifikat');
     Route::post('/workshop/{id}/sertifikat-bulk-progress/start', [App\Http\Controllers\WorkshopController::class, 'startBulkSertifikatProgress'])->name('workshop.bulk-progress.start');
     Route::post('/workshop/{id}/sertifikat-bulk-progress/process', [App\Http\Controllers\WorkshopController::class, 'processBulkSertifikatProgress'])->name('workshop.bulk-progress.process');
+    Route::post('/workshop/{id}/sertifikat-bulk-download/start', [App\Http\Controllers\WorkshopController::class, 'startBulkSertifikatDownloadProgress'])->name('workshop.bulk-download.start');
+    Route::post('/workshop/{id}/sertifikat-bulk-download/process', [App\Http\Controllers\WorkshopController::class, 'processBulkSertifikatDownloadProgress'])->name('workshop.bulk-download.process');
+    Route::get('/workshop/{id}/sertifikat-bulk-download/{token}', [App\Http\Controllers\WorkshopController::class, 'downloadPreparedBulkSertifikatPdf'])->name('workshop.download-bulk-pdf.ready');
     Route::get('/workshop/{id}/sertifikat-bulk-pdf', [App\Http\Controllers\WorkshopController::class, 'downloadSertifikatBulkPdf'])->name('workshop.download-bulk-pdf');
 
     // Materials

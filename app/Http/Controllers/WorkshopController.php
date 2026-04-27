@@ -436,6 +436,205 @@ class WorkshopController extends Controller
         return response()->json($this->formatBulkSertifikatProgress($state));
     }
 
+    public function startBulkSertifikatDownloadProgress($id)
+    {
+        $workshop = Workshop::findOrFail($id);
+        $sertifikats = Sertifikat::where('workshop_id', $id)
+            ->whereNotNull('file_sertifikat')
+            ->orderBy('id', 'asc')
+            ->get(['id', 'file_sertifikat', 'file_sertifikat_belakang']);
+
+        if ($sertifikats->isEmpty()) {
+            return response()->json([
+                'message' => 'Belum ada sertifikat yang di-generate',
+            ], 422);
+        }
+
+        $pages = [];
+        foreach ($sertifikats as $sertifikat) {
+            $frontPath = storage_path('app/public/sertifikat/' . $id . '/' . $sertifikat->file_sertifikat);
+            if (file_exists($frontPath)) {
+                $pages[] = $frontPath;
+            }
+
+            if ($sertifikat->file_sertifikat_belakang) {
+                $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $sertifikat->file_sertifikat_belakang);
+                if (file_exists($backPath)) {
+                    $pages[] = $backPath;
+                }
+            }
+        }
+
+        if (empty($pages)) {
+            return response()->json([
+                'message' => 'File sertifikat tidak valid atau tidak ditemukan untuk digabungkan',
+            ], 422);
+        }
+
+        $token = Str::uuid()->toString();
+        $state = [
+            'workshop_id' => (int) $id,
+            'workshop_nama' => $workshop->nama,
+            'token' => $token,
+            'total' => count($pages),
+            'processed' => 0,
+            'failed' => 0,
+            'pages' => $pages,
+            'prepared_pages' => [],
+            'temp_files' => [],
+            'completed' => false,
+            'download_ready' => false,
+            'download_url' => null,
+            'message' => 'Menyiapkan file sertifikat untuk PDF gabungan...',
+        ];
+
+        Cache::put($this->bulkSertifikatDownloadKey($id), $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkSertifikatDownloadProgress($state));
+    }
+
+    public function processBulkSertifikatDownloadProgress($id)
+    {
+        $cacheKey = $this->bulkSertifikatDownloadKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state) {
+            return response()->json([
+                'message' => 'Progress download PDF gabungan tidak ditemukan. Silakan mulai ulang prosesnya.',
+            ], 404);
+        }
+
+        if (!empty($state['completed'])) {
+            return response()->json($this->formatBulkSertifikatDownloadProgress($state));
+        }
+
+        $chunkSize = 6;
+        $remainingPages = $state['pages'] ?? [];
+        $currentBatch = array_splice($remainingPages, 0, $chunkSize);
+
+        foreach ($currentBatch as $sourcePath) {
+            try {
+                $preparedPath = $this->prepareImageForBulkPdf($sourcePath, $state['temp_files']);
+                if ($preparedPath) {
+                    $state['prepared_pages'][] = $preparedPath;
+                    $state['processed']++;
+                } else {
+                    $state['processed']++;
+                    $state['failed']++;
+                }
+            } catch (\Throwable $e) {
+                $state['processed']++;
+                $state['failed']++;
+                Log::error('Gagal menyiapkan halaman bulk PDF sertifikat', [
+                    'workshop_id' => $id,
+                    'source_path' => $sourcePath,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $state['pages'] = $remainingPages;
+
+        if (empty($remainingPages)) {
+            $downloadToken = $state['token'];
+            $pdfPath = storage_path('app/temp-bulk-sertifikat-' . $downloadToken . '.pdf');
+
+            try {
+                @set_time_limit(0);
+                $pdf = new \FPDF();
+                $pagesAdded = 0;
+
+                foreach ($state['prepared_pages'] as $preparedPath) {
+                    if (!file_exists($preparedPath)) {
+                        continue;
+                    }
+
+                    $size = @getimagesize($preparedPath);
+                    if (!$size || empty($size[0]) || empty($size[1])) {
+                        continue;
+                    }
+
+                    $wMm = $size[0] * 0.264583;
+                    $hMm = $size[1] * 0.264583;
+                    $orientation = ($wMm > $hMm) ? 'L' : 'P';
+
+                    $pdf->AddPage($orientation, [$wMm, $hMm]);
+                    $pdf->Image($preparedPath, 0, 0, $wMm, $hMm);
+                    $pagesAdded++;
+                }
+
+                if ($pagesAdded === 0) {
+                    throw new \RuntimeException('Tidak ada halaman valid untuk dibuatkan PDF');
+                }
+
+                $pdf->Output('F', $pdfPath);
+
+                foreach ($state['temp_files'] as $tempFile) {
+                    if (is_string($tempFile) && file_exists($tempFile)) {
+                        @unlink($tempFile);
+                    }
+                }
+
+                $state['prepared_pages'] = [];
+                $state['temp_files'] = [];
+                $state['completed'] = true;
+                $state['download_ready'] = true;
+                $state['pdf_path'] = $pdfPath;
+                $state['download_url'] = route('workshop.download-bulk-pdf.ready', [
+                    'id' => $id,
+                    'token' => $downloadToken,
+                ]);
+                $state['message'] = 'PDF gabungan siap diunduh';
+            } catch (\Throwable $e) {
+                Log::error('Gagal finalisasi bulk PDF sertifikat', [
+                    'workshop_id' => $id,
+                    'message' => $e->getMessage(),
+                ]);
+
+                foreach ($state['temp_files'] as $tempFile) {
+                    if (is_string($tempFile) && file_exists($tempFile)) {
+                        @unlink($tempFile);
+                    }
+                }
+
+                $state['prepared_pages'] = [];
+                $state['temp_files'] = [];
+                $state['completed'] = true;
+                $state['download_ready'] = false;
+                $state['message'] = 'Gagal membuat PDF gabungan sertifikat';
+            }
+        } else {
+            $state['message'] = 'Sedang menyiapkan halaman PDF gabungan...';
+        }
+
+        Cache::put($cacheKey, $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkSertifikatDownloadProgress($state));
+    }
+
+    public function downloadPreparedBulkSertifikatPdf($id, $token)
+    {
+        $cacheKey = $this->bulkSertifikatDownloadKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state || ($state['token'] ?? null) !== $token || empty($state['download_ready']) || empty($state['pdf_path'])) {
+            return redirect()->back()->with(['message' => 'File PDF gabungan tidak ditemukan atau sudah kedaluwarsa', 'type' => 'warning']);
+        }
+
+        $pdfPath = $state['pdf_path'];
+        if (!file_exists($pdfPath)) {
+            Cache::forget($cacheKey);
+
+            return redirect()->back()->with(['message' => 'File PDF gabungan tidak ditemukan di server', 'type' => 'warning']);
+        }
+
+        Cache::forget($cacheKey);
+
+        return response()->download($pdfPath, 'Semua_Sertifikat_' . Str::slug($state['workshop_nama'] ?? ('workshop-' . $id)) . '.pdf', [
+            'Content-Type' => 'application/pdf',
+        ])->deleteFileAfterSend(true);
+    }
+
     public function cekValidasi($id)
     {
         $sertifikat = Sertifikat::with(['peserta.transaction', 'workshop'])->find($id);
@@ -666,6 +865,13 @@ class WorkshopController extends Controller
         return 'bulk_sertifikat_progress_' . $userId . '_' . $workshopId . '_' . $mode;
     }
 
+    private function bulkSertifikatDownloadKey($workshopId)
+    {
+        $userId = Auth::id() ?? 'guest';
+
+        return 'bulk_sertifikat_download_' . $userId . '_' . $workshopId;
+    }
+
     private function prepareImageForBulkPdf($sourcePath, array &$tempFiles)
     {
         $imageInfo = @getimagesize($sourcePath);
@@ -727,6 +933,24 @@ class WorkshopController extends Controller
             'skipped' => (int) ($state['skipped'] ?? 0),
             'pending' => count($state['pending_ids'] ?? []),
             'completed' => (bool) ($state['completed'] ?? false),
+            'percent' => min(100, $percent),
+            'message' => $state['message'] ?? '',
+        ];
+    }
+
+    private function formatBulkSertifikatDownloadProgress(array $state)
+    {
+        $total = max(1, (int) ($state['total'] ?? 0));
+        $processed = (int) ($state['processed'] ?? 0);
+        $percent = (int) floor(($processed / $total) * 100);
+
+        return [
+            'total' => (int) ($state['total'] ?? 0),
+            'processed' => $processed,
+            'failed' => (int) ($state['failed'] ?? 0),
+            'completed' => (bool) ($state['completed'] ?? false),
+            'download_ready' => (bool) ($state['download_ready'] ?? false),
+            'download_url' => $state['download_url'] ?? null,
             'percent' => min(100, $percent),
             'message' => $state['message'] ?? '',
         ];
