@@ -48,8 +48,8 @@ class KwitansiTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make('No. Urut', 'sertifikat_no_urut')
-                ->format(fn ($value) => e($value ?: '-'))
+            Column::make('No. Urut')
+                ->label(fn ($row) => e($row->sertifikat_no_urut ?: '-'))
                 ->html()
                 ->sortable(function (Builder $builder, $direction) {
                     return $builder
