@@ -439,35 +439,11 @@ class WorkshopController extends Controller
     public function startBulkSertifikatDownloadProgress($id)
     {
         $workshop = Workshop::findOrFail($id);
-        $sertifikats = Sertifikat::where('workshop_id', $id)
-            ->whereNotNull('file_sertifikat')
-            ->orderBy('id', 'asc')
-            ->get(['id', 'file_sertifikat', 'file_sertifikat_belakang']);
-
-        if ($sertifikats->isEmpty()) {
-            return response()->json([
-                'message' => 'Belum ada sertifikat yang di-generate',
-            ], 422);
-        }
-
-        $pages = [];
-        foreach ($sertifikats as $sertifikat) {
-            $frontPath = storage_path('app/public/sertifikat/' . $id . '/' . $sertifikat->file_sertifikat);
-            if (file_exists($frontPath)) {
-                $pages[] = $frontPath;
-            }
-
-            if ($sertifikat->file_sertifikat_belakang) {
-                $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $sertifikat->file_sertifikat_belakang);
-                if (file_exists($backPath)) {
-                    $pages[] = $backPath;
-                }
-            }
-        }
+        $pages = $this->buildBulkSertifikatPageSources($id);
 
         if (empty($pages)) {
             return response()->json([
-                'message' => 'File sertifikat tidak valid atau tidak ditemukan untuk digabungkan',
+                'message' => 'Belum ada sertifikat yang di-generate',
             ], 422);
         }
 
@@ -649,26 +625,17 @@ class WorkshopController extends Controller
             @set_time_limit(0);
 
             $workshop = Workshop::findOrFail($id);
-            $sertifikats = Sertifikat::where('workshop_id', $id)
-                ->whereNotNull('file_sertifikat')
-                ->orderBy('id', 'asc')
-                ->get();
+            $pages = $this->buildBulkSertifikatPageSources($id);
 
-            if ($sertifikats->isEmpty()) {
+            if (empty($pages)) {
                 return redirect()->back()->with(['message' => 'Belum ada sertifikat yang di-generate', 'type' => 'warning']);
             }
 
             $pdf = new \FPDF();
             $pagesAdded = 0;
 
-            foreach ($sertifikats as $s) {
-                $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat);
-
-                if (!file_exists($filePath)) {
-                    continue;
-                }
-
-                $preparedFrontPath = $this->prepareImageForBulkPdf($filePath, $tempFiles);
+            foreach ($pages as $pagePath) {
+                $preparedFrontPath = $this->prepareImageForBulkPdf($pagePath, $tempFiles);
                 $size = $preparedFrontPath ? getimagesize($preparedFrontPath) : false;
                 if (!$size || empty($size[0]) || empty($size[1])) {
                     continue;
@@ -681,22 +648,6 @@ class WorkshopController extends Controller
                 $pdf->AddPage($orientation, [$wMm, $hMm]);
                 $pdf->Image($preparedFrontPath, 0, 0, $wMm, $hMm);
                 $pagesAdded++;
-
-                if ($s->file_sertifikat_belakang) {
-                    $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat_belakang);
-                    if (file_exists($backPath)) {
-                        $preparedBackPath = $this->prepareImageForBulkPdf($backPath, $tempFiles);
-                        $backSize = $preparedBackPath ? getimagesize($preparedBackPath) : false;
-                        if ($backSize && !empty($backSize[0]) && !empty($backSize[1])) {
-                            $wBackMm = $backSize[0] * 0.264583;
-                            $hBackMm = $backSize[1] * 0.264583;
-                            $backOrientation = ($wBackMm > $hBackMm) ? 'L' : 'P';
-                            $pdf->AddPage($backOrientation, [$wBackMm, $hBackMm]);
-                            $pdf->Image($preparedBackPath, 0, 0, $wBackMm, $hBackMm);
-                            $pagesAdded++;
-                        }
-                    }
-                }
             }
 
             if ($pagesAdded === 0) {
@@ -870,6 +821,71 @@ class WorkshopController extends Controller
         $userId = Auth::id() ?? 'guest';
 
         return 'bulk_sertifikat_download_' . $userId . '_' . $workshopId;
+    }
+
+    private function buildBulkSertifikatPageSources($workshopId)
+    {
+        $sertifikats = Sertifikat::where('workshop_id', $workshopId)
+            ->whereNotNull('file_sertifikat')
+            ->orderBy('id', 'asc')
+            ->get(['file_sertifikat', 'file_sertifikat_belakang']);
+
+        $pages = [];
+
+        foreach ($sertifikats as $sertifikat) {
+            $frontPath = storage_path('app/public/sertifikat/' . $workshopId . '/' . $sertifikat->file_sertifikat);
+            if (file_exists($frontPath)) {
+                $pages[] = $frontPath;
+            }
+        }
+
+        if (empty($pages)) {
+            return [];
+        }
+
+        $setting = WorkshopSetting::where('workshop_id', $workshopId)->first();
+        $frontTemplatePath = null;
+        $backTemplatePath = null;
+
+        if ($setting && $setting->file_template) {
+            $candidateFrontPath = storage_path('app/public/workshop/template/' . $workshopId . '/' . $setting->file_template);
+            if (file_exists($candidateFrontPath)) {
+                $frontTemplatePath = $candidateFrontPath;
+            }
+        }
+
+        if ($setting && $setting->file_template_belakang) {
+            $candidateBackPath = storage_path('app/public/workshop/template/' . $workshopId . '/' . $setting->file_template_belakang);
+            if (file_exists($candidateBackPath)) {
+                $backTemplatePath = $candidateBackPath;
+            }
+        }
+
+        if (!$backTemplatePath) {
+            foreach ($sertifikats as $sertifikat) {
+                if (!$sertifikat->file_sertifikat_belakang) {
+                    continue;
+                }
+
+                $candidateBackPath = storage_path('app/public/sertifikat/' . $workshopId . '/' . $sertifikat->file_sertifikat_belakang);
+                if (file_exists($candidateBackPath)) {
+                    $backTemplatePath = $candidateBackPath;
+                    break;
+                }
+            }
+        }
+
+        if ($frontTemplatePath) {
+            for ($i = 0; $i < 5; $i++) {
+                $pages[] = $frontTemplatePath;
+            }
+        }
+
+        if ($backTemplatePath) {
+            $pages[] = $backTemplatePath;
+        }
+
+        return $pages;
     }
 
     private function prepareImageForBulkPdf($sourcePath, array &$tempFiles)
