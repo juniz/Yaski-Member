@@ -56,7 +56,9 @@ class KwitansiTable extends DataTableComponent
                         ->orderByRaw('CASE WHEN sertifikat.no_urut IS NULL OR sertifikat.no_urut = "" THEN 1 ELSE 0 END ' . $direction)
                         ->orderByRaw('CAST(sertifikat.no_urut AS UNSIGNED) ' . $direction);
                 })
-                ->searchable(),
+                ->searchable(function (Builder $builder, string $term) {
+                    $builder->orWhere('sertifikat.no_urut', 'like', '%' . $term . '%');
+                }),
             Column::make('No. Order', 'transaction.order_id')
                 ->sortable()
                 ->searchable(),
