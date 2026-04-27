@@ -83,32 +83,10 @@ class DaftarHadirTable extends DataTableComponent
         $peserta = Peserta::find($data['id']);
         $peserta->stts = 'hadir';
         $peserta->save();
-        $cek = Sertifikat::where('workshop_id', $this->idWorkshop)->where('peserta_id', $data['id'])->first();
-        $idSertifikat = $cek->id ?? null;
-        if (!$cek) {
-            $no_urut = Sertifikat::where('workshop_id', $this->idWorkshop)->max('no_urut') + 1;
-            $no = sprintf("%03d", $no_urut);
-            $no_sertifikat = date('Y') . '/' . 'YASKI' . '/' . date('m') . '/' . $no;
-            $sertifikat = Sertifikat::create([
-                'workshop_id' => $this->idWorkshop,
-                'peserta_id' => $data['id'],
-                'no_sertifikat' => $no_sertifikat,
-                'no_urut' => $no,
-                'nama' => $peserta->nama,
-            ]);
-            $idSertifikat = $sertifikat->id;
-
-            // Auto-generate sertifikat image
-            try {
-                $certService = new CertificateGeneratorService();
-                $certService->generate($idSertifikat);
-            } catch (\Exception $e) {
-                // Log error tapi jangan gagalkan check-in
-                \Log::warning('Gagal generate sertifikat: ' . $e->getMessage());
-            }
-        }
+        $sertifikat = $this->getOrCreateSertifikat($data['id'], $peserta);
+        $idSertifikat = $sertifikat->id;
         $this->emit('refreshDatatable');
-        $pdf = PDF::loadView('prints.labels.peserta', ['data' => $data, 'url' => url('sertifikat/' . $idSertifikat), 'workshop' => $workshop->nama, 'no_urut' => $no ?? $cek->no_urut]);
+        $pdf = PDF::loadView('prints.labels.peserta', ['data' => $data, 'url' => url('sertifikat/' . $idSertifikat), 'workshop' => $workshop->nama, 'no_urut' => $sertifikat->no_urut]);
         if (!is_dir(storage_path('app/public/labels/' . $this->idWorkshop))) {
             mkdir(storage_path('app/public/labels/' . $this->idWorkshop), 0777, true);
         }
@@ -117,6 +95,14 @@ class DaftarHadirTable extends DataTableComponent
             'nama' => $peserta->nama,
             'url' => url('storage/labels/' . $this->idWorkshop . '/' . $peserta->nama . '.pdf')
         ]);
+    }
+
+    public function editNamaSertifikat($pesertaId)
+    {
+        $peserta = Peserta::findOrFail($pesertaId);
+        $sertifikat = $this->getOrCreateSertifikat($pesertaId, $peserta);
+
+        return redirect()->to(url('sertifikat/' . $sertifikat->id));
     }
 
     public function penyebut($nilai)
@@ -234,6 +220,39 @@ class DaftarHadirTable extends DataTableComponent
         $this->emit('refreshDatatable');
     }
 
+    private function getOrCreateSertifikat($pesertaId, $peserta = null)
+    {
+        $sertifikat = Sertifikat::where('workshop_id', $this->idWorkshop)
+            ->where('peserta_id', $pesertaId)
+            ->first();
+
+        if ($sertifikat) {
+            return $sertifikat;
+        }
+
+        $peserta = $peserta ?: Peserta::findOrFail($pesertaId);
+        $noUrut = (int) Sertifikat::where('workshop_id', $this->idWorkshop)->max('no_urut') + 1;
+        $no = sprintf("%03d", $noUrut);
+        $noSertifikat = date('Y') . '/' . 'YASKI' . '/' . date('m') . '/' . $no;
+
+        $sertifikat = Sertifikat::create([
+            'workshop_id' => $this->idWorkshop,
+            'peserta_id' => $pesertaId,
+            'no_sertifikat' => $noSertifikat,
+            'no_urut' => $no,
+            'nama' => $peserta->nama,
+        ]);
+
+        try {
+            $certService = new CertificateGeneratorService();
+            $certService->generate($sertifikat->id);
+        } catch (\Exception $e) {
+            \Log::warning('Gagal generate sertifikat: ' . $e->getMessage());
+        }
+
+        return $sertifikat;
+    }
+
     public function columns(): array
     {
         return [
@@ -303,6 +322,8 @@ class DaftarHadirTable extends DataTableComponent
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="hadir(' . $row . ')" 
                                     href="#">Check In</a></li>
+                            <li><a class="dropdown-item" wire:click="editNamaSertifikat(' . $value . ')" 
+                                    href="#">Edit Nama Sertifikat</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" wire:click="cetakKwitansi(' . $row . ')" 
                                     href="#">Kwitansi</a></li>
                             <li><a class="dropdown-item" target="_blank" href="' . $kwitansiUrl . '">Cetak Kwitansi</a></li>

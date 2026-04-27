@@ -164,10 +164,16 @@ class SertifikatTable extends DataTableComponent
                 ->html(),
             Column::make("Aksi", "id")
                 ->format(function ($value, $row, Column $column) {
+                    $editUrl = url('sertifikat/' . $value);
                     return '
-                    <button wire:click="generateSingle(\'' . $value . '\')" class="btn btn-primary btn-sm" title="Generate Sertifikat">
-                        <i class="bx bx-refresh"></i> Generate
-                    </button>';
+                    <div class="btn-group btn-group-sm">
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm" title="Edit Nama Sertifikat">
+                            <i class="bx bx-pencil"></i>
+                        </a>
+                        <button wire:click="generateSingle(\'' . $value . '\')" class="btn btn-primary btn-sm" title="Generate Sertifikat">
+                            <i class="bx bx-refresh"></i>
+                        </button>
+                    </div>';
                 })
                 ->html(),
         ];
