@@ -348,6 +348,7 @@ class WorkshopController extends Controller
 
         // Initialize FPDF
         $pdf = new \FPDF();
+        $pagesAdded = 0;
 
         foreach ($sertifikats as $s) {
             $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat);
@@ -355,6 +356,9 @@ class WorkshopController extends Controller
             if (file_exists($filePath)) {
                 // Get image dimensions
                 $size = getimagesize($filePath);
+                if (!$size || empty($size[0]) || empty($size[1])) {
+                    continue;
+                }
                 $width = $size[0];
                 $height = $size[1];
 
@@ -366,16 +370,28 @@ class WorkshopController extends Controller
                 $orientation = ($wMm > $hMm) ? 'L' : 'P';
                 $pdf->AddPage($orientation, [$wMm, $hMm]);
                 $pdf->Image($filePath, 0, 0, $wMm, $hMm);
+                $pagesAdded++;
 
                 // Add back page if exists
                 if ($s->file_sertifikat_belakang) {
                     $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat_belakang);
                     if (file_exists($backPath)) {
-                        $pdf->AddPage($orientation, [$wMm, $hMm]);
-                        $pdf->Image($backPath, 0, 0, $wMm, $hMm);
+                        $backSize = getimagesize($backPath);
+                        if ($backSize && !empty($backSize[0]) && !empty($backSize[1])) {
+                            $wBackMm = $backSize[0] * 0.264583;
+                            $hBackMm = $backSize[1] * 0.264583;
+                            $backOrientation = ($wBackMm > $hBackMm) ? 'L' : 'P';
+                            $pdf->AddPage($backOrientation, [$wBackMm, $hBackMm]);
+                            $pdf->Image($backPath, 0, 0, $wBackMm, $hBackMm);
+                            $pagesAdded++;
+                        }
                     }
                 }
             }
+        }
+
+        if ($pagesAdded === 0) {
+            return redirect()->back()->with(['message' => 'File sertifikat tidak valid atau tidak ditemukan untuk digabungkan', 'type' => 'warning']);
         }
 
         return $pdf->Output('D', 'Semua_Sertifikat_' . \Illuminate\Support\Str::slug($workshop->nama) . '.pdf');

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Sertifikat;
 use App\Models\WorkshopSetting;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use BaconQrCode\Encoder\Encoder;
 use BaconQrCode\Common\ErrorCorrectionLevel;
 
@@ -17,202 +18,217 @@ class CertificateGeneratorService
      */
     public function generate($sertifikatId, $preview = false)
     {
-        if ($sertifikatId instanceof Sertifikat) {
-            $sertifikat = $sertifikatId;
-        } else {
-            $sertifikat = Sertifikat::with(['workshop', 'peserta.transaction'])->find($sertifikatId);
-        }
+        try {
+            if ($sertifikatId instanceof Sertifikat) {
+                $sertifikat = $sertifikatId;
+                $sertifikat->loadMissing('peserta.transaction');
+            } else {
+                $sertifikat = Sertifikat::with(['workshop', 'peserta.transaction'])->find($sertifikatId);
+            }
 
-        if (!$sertifikat) {
-            return null;
-        }
-
-        $setting = WorkshopSetting::where('workshop_id', $sertifikat->workshop_id)->first();
-        if (!$setting || !$setting->file_template) {
-            return null;
-        }
-
-        $templatePath = storage_path('app/public/workshop/template/' . $sertifikat->workshop_id . '/' . $setting->file_template);
-        if (!file_exists($templatePath)) {
-            return null;
-        }
-
-        // Determine image type
-        $imageInfo = getimagesize($templatePath);
-        if (!$imageInfo) {
-            return null;
-        }
-
-        $mime = $imageInfo['mime'];
-
-        // Create image from template
-        switch ($mime) {
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($templatePath);
-                break;
-            case 'image/png':
-                $image = imagecreatefrompng($templatePath);
-                break;
-            default:
+            if (!$sertifikat) {
                 return null;
-        }
+            }
 
-        if (!$image) {
+            $setting = WorkshopSetting::where('workshop_id', $sertifikat->workshop_id)->first();
+            if (!$setting || !$setting->file_template) {
+                return null;
+            }
+
+            $templatePath = storage_path('app/public/workshop/template/' . $sertifikat->workshop_id . '/' . $setting->file_template);
+            if (!file_exists($templatePath)) {
+                return null;
+            }
+
+            // Determine image type
+            $imageInfo = getimagesize($templatePath);
+            if (!$imageInfo) {
+                return null;
+            }
+
+            $mime = $imageInfo['mime'];
+
+            // Create image from template
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($templatePath);
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($templatePath);
+                    break;
+                default:
+                    return null;
+            }
+
+            if (!$image) {
+                return null;
+            }
+
+            // Use default font or TTF if available
+            $fontPath = public_path('assets/fonts/arial.ttf');
+            $useTTF = file_exists($fontPath);
+
+            // Define search paths for fonts (Windows & Linux)
+            if (!$useTTF) {
+                $searchPaths = [
+                    // Project local
+                    public_path('assets/fonts/arial.ttf'),
+                    // Windows
+                    'C:/Windows/Fonts/arial.ttf',
+                    'C:/Windows/Fonts/calibri.ttf',
+                    'C:/Windows/Fonts/segoeui.ttf',
+                    // Linux (Ubuntu/Debian standard paths)
+                    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+                    '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+                    '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+                    '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
+                ];
+                foreach ($searchPaths as $path) {
+                    if (file_exists($path)) {
+                        $fontPath = $path;
+                        $useTTF = true;
+                        break;
+                    }
+                }
+            }
+
+            // --- Perbaikan Skalasi Font ---
+            // Editor sekarang menggunakan standar lebar referensi 1000px.
+            // 0.75 adalah faktor koreksi untuk menyamakan pixel browser dengan point GD (96 DPI vs 72 DPI).
+            $imageWidth = $imageInfo[0];
+            $fontSizeFactor = ($imageWidth / 1000) * 0.75;
+
+            // Draw nama peserta
+            $namaText = $sertifikat->nama ?: optional($sertifikat->peserta)->nama ?: '';
+            $namaEnabled = $setting->nama_enabled ?? true;
+            if ($namaText && $namaEnabled) {
+                $this->drawText(
+                    $image,
+                    $namaText,
+                    $setting->nama_x ?? 500,
+                    $setting->nama_y ?? 400,
+                    ($setting->nama_font_size ?? 40) * $fontSizeFactor,
+                    $setting->nama_color ?? '#000000',
+                    $fontPath,
+                    $useTTF,
+                    $imageInfo[0]
+                );
+            }
+
+            // Draw no sertifikat
+            $noSertifikatText = $sertifikat->no_sertifikat ?? '';
+            $noSertifikatEnabled = $setting->no_sertifikat_enabled ?? true;
+            if ($noSertifikatText && $noSertifikatEnabled) {
+                $this->drawText(
+                    $image,
+                    $noSertifikatText,
+                    $setting->no_sertifikat_x ?? 500,
+                    $setting->no_sertifikat_y ?? 350,
+                    ($setting->no_sertifikat_font_size ?? 20) * $fontSizeFactor,
+                    $setting->no_sertifikat_color ?? '#333333',
+                    $fontPath,
+                    $useTTF,
+                    $imageInfo[0]
+                );
+            }
+
+            // Draw instansi
+            $instansiText = $sertifikat->instansi ?: optional(optional($sertifikat->peserta)->transaction)->nama_rs ?: '';
+            $instansiEnabled = $setting->instansi_enabled ?? true;
+            if ($instansiText && $instansiEnabled) {
+                $this->drawText(
+                    $image,
+                    $instansiText,
+                    $setting->instansi_x ?? 500,
+                    $setting->instansi_y ?? 460,
+                    ($setting->instansi_font_size ?? 24) * $fontSizeFactor,
+                    $setting->instansi_color ?? '#333333',
+                    $fontPath,
+                    $useTTF,
+                    $imageInfo[0]
+                );
+            }
+
+            // Draw QR Code
+            $qrEnabled = $setting->qr_enabled ?? true;
+            if ($qrEnabled) {
+                $validationUrl = url('sertifikat/' . $sertifikat->id . '/validasi');
+                $this->drawQrCode(
+                    $image,
+                    $validationUrl,
+                    $setting->qr_x ?? 900,
+                    $setting->qr_y ?? 500,
+                    $setting->qr_size ?? 150
+                );
+            }
+
+            // --- Handle Preview Mode ---
+            if ($preview) {
+                return $image;
+            }
+
+            // Output directory
+            $outputDir = 'public/sertifikat/' . $sertifikat->workshop_id;
+            if (!Storage::exists($outputDir)) {
+                Storage::makeDirectory($outputDir);
+            }
+
+            $filename = 'sertifikat-' . $sertifikat->id . '.png';
+            $outputPath = storage_path('app/' . $outputDir . '/' . $filename);
+
+            // Save as PNG
+            imagepng($image, $outputPath, 5);
+            imagedestroy($image);
+
+            // --- Handle Back Side ---
+            $filenameBack = null;
+            if ($setting->file_template_belakang) {
+                $templateBackPath = storage_path('app/public/workshop/template/' . $sertifikat->workshop_id . '/' . $setting->file_template_belakang);
+                if (file_exists($templateBackPath)) {
+                    $filenameBack = 'sertifikat-' . $sertifikat->id . '-back.png';
+                    $outputPathBack = storage_path('app/' . $outputDir . '/' . $filenameBack);
+
+                    // Since it's static, we can just copy it or re-save it via GD
+                    $backImageInfo = getimagesize($templateBackPath);
+                    if ($backImageInfo) {
+                        $backMime = $backImageInfo['mime'];
+                        $imageBack = null;
+                        switch ($backMime) {
+                            case 'image/jpeg':
+                                $imageBack = imagecreatefromjpeg($templateBackPath);
+                                break;
+                            case 'image/png':
+                                $imageBack = imagecreatefrompng($templateBackPath);
+                                break;
+                        }
+                        if ($imageBack) {
+                            imagepng($imageBack, $outputPathBack, 5);
+                            imagedestroy($imageBack);
+                        }
+                    }
+                }
+            }
+
+            // Update sertifikat record
+            $sertifikat->file_sertifikat = $filename;
+            if ($filenameBack) {
+                $sertifikat->file_sertifikat_belakang = $filenameBack;
+            }
+
+            if ($sertifikat->exists) {
+                $sertifikat->save();
+            }
+
+            return $filename;
+        } catch (\Throwable $e) {
+            Log::error('Gagal generate sertifikat', [
+                'sertifikat_id' => $sertifikatId instanceof Sertifikat ? $sertifikatId->id : $sertifikatId,
+                'preview' => $preview,
+                'message' => $e->getMessage(),
+            ]);
+
             return null;
         }
-
-        // Use default font or TTF if available
-        $fontPath = public_path('assets/fonts/arial.ttf');
-        $useTTF = file_exists($fontPath);
-
-        // Define search paths for fonts (Windows & Linux)
-        if (!$useTTF) {
-            $searchPaths = [
-                // Project local
-                public_path('assets/fonts/arial.ttf'),
-                // Windows
-                'C:/Windows/Fonts/arial.ttf',
-                'C:/Windows/Fonts/calibri.ttf',
-                'C:/Windows/Fonts/segoeui.ttf',
-                // Linux (Ubuntu/Debian standard paths)
-                '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-                '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-                '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-                '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
-            ];
-            foreach ($searchPaths as $path) {
-                if (file_exists($path)) {
-                    $fontPath = $path;
-                    $useTTF = true;
-                    break;
-                }
-            }
-        }
-
-        // --- Perbaikan Skalasi Font ---
-        // Editor sekarang menggunakan standar lebar referensi 1000px. 
-        // 0.75 adalah faktor koreksi untuk menyamakan pixel browser dengan point GD (96 DPI vs 72 DPI).
-        $imageWidth = $imageInfo[0];
-        $fontSizeFactor = ($imageWidth / 1000) * 0.75;
-
-        // Draw nama peserta
-        $namaText = $sertifikat->nama ?? $sertifikat->peserta->nama ?? '';
-        $namaEnabled = $setting->nama_enabled ?? true;
-        if ($namaText && $namaEnabled) {
-            $this->drawText(
-                $image,
-                $namaText,
-                $setting->nama_x ?? 500,
-                $setting->nama_y ?? 400,
-                ($setting->nama_font_size ?? 40) * $fontSizeFactor,
-                $setting->nama_color ?? '#000000',
-                $fontPath,
-                $useTTF,
-                $imageInfo[0]
-            );
-        }
-
-        // Draw no sertifikat
-        $noSertifikatText = $sertifikat->no_sertifikat ?? '';
-        $noSertifikatEnabled = $setting->no_sertifikat_enabled ?? true;
-        if ($noSertifikatText && $noSertifikatEnabled) {
-            $this->drawText(
-                $image,
-                $noSertifikatText,
-                $setting->no_sertifikat_x ?? 500,
-                $setting->no_sertifikat_y ?? 350,
-                ($setting->no_sertifikat_font_size ?? 20) * $fontSizeFactor,
-                $setting->no_sertifikat_color ?? '#333333',
-                $fontPath,
-                $useTTF,
-                $imageInfo[0]
-            );
-        }
-
-        // Draw instansi
-        $instansiText = $sertifikat->instansi ?? $sertifikat->peserta->transaction->nama_rs ?? '';
-        $instansiEnabled = $setting->instansi_enabled ?? true;
-        if ($instansiText && $instansiEnabled) {
-            $this->drawText(
-                $image,
-                $instansiText,
-                $setting->instansi_x ?? 500,
-                $setting->instansi_y ?? 460,
-                ($setting->instansi_font_size ?? 24) * $fontSizeFactor,
-                $setting->instansi_color ?? '#333333',
-                $fontPath,
-                $useTTF,
-                $imageInfo[0]
-            );
-        }
-
-        // Draw QR Code
-        $qrEnabled = $setting->qr_enabled ?? true;
-        if ($qrEnabled) {
-            $validationUrl = url('sertifikat/' . $sertifikat->id . '/validasi');
-            $this->drawQrCode(
-                $image,
-                $validationUrl,
-                $setting->qr_x ?? 900,
-                $setting->qr_y ?? 500,
-                $setting->qr_size ?? 150
-            );
-        }
-
-        // --- Handle Preview Mode ---
-        if ($preview) {
-            return $image;
-        }
-
-        // Output directory
-        $outputDir = 'public/sertifikat/' . $sertifikat->workshop_id;
-        if (!Storage::exists($outputDir)) {
-            Storage::makeDirectory($outputDir);
-        }
-
-        $filename = 'sertifikat-' . $sertifikat->id . '.png';
-        $outputPath = storage_path('app/' . $outputDir . '/' . $filename);
-
-        // Save as PNG
-        imagepng($image, $outputPath, 5);
-        imagedestroy($image);
-
-        // --- Handle Back Side ---
-        $filenameBack = null;
-        if ($setting->file_template_belakang) {
-            $templateBackPath = storage_path('app/public/workshop/template/' . $sertifikat->workshop_id . '/' . $setting->file_template_belakang);
-            if (file_exists($templateBackPath)) {
-                $filenameBack = 'sertifikat-' . $sertifikat->id . '-back.png';
-                $outputPathBack = storage_path('app/' . $outputDir . '/' . $filenameBack);
-                
-                // Since it's static, we can just copy it or re-save it via GD
-                $backImageInfo = getimagesize($templateBackPath);
-                if ($backImageInfo) {
-                    $backMime = $backImageInfo['mime'];
-                    $imageBack = null;
-                    switch ($backMime) {
-                        case 'image/jpeg': $imageBack = imagecreatefromjpeg($templateBackPath); break;
-                        case 'image/png': $imageBack = imagecreatefrompng($templateBackPath); break;
-                    }
-                    if ($imageBack) {
-                        imagepng($imageBack, $outputPathBack, 5);
-                        imagedestroy($imageBack);
-                    }
-                }
-            }
-        }
-
-        // Update sertifikat record
-        $sertifikat->file_sertifikat = $filename;
-        if ($filenameBack) {
-            $sertifikat->file_sertifikat_belakang = $filenameBack;
-        }
-        
-        if ($sertifikat->exists) {
-            $sertifikat->save();
-        }
-
-        return $filename;
     }
 
     /**
@@ -235,7 +251,17 @@ class CertificateGeneratorService
                 }
             }
 
-            $generated = $this->generate($sertifikat->id);
+            try {
+                $generated = $this->generate($sertifikat->id);
+            } catch (\Throwable $e) {
+                Log::error('Gagal generate bulk sertifikat', [
+                    'workshop_id' => $workshopId,
+                    'sertifikat_id' => $sertifikat->id,
+                    'message' => $e->getMessage(),
+                ]);
+                $generated = null;
+            }
+
             if ($generated) {
                 $result['success']++;
             } else {
@@ -258,7 +284,17 @@ class CertificateGeneratorService
         $result = ['success' => 0, 'failed' => 0];
 
         foreach ($sertifikats as $sertifikat) {
-            $generated = $this->generate($sertifikat->id);
+            try {
+                $generated = $this->generate($sertifikat->id);
+            } catch (\Throwable $e) {
+                Log::error('Gagal regenerate bulk sertifikat', [
+                    'workshop_id' => $workshopId,
+                    'sertifikat_id' => $sertifikat->id,
+                    'message' => $e->getMessage(),
+                ]);
+                $generated = null;
+            }
+
             if ($generated) {
                 $result['success']++;
             } else {

@@ -2,6 +2,12 @@
     <div wire:init='getWorkshop' class="card">
         <div class="card-body">
             <h5 class="card-title">Riwayat Workshop</h5>
+            @if($checkinMessage)
+                <div class="alert alert-{{ $checkinType }} alert-dismissible fade show" role="alert">
+                    {{ $checkinMessage }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead>
@@ -21,7 +27,15 @@
                             <td>
                                 <ul class="mb-0">
                                     @foreach($transaction->peserta as $peserta)
-                                    <li><small>{{ $peserta->nama }}</small></li>
+                                    <li>
+                                        <small>{{ $peserta->nama }}</small>
+                                        @if($peserta->stts === 'hadir')
+                                            <span class="badge bg-success ms-1">Hadir</span>
+                                            <div class="text-muted font-size-12">
+                                                Check-in: {{ $peserta->updated_at ? \Illuminate\Support\Carbon::parse($peserta->updated_at)->translatedFormat('d F Y H:i') : '-' }}
+                                            </div>
+                                        @endif
+                                    </li>
                                     @endforeach
                                 </ul>
                             </td>
@@ -45,6 +59,18 @@
                                         <i class="bx bx-medal me-1"></i> Sertifikat
                                     </button>
                                     @foreach($transaction->peserta as $peserta)
+                                        @if($peserta->stts === 'hadir')
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    wire:click="showBuktiCheckin({{ $peserta->id }})">
+                                                <i class="bx bx-check-shield me-1"></i> Bukti Check-in {{ $loop->iteration }}
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-warning btn-sm waves-effect waves-light"
+                                                    wire:click="checkInPeserta({{ $peserta->id }})"
+                                                    onclick="return confirm('Check-in peserta {{ addslashes($peserta->nama) }} sekarang?')">
+                                                <i class="bx bx-log-in-circle me-1"></i> Check-in {{ $loop->iteration }}
+                                            </button>
+                                        @endif
                                         <a href="{{ route('kwitansi.cetak', $peserta->id) }}" target="_blank" class="btn btn-outline-success btn-sm waves-effect waves-light">
                                             <i class="bx bx-receipt me-1"></i> Kwitansi {{ $loop->iteration }}
                                         </a>
@@ -183,6 +209,60 @@
         </div>
     </div>
 
+    <div wire:ignore.self class="modal fade" id="buktiCheckinModal" tabindex="-1" aria-labelledby="buktiCheckinModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="buktiCheckinModalLabel">
+                        <i class="bx bx-check-shield me-2"></i> Bukti Check-in
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    @if($selectedCheckinPeserta)
+                        <div class="text-center mb-4">
+                            <div class="avatar-md mx-auto mb-3">
+                                <span class="avatar-title rounded-circle bg-soft-success text-success fs-2">
+                                    <i class="bx bx-check"></i>
+                                </span>
+                            </div>
+                            <h5 class="mb-1">Check-in Berhasil</h5>
+                            <p class="text-muted mb-0">
+                                {{ $selectedCheckinPeserta->updated_at ? \Illuminate\Support\Carbon::parse($selectedCheckinPeserta->updated_at)->translatedFormat('d F Y H:i') : '-' }}
+                            </p>
+                        </div>
+
+                        <div class="border rounded p-3 bg-light">
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Nama Peserta</small>
+                                <strong>{{ $selectedCheckinPeserta->nama }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Workshop</small>
+                                <strong>{{ $selectedCheckinPeserta->transaction->workshop->nama ?? '-' }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Instansi</small>
+                                <strong>{{ $selectedCheckinPeserta->transaction->nama_rs ?? 'Pribadi' }}</strong>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Status</small>
+                                <span class="badge bg-success">Hadir</span>
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning mb-0">
+                            Bukti check-in tidak ditemukan.
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.addEventListener('openMateriModal', event => {
             var myModal = new bootstrap.Modal(document.getElementById('materiModal'));
@@ -190,6 +270,10 @@
         })
         window.addEventListener('openSertifikatModal', event => {
             var myModal = new bootstrap.Modal(document.getElementById('sertifikatModal'));
+            myModal.show();
+        })
+        window.addEventListener('openBuktiCheckinModal', event => {
+            var myModal = new bootstrap.Modal(document.getElementById('buktiCheckinModal'));
             myModal.show();
         })
     </script>

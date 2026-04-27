@@ -278,9 +278,16 @@ class DaftarHadirTable extends DataTableComponent
                 ->sortable(),
             Column::make("Stts", "stts")
                 ->sortable()
-                ->format(function ($value) {
+                ->format(function ($value, $row) {
+                    if ($value === 'hadir') {
+                        $date = $row->updated_at ? Carbon::parse($row->updated_at)->translatedFormat('d F Y H:i') : '-';
+
+                        return 'Hadir<br><small class="text-muted">' . e($date) . '</small>';
+                    }
+
                     return $value ?? 'Belum Hadir';
-                }),
+                })
+                ->html(),
             Column::make("Aksi", "id")
                 ->format(function ($value, $row, Column $column) {
                     $nama = "'" . $row->nama . "'";

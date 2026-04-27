@@ -9,6 +9,7 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Sertifikat;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class SertifikatTable extends DataTableComponent
 {
@@ -66,7 +67,17 @@ class SertifikatTable extends DataTableComponent
         $failed = 0;
 
         foreach ($selected as $id) {
-            $result = $service->generate($id);
+            try {
+                $result = $service->generate($id);
+            } catch (\Throwable $e) {
+                Log::error('Gagal generate sertifikat terpilih', [
+                    'workshop_id' => $this->idWorkshop,
+                    'sertifikat_id' => $id,
+                    'message' => $e->getMessage(),
+                ]);
+                $result = null;
+            }
+
             if ($result) {
                 $success++;
             } else {
