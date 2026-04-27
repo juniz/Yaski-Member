@@ -30,6 +30,13 @@
             overflow: hidden;
         }
 
+        .certificate-order {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-bottom: 2mm;
+            text-align: left;
+        }
+
         .receipt-page + .receipt-page {
             page-break-before: always;
         }
@@ -180,6 +187,12 @@
     @foreach($receipts as $receipt)
         @php($data = $receipt['data'])
         <div class="receipt-page">
+            @if(!empty($data['no_urut_sertifikat']))
+                <div class="certificate-order">
+                    No. Urut: {{ $data['no_urut_sertifikat'] }}
+                </div>
+            @endif
+
             <div class="header">
                 <div class="logo-wrap">
                     @if(!empty($logo))
@@ -204,13 +217,6 @@
                 <div class="receipt-number">NO. {{ $data['no_kwitansi'] ?? $data['order_id'] }}</div>
                 <div class="receipt-title">KWITANSI</div>
             </div>
-
-            @if(!empty($data['no_urut_sertifikat']))
-                <div class="payment-row">
-                    <div class="payment-left">No. Urut Sertifikat</div>
-                    <div class="payment-right">: {{ $data['no_urut_sertifikat'] }}</div>
-                </div>
-            @endif
 
             <div class="payment-row">
                 <div class="payment-left">Telah terima dari</div>

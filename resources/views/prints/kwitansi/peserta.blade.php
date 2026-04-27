@@ -33,6 +33,13 @@
             overflow: hidden;
         }
 
+        .certificate-order {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-bottom: 2mm;
+            text-align: left;
+        }
+
         .header {
             display: flex;
             align-items: center;
@@ -216,6 +223,12 @@
 </head>
 <body>
     <div class="container">
+        @if(!empty($data['no_urut_sertifikat']))
+            <div class="certificate-order">
+                No. Urut: {{ $data['no_urut_sertifikat'] }}
+            </div>
+        @endif
+
         <div class="header">
             <!-- Add your company logo here -->
             <img src="{{ $logo }}" alt="Company Logo" class="logo">
@@ -237,15 +250,6 @@
             <div class="payment-left">NO. {{ $data['no_kwitansi'] ?? $data['order_id'] }}</div>
             <div class="receipt-title payment-right">KWITANSI</div>
         </div>
-
-        @if(!empty($data['no_urut_sertifikat']))
-            <div class="payment-details" style="margin-bottom: 2mm;">
-                <div class="flex">
-                    <div class="payment-left">No. Urut Sertifikat</div>
-                    <div class="payment-right">: {{ $data['no_urut_sertifikat'] }}</div>
-                </div>
-            </div>
-        @endif
 
         <div class="payment-details">
             <div class="flex">
