@@ -7,6 +7,9 @@ use App\Models\Workshop;
 use App\Models\WorkshopSetting;
 use App\Services\CertificateGeneratorService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -328,6 +331,111 @@ class WorkshopController extends Controller
         }
     }
 
+    public function startBulkSertifikatProgress($id, Request $request)
+    {
+        $request->validate([
+            'mode' => 'required|in:generate,regenerate',
+        ]);
+
+        $mode = $request->mode;
+        $workshop = Workshop::findOrFail($id);
+        $sertifikats = Sertifikat::where('workshop_id', $id)
+            ->orderBy('id', 'asc')
+            ->get(['id', 'file_sertifikat']);
+
+        $pendingIds = [];
+        $skipped = 0;
+
+        foreach ($sertifikats as $sertifikat) {
+            if ($mode === 'generate' && $sertifikat->file_sertifikat) {
+                $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $sertifikat->file_sertifikat);
+                if (file_exists($filePath)) {
+                    $skipped++;
+                    continue;
+                }
+            }
+
+            $pendingIds[] = $sertifikat->id;
+        }
+
+        $state = [
+            'workshop_id' => (int) $id,
+            'workshop_nama' => $workshop->nama,
+            'mode' => $mode,
+            'total' => $sertifikats->count(),
+            'pending_ids' => $pendingIds,
+            'processed' => 0,
+            'success' => 0,
+            'failed' => 0,
+            'skipped' => $skipped,
+            'completed' => count($pendingIds) === 0,
+            'message' => count($pendingIds) === 0
+                ? 'Tidak ada sertifikat yang perlu diproses'
+                : 'Proses bulk sertifikat dimulai',
+        ];
+
+        Cache::put($this->bulkSertifikatProgressKey($id, $mode), $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkSertifikatProgress($state));
+    }
+
+    public function processBulkSertifikatProgress($id, Request $request)
+    {
+        $request->validate([
+            'mode' => 'required|in:generate,regenerate',
+        ]);
+
+        $mode = $request->mode;
+        $cacheKey = $this->bulkSertifikatProgressKey($id, $mode);
+        $state = Cache::get($cacheKey);
+
+        if (!$state) {
+            return response()->json([
+                'message' => 'Progress bulk sertifikat tidak ditemukan. Silakan mulai ulang prosesnya.',
+            ], 404);
+        }
+
+        if (!empty($state['completed'])) {
+            return response()->json($this->formatBulkSertifikatProgress($state));
+        }
+
+        $service = new CertificateGeneratorService();
+        $chunkSize = 5;
+        $pendingIds = $state['pending_ids'] ?? [];
+        $currentBatch = array_splice($pendingIds, 0, $chunkSize);
+
+        foreach ($currentBatch as $sertifikatId) {
+            try {
+                $result = $service->generate($sertifikatId);
+                if ($result) {
+                    $state['success']++;
+                } else {
+                    $state['failed']++;
+                }
+            } catch (\Throwable $e) {
+                $state['failed']++;
+                Log::error('Gagal memproses progress bulk sertifikat', [
+                    'workshop_id' => $id,
+                    'mode' => $mode,
+                    'sertifikat_id' => $sertifikatId,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+
+            $state['processed']++;
+        }
+
+        $state['pending_ids'] = $pendingIds;
+        $state['completed'] = count($pendingIds) === 0;
+        $state['message'] = $state['completed']
+            ? 'Proses bulk sertifikat selesai'
+            : 'Sedang memproses sertifikat...';
+
+        Cache::put($cacheKey, $state, now()->addHours(2));
+
+        return response()->json($this->formatBulkSertifikatProgress($state));
+    }
+
     public function cekValidasi($id)
     {
         $sertifikat = Sertifikat::with(['peserta.transaction', 'workshop'])->find($id);
@@ -336,65 +444,88 @@ class WorkshopController extends Controller
 
     public function downloadSertifikatBulkPdf($id)
     {
-        $workshop = Workshop::findOrFail($id);
-        $sertifikats = Sertifikat::where('workshop_id', $id)
-            ->whereNotNull('file_sertifikat')
-            ->orderBy('id', 'asc')
-            ->get();
+        $tempFiles = [];
 
-        if ($sertifikats->isEmpty()) {
-            return redirect()->back()->with(['message' => 'Belum ada sertifikat yang di-generate', 'type' => 'warning']);
-        }
+        try {
+            @set_time_limit(0);
 
-        // Initialize FPDF
-        $pdf = new \FPDF();
-        $pagesAdded = 0;
+            $workshop = Workshop::findOrFail($id);
+            $sertifikats = Sertifikat::where('workshop_id', $id)
+                ->whereNotNull('file_sertifikat')
+                ->orderBy('id', 'asc')
+                ->get();
 
-        foreach ($sertifikats as $s) {
-            $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat);
+            if ($sertifikats->isEmpty()) {
+                return redirect()->back()->with(['message' => 'Belum ada sertifikat yang di-generate', 'type' => 'warning']);
+            }
 
-            if (file_exists($filePath)) {
-                // Get image dimensions
-                $size = getimagesize($filePath);
+            $pdf = new \FPDF();
+            $pagesAdded = 0;
+
+            foreach ($sertifikats as $s) {
+                $filePath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat);
+
+                if (!file_exists($filePath)) {
+                    continue;
+                }
+
+                $preparedFrontPath = $this->prepareImageForBulkPdf($filePath, $tempFiles);
+                $size = $preparedFrontPath ? getimagesize($preparedFrontPath) : false;
                 if (!$size || empty($size[0]) || empty($size[1])) {
                     continue;
                 }
-                $width = $size[0];
-                $height = $size[1];
 
-                // Convert pixels to mm (assuming 96 DPI)
-                $wMm = $width * 0.264583;
-                $hMm = $height * 0.264583;
-
-                // Add page with custom size
+                $wMm = $size[0] * 0.264583;
+                $hMm = $size[1] * 0.264583;
                 $orientation = ($wMm > $hMm) ? 'L' : 'P';
+
                 $pdf->AddPage($orientation, [$wMm, $hMm]);
-                $pdf->Image($filePath, 0, 0, $wMm, $hMm);
+                $pdf->Image($preparedFrontPath, 0, 0, $wMm, $hMm);
                 $pagesAdded++;
 
-                // Add back page if exists
                 if ($s->file_sertifikat_belakang) {
                     $backPath = storage_path('app/public/sertifikat/' . $id . '/' . $s->file_sertifikat_belakang);
                     if (file_exists($backPath)) {
-                        $backSize = getimagesize($backPath);
+                        $preparedBackPath = $this->prepareImageForBulkPdf($backPath, $tempFiles);
+                        $backSize = $preparedBackPath ? getimagesize($preparedBackPath) : false;
                         if ($backSize && !empty($backSize[0]) && !empty($backSize[1])) {
                             $wBackMm = $backSize[0] * 0.264583;
                             $hBackMm = $backSize[1] * 0.264583;
                             $backOrientation = ($wBackMm > $hBackMm) ? 'L' : 'P';
                             $pdf->AddPage($backOrientation, [$wBackMm, $hBackMm]);
-                            $pdf->Image($backPath, 0, 0, $wBackMm, $hBackMm);
+                            $pdf->Image($preparedBackPath, 0, 0, $wBackMm, $hBackMm);
                             $pagesAdded++;
                         }
                     }
                 }
             }
-        }
 
-        if ($pagesAdded === 0) {
-            return redirect()->back()->with(['message' => 'File sertifikat tidak valid atau tidak ditemukan untuk digabungkan', 'type' => 'warning']);
-        }
+            if ($pagesAdded === 0) {
+                return redirect()->back()->with(['message' => 'File sertifikat tidak valid atau tidak ditemukan untuk digabungkan', 'type' => 'warning']);
+            }
 
-        return $pdf->Output('D', 'Semua_Sertifikat_' . \Illuminate\Support\Str::slug($workshop->nama) . '.pdf');
+            $downloadName = 'Semua_Sertifikat_' . Str::slug($workshop->nama) . '.pdf';
+            if (ob_get_length()) {
+                ob_end_clean();
+            }
+
+            return response($pdf->Output('S', $downloadName))
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $downloadName . '"');
+        } catch (\Throwable $e) {
+            Log::error('Gagal download bulk sertifikat PDF', [
+                'workshop_id' => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()->with(['message' => 'Gagal membuat PDF gabungan sertifikat', 'type' => 'danger']);
+        } finally {
+            foreach ($tempFiles as $tempFile) {
+                if (is_string($tempFile) && file_exists($tempFile)) {
+                    @unlink($tempFile);
+                }
+            }
+        }
     }
 
     public function previewSertifikat($id, CertificateGeneratorService $generator)
@@ -526,5 +657,78 @@ class WorkshopController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(['message' => $e->getMessage() ?? 'Gagal menghapus materi', 'type' => 'danger']);
         }
+    }
+
+    private function bulkSertifikatProgressKey($workshopId, $mode)
+    {
+        $userId = Auth::id() ?? 'guest';
+
+        return 'bulk_sertifikat_progress_' . $userId . '_' . $workshopId . '_' . $mode;
+    }
+
+    private function prepareImageForBulkPdf($sourcePath, array &$tempFiles)
+    {
+        $imageInfo = @getimagesize($sourcePath);
+        if (!$imageInfo || empty($imageInfo['mime'])) {
+            return null;
+        }
+
+        if ($imageInfo['mime'] === 'image/jpeg') {
+            return $sourcePath;
+        }
+
+        switch ($imageInfo['mime']) {
+            case 'image/png':
+                $image = @imagecreatefrompng($sourcePath);
+                break;
+            case 'image/webp':
+                $image = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($sourcePath) : false;
+                break;
+            default:
+                $image = false;
+                break;
+        }
+
+        if (!$image) {
+            return null;
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $canvas = imagecreatetruecolor($width, $height);
+        $white = imagecolorallocate($canvas, 255, 255, 255);
+        imagefill($canvas, 0, 0, $white);
+        imagecopy($canvas, $image, 0, 0, 0, 0, $width, $height);
+
+        $tempPath = storage_path('app/temp-bulk-cert-' . uniqid('', true) . '.jpg');
+        imagejpeg($canvas, $tempPath, 85);
+
+        imagedestroy($canvas);
+        imagedestroy($image);
+
+        $tempFiles[] = $tempPath;
+
+        return $tempPath;
+    }
+
+    private function formatBulkSertifikatProgress(array $state)
+    {
+        $processedAll = ($state['processed'] ?? 0) + ($state['skipped'] ?? 0);
+        $total = max(1, (int) ($state['total'] ?? 0));
+        $percent = (int) floor(($processedAll / $total) * 100);
+
+        return [
+            'mode' => $state['mode'] ?? 'generate',
+            'total' => (int) ($state['total'] ?? 0),
+            'processed' => (int) ($state['processed'] ?? 0),
+            'processed_all' => $processedAll,
+            'success' => (int) ($state['success'] ?? 0),
+            'failed' => (int) ($state['failed'] ?? 0),
+            'skipped' => (int) ($state['skipped'] ?? 0),
+            'pending' => count($state['pending_ids'] ?? []),
+            'completed' => (bool) ($state['completed'] ?? false),
+            'percent' => min(100, $percent),
+            'message' => $state['message'] ?? '',
+        ];
     }
 }

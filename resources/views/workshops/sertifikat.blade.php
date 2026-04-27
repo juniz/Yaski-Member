@@ -17,18 +17,22 @@ Sertifikat Workshop
                     <i class="bx bx-certification"></i> Sertifikat Workshop
                 </h5>
                 <div class="btn-group">
-                    <form method="POST" action="{{ route('workshop.generate.sertifikat', $id) }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-sm me-1" onclick="return confirm('Generate sertifikat untuk semua peserta yang belum memiliki sertifikat?')">
-                            <i class="bx bx-play-circle"></i> Generate Semua
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('workshop.regenerate.sertifikat', $id) }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-warning btn-sm me-1" onclick="return confirm('Regenerate SEMUA sertifikat? Ini akan menimpa file yang sudah ada.')">
-                            <i class="bx bx-refresh"></i> Regenerate Semua
-                        </button>
-                    </form>
+                    <button
+                        type="button"
+                        class="btn btn-primary btn-sm me-1 js-bulk-sertifikat"
+                        data-mode="generate"
+                        data-confirm="Generate sertifikat untuk semua peserta yang belum memiliki sertifikat?"
+                    >
+                        <i class="bx bx-play-circle"></i> Generate Semua
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-warning btn-sm me-1 js-bulk-sertifikat"
+                        data-mode="regenerate"
+                        data-confirm="Regenerate SEMUA sertifikat? Ini akan menimpa file yang sudah ada."
+                    >
+                        <i class="bx bx-refresh"></i> Regenerate Semua
+                    </button>
                     <a href="{{ route('workshop.download-bulk-pdf', $id) }}" class="btn btn-success btn-sm me-1">
                         <i class="bx bx-download"></i> Download PDF Gabungan
                     </a>
@@ -43,4 +47,121 @@ Sertifikat Workshop
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+<script>
+    (function () {
+        const csrfToken = @json(csrf_token());
+        const startUrl = @json(route('workshop.bulk-progress.start', $id));
+        const processUrl = @json(route('workshop.bulk-progress.process', $id));
+
+        function modeLabel(mode) {
+            return mode === 'regenerate' ? 'Regenerate' : 'Generate';
+        }
+
+        function buildProgressHtml(progress) {
+            return `
+                <div class="text-start">
+                    <div class="mb-2"><strong>Status:</strong> ${progress.message || 'Sedang memproses...'}</div>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ${progress.percent}%;">
+                            ${progress.percent}%
+                        </div>
+                    </div>
+                    <div class="row text-center g-2">
+                        <div class="col-4"><div class="border rounded p-2"><div class="fw-bold">${progress.processed_all}</div><small>Diproses</small></div></div>
+                        <div class="col-4"><div class="border rounded p-2"><div class="fw-bold text-success">${progress.success}</div><small>Berhasil</small></div></div>
+                        <div class="col-4"><div class="border rounded p-2"><div class="fw-bold text-danger">${progress.failed}</div><small>Gagal</small></div></div>
+                        <div class="col-6"><div class="border rounded p-2"><div class="fw-bold text-secondary">${progress.skipped}</div><small>Skip</small></div></div>
+                        <div class="col-6"><div class="border rounded p-2"><div class="fw-bold">${progress.total}</div><small>Total</small></div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || 'Terjadi kesalahan saat memproses bulk sertifikat');
+            }
+
+            return data;
+        }
+
+        async function runBulkProcess(mode) {
+            let progress = await postJson(startUrl, { mode });
+
+            await Swal.fire({
+                title: `${modeLabel(mode)} Sertifikat`,
+                html: buildProgressHtml(progress),
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: async () => {
+                    Swal.showLoading();
+
+                    while (!progress.completed) {
+                        progress = await postJson(processUrl, { mode });
+                        Swal.update({
+                            html: buildProgressHtml(progress),
+                        });
+                    }
+
+                    Swal.hideLoading();
+                    Swal.update({
+                        icon: progress.failed > 0 ? 'warning' : 'success',
+                        title: `${modeLabel(mode)} Selesai`,
+                        html: buildProgressHtml(progress),
+                        showConfirmButton: true,
+                        confirmButtonText: 'Tutup',
+                    });
+                },
+            });
+
+            window.location.reload();
+        }
+
+        document.querySelectorAll('.js-bulk-sertifikat').forEach((button) => {
+            button.addEventListener('click', async function () {
+                const mode = this.dataset.mode;
+                const confirmText = this.dataset.confirm || 'Lanjutkan proses bulk sertifikat?';
+
+                const confirmation = await Swal.fire({
+                    icon: 'question',
+                    title: `${modeLabel(mode)} Sertifikat`,
+                    text: confirmText,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, lanjutkan',
+                    cancelButtonText: 'Batal',
+                });
+
+                if (!confirmation.isConfirmed) {
+                    return;
+                }
+
+                try {
+                    await runBulkProcess(mode);
+                } catch (error) {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Proses Gagal',
+                        text: error.message || 'Terjadi kesalahan saat menjalankan bulk sertifikat',
+                    });
+                }
+            });
+        });
+    })();
+</script>
 @endsection
