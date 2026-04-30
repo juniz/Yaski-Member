@@ -346,6 +346,7 @@ Setting Template Sertifikat
                     <div class="tab-pane" id="materi-workshop" role="tabpanel">
                         @php
                             $publicMaterialUrl = route('workshop.material.public', $workshop->id ?? $id);
+                            $maxMaterialUploadMb = min(30, (int) ini_get('upload_max_filesize'), (int) ini_get('post_max_size'));
                         @endphp
                         <div class="alert alert-info d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
                             <div>
@@ -367,7 +368,7 @@ Setting Template Sertifikat
                                     </div>
                                     <div class="card-body">
                                         @if($errors->has('materi_title') || $errors->has('materi_type') || $errors->has('materi_file') || $errors->has('materi_link'))
-                                            <div class="alert alert-danger">
+                                            <div class="alert alert-danger" id="materialValidationAlert">
                                                 <strong>Materi belum bisa disimpan.</strong>
                                                 <ul class="mb-0 mt-2 ps-3">
                                                     @foreach(['materi_title', 'materi_type', 'materi_file', 'materi_link'] as $field)
@@ -400,7 +401,7 @@ Setting Template Sertifikat
                                             <div class="mb-3" id="input_file">
                                                 <label class="form-label fw-bold">File Materi</label>
                                                 <input type="file" name="materi_file" id="materi_file" class="form-control @error('materi_file') is-invalid @enderror">
-                                                <small class="text-muted">Maksimal 30MB</small>
+                                                <small class="text-muted">Maksimal {{ $maxMaterialUploadMb }}MB</small>
                                                 @error('materi_file')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -948,10 +949,11 @@ Setting Template Sertifikat
 
     const materialForm = document.getElementById('materialForm');
     const materialFileInput = document.getElementById('materi_file');
-    const maxMaterialFileSize = 30 * 1024 * 1024;
+    const maxMaterialFileMb = {{ $maxMaterialUploadMb }};
+    const maxMaterialFileSize = maxMaterialFileMb * 1024 * 1024;
 
     function showMaterialFileSizePopup() {
-        alert('Ukuran file materi melebihi batas maksimal 30MB. Silakan pilih file yang lebih kecil.');
+        alert('Ukuran file materi melebihi batas maksimal ' + maxMaterialFileMb + 'MB. Silakan pilih file yang lebih kecil.');
     }
 
     function isMaterialFileTooLarge() {
@@ -962,6 +964,13 @@ Setting Template Sertifikat
         if (isMaterialFileTooLarge()) {
             showMaterialFileSizePopup();
             this.value = '';
+            return;
+        }
+
+        this.classList.remove('is-invalid');
+        const materialValidationAlert = document.getElementById('materialValidationAlert');
+        if (materialValidationAlert) {
+            materialValidationAlert.style.display = 'none';
         }
     });
 

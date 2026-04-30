@@ -799,18 +799,22 @@ class WorkshopController extends Controller
 
     public function storeMaterial(Request $request, $id)
     {
+        $maxMaterialMb = min(30, (int) ini_get('upload_max_filesize'), (int) ini_get('post_max_size'));
+        $maxMaterialKb = max(1, $maxMaterialMb) * 1024;
+
         $this->validate($request, [
             'materi_title' => 'required|string|max:255',
             'materi_type' => 'required|in:file,link',
-            'materi_file' => 'required_if:materi_type,file|nullable|file|max:30720', // Max 30MB
+            'materi_file' => 'required_if:materi_type,file|nullable|file|max:' . $maxMaterialKb,
             'materi_link' => 'required_if:materi_type,link|nullable|url',
         ], [
             'materi_title.required' => 'Judul materi wajib diisi.',
             'materi_type.required' => 'Tipe materi wajib dipilih.',
             'materi_type.in' => 'Tipe materi tidak valid.',
             'materi_file.required_if' => 'File materi wajib dipilih.',
+            'materi_file.uploaded' => 'File materi gagal diupload. Ukuran file kemungkinan melebihi batas server ' . $maxMaterialMb . 'MB.',
             'materi_file.file' => 'Materi harus berupa file yang valid.',
-            'materi_file.max' => 'Ukuran file materi maksimal 30MB.',
+            'materi_file.max' => 'Ukuran file materi maksimal ' . $maxMaterialMb . 'MB.',
             'materi_link.required_if' => 'URL link materi wajib diisi.',
             'materi_link.url' => 'URL link materi harus valid, contoh: https://example.com/materi.',
         ]);
