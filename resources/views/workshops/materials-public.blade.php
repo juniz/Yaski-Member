@@ -35,9 +35,6 @@ Materi Workshop
         font-size: 24px;
     }
 
-    .share-box {
-        max-width: 460px;
-    }
 </style>
 @endsection
 
@@ -47,42 +44,23 @@ Materi Workshop
 @slot('title') Materi Workshop @endslot
 @endcomponent
 
-@php
-    $publicUrl = route('workshop.material.public', $workshop->id);
-@endphp
-
 <div class="material-hero mb-4">
-    <div class="row align-items-center g-3">
-        <div class="col-lg-7">
-            <div class="d-flex align-items-start gap-3">
-                <div class="material-icon bg-soft-primary text-primary">
-                    <i class="bx bx-book-content"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2">{{ $workshop->nama }}</h4>
-                    <div class="text-muted">
-                        Materi workshop dapat dibuka dan didownload tanpa login.
-                    </div>
-                    <div class="mt-2 small text-muted">
-                        @if($workshop->tgl_mulai && $workshop->tgl_selesai)
-                            <i class="bx bx-calendar me-1"></i>
-                            {{ \Carbon\Carbon::parse($workshop->tgl_mulai)->format('d M Y') }}
-                            sampai
-                            {{ \Carbon\Carbon::parse($workshop->tgl_selesai)->format('d M Y') }}
-                        @endif
-                    </div>
-                </div>
-            </div>
+    <div class="d-flex align-items-start gap-3">
+        <div class="material-icon bg-soft-primary text-primary">
+            <i class="bx bx-book-content"></i>
         </div>
-        <div class="col-lg-5">
-            <div class="share-box ms-lg-auto">
-                <label class="form-label small text-muted mb-1">Link materi</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="publicMaterialUrl" value="{{ $publicUrl }}" readonly>
-                    <button class="btn btn-primary" type="button" onclick="shareMaterialLink()">
-                        <i class="bx bx-share-alt me-1"></i> Share
-                    </button>
-                </div>
+        <div>
+            <h4 class="mb-2">{{ $workshop->nama }}</h4>
+            <div class="text-muted">
+                Materi workshop dapat dibuka dan didownload tanpa login.
+            </div>
+            <div class="mt-2 small text-muted">
+                @if($workshop->tgl_mulai && $workshop->tgl_selesai)
+                    <i class="bx bx-calendar me-1"></i>
+                    {{ \Carbon\Carbon::parse($workshop->tgl_mulai)->format('d M Y') }}
+                    sampai
+                    {{ \Carbon\Carbon::parse($workshop->tgl_selesai)->format('d M Y') }}
+                @endif
             </div>
         </div>
     </div>
@@ -147,28 +125,4 @@ Materi Workshop
 
 @section('script')
 <script src="{{ URL::asset('/assets/js/app.min.js') }}"></script>
-<script>
-    function shareMaterialLink() {
-        const input = document.getElementById('publicMaterialUrl');
-        const url = input.value;
-
-        if (navigator.share) {
-            navigator.share({
-                title: 'Materi Workshop {{ addslashes($workshop->nama) }}',
-                text: 'Silakan buka materi workshop melalui link berikut.',
-                url: url
-            }).catch(function() {});
-            return;
-        }
-
-        input.select();
-        input.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(url).then(function() {
-            alert('Link materi berhasil disalin.');
-        }).catch(function() {
-            document.execCommand('copy');
-            alert('Link materi berhasil disalin.');
-        });
-    }
-</script>
 @endsection
