@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sertifikat;
 use App\Models\Workshop;
+use App\Models\WorkshopMaterial;
 use App\Models\WorkshopSetting;
 use App\Services\CertificateGeneratorService;
 use Illuminate\Http\Request;
@@ -207,8 +208,45 @@ class WorkshopController extends Controller
     public function openSetting($id)
     {
         $setting = WorkshopSetting::where('workshop_id', $id)->first();
-        $workshop = Workshop::find($id);
+        $workshop = Workshop::with('materials')->find($id);
         return view('workshops.setting', compact('id', 'setting', 'workshop'));
+    }
+
+    public function publicMaterials(Workshop $workshop)
+    {
+        $workshop->load(['materials' => function ($query) {
+            $query->latest();
+        }]);
+
+        return view('workshops.materials-public', compact('workshop'));
+    }
+
+    public function openMaterial(WorkshopMaterial $material)
+    {
+        if ($material->type === 'link') {
+            abort_if(empty($material->link_url), 404);
+
+            return redirect()->away($material->link_url);
+        }
+
+        $path = $this->materialStoragePath($material);
+        abort_unless(Storage::exists($path), 404);
+
+        return response()->file(Storage::path($path));
+    }
+
+    public function downloadMaterial(WorkshopMaterial $material)
+    {
+        if ($material->type === 'link') {
+            abort_if(empty($material->link_url), 404);
+
+            return redirect()->away($material->link_url);
+        }
+
+        $path = $this->materialStoragePath($material);
+        abort_unless(Storage::exists($path), 404);
+
+        return Storage::download($path, $this->materialDownloadName($material));
     }
 
     public function simpanSetting(Request $request, $id)
@@ -764,8 +802,8 @@ class WorkshopController extends Controller
         $this->validate($request, [
             'materi_title' => 'required|string|max:255',
             'materi_type' => 'required|in:file,link',
-            'materi_file' => 'nullable|file|max:20480', // Max 20MB
-            'materi_link' => 'nullable|url',
+            'materi_file' => 'required_if:materi_type,file|nullable|file|max:20480', // Max 20MB
+            'materi_link' => 'required_if:materi_type,link|nullable|url',
         ]);
 
         try {
@@ -814,6 +852,19 @@ class WorkshopController extends Controller
         $userId = Auth::id() ?? 'guest';
 
         return 'bulk_sertifikat_progress_' . $userId . '_' . $workshopId . '_' . $mode;
+    }
+
+    private function materialStoragePath(WorkshopMaterial $material)
+    {
+        return 'public/workshop/material/' . $material->workshop_id . '/' . basename($material->file_path);
+    }
+
+    private function materialDownloadName(WorkshopMaterial $material)
+    {
+        $extension = pathinfo($material->file_path, PATHINFO_EXTENSION);
+        $name = Str::slug($material->title ?: 'materi-workshop');
+
+        return $extension ? $name . '.' . $extension : $name;
     }
 
     private function bulkSertifikatDownloadKey($workshopId)

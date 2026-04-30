@@ -344,6 +344,21 @@ Setting Template Sertifikat
                         </form>
                     </div>
                     <div class="tab-pane" id="materi-workshop" role="tabpanel">
+                        @php
+                            $publicMaterialUrl = route('workshop.material.public', $workshop->id ?? $id);
+                        @endphp
+                        <div class="alert alert-info d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                            <div>
+                                <h6 class="alert-heading mb-1"><i class="bx bx-share-alt me-1"></i> Link Publik Materi Workshop</h6>
+                                <div class="small">Bagikan link ini agar peserta bisa membuka dan mendownload materi tanpa login.</div>
+                            </div>
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <input type="text" class="form-control" id="publicMaterialUrl" value="{{ $publicMaterialUrl }}" readonly style="min-width: 280px;">
+                                <button type="button" class="btn btn-primary text-nowrap" onclick="shareMaterialLink()">
+                                    <i class="bx bx-share-alt me-1"></i> Share Link
+                                </button>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="card border border-primary shadow-sm">
@@ -903,6 +918,29 @@ Setting Template Sertifikat
             document.getElementById('input_file').style.display = 'none';
             document.getElementById('input_link').style.display = 'block';
         }
+    };
+
+    window.shareMaterialLink = function() {
+        const input = document.getElementById('publicMaterialUrl');
+        const url = input.value;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Materi Workshop',
+                text: 'Silakan buka materi workshop melalui link berikut.',
+                url: url
+            }).catch(function() {});
+            return;
+        }
+
+        input.select();
+        input.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(url).then(function() {
+            alert('Link materi berhasil disalin.');
+        }).catch(function() {
+            document.execCommand('copy');
+            alert('Link materi berhasil disalin.');
+        });
     };
 
     // Polyfill for roundRect if needed

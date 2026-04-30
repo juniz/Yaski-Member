@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CertifikatController;
 use App\Http\Controllers\KwitansiController;
+use App\Http\Controllers\WorkshopController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Invoice\Transaction;
@@ -103,6 +104,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/get-kabupaten/{id}', [App\Http\Controllers\ProfileController::class, 'getKabupaten'])->name('getKabupaten');
 Route::get('/workshop', fn() => view('workshops.daftar'))->name('workshop.list');
 Route::get('/workshop/detail/{slug}', fn() => view('workshops.detail'))->name('workshop.detail');
+Route::get('/workshop/materi/{material}/buka', [WorkshopController::class, 'openMaterial'])->name('workshop.material.open');
+Route::get('/workshop/materi/{material}/download', [WorkshopController::class, 'downloadMaterial'])->name('workshop.material.download');
+Route::get('/workshop/{workshop}/materi', [WorkshopController::class, 'publicMaterials'])->name('workshop.material.public');
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])->name('pendaftaran.index');
 Route::post('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
 Route::post('/transaksi', [App\Http\Controllers\PendaftaranController::class, 'createSnapToken'])->name('pendaftaran.transaksi');
