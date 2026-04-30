@@ -802,8 +802,17 @@ class WorkshopController extends Controller
         $this->validate($request, [
             'materi_title' => 'required|string|max:255',
             'materi_type' => 'required|in:file,link',
-            'materi_file' => 'required_if:materi_type,file|nullable|file|max:20480', // Max 20MB
+            'materi_file' => 'required_if:materi_type,file|nullable|file|max:30720', // Max 30MB
             'materi_link' => 'required_if:materi_type,link|nullable|url',
+        ], [
+            'materi_title.required' => 'Judul materi wajib diisi.',
+            'materi_type.required' => 'Tipe materi wajib dipilih.',
+            'materi_type.in' => 'Tipe materi tidak valid.',
+            'materi_file.required_if' => 'File materi wajib dipilih.',
+            'materi_file.file' => 'Materi harus berupa file yang valid.',
+            'materi_file.max' => 'Ukuran file materi maksimal 30MB.',
+            'materi_link.required_if' => 'URL link materi wajib diisi.',
+            'materi_link.url' => 'URL link materi harus valid, contoh: https://example.com/materi.',
         ]);
 
         try {

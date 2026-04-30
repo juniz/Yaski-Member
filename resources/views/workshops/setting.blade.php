@@ -366,27 +366,51 @@ Setting Template Sertifikat
                                         <h5 class="my-0 text-primary"><i class="bx bx-plus me-2"></i>Tambah Materi</h5>
                                     </div>
                                     <div class="card-body">
-                                        <form action="{{ route('workshop.material.store', $id) }}" method="POST" enctype="multipart/form-data">
+                                        @if($errors->has('materi_title') || $errors->has('materi_type') || $errors->has('materi_file') || $errors->has('materi_link'))
+                                            <div class="alert alert-danger">
+                                                <strong>Materi belum bisa disimpan.</strong>
+                                                <ul class="mb-0 mt-2 ps-3">
+                                                    @foreach(['materi_title', 'materi_type', 'materi_file', 'materi_link'] as $field)
+                                                        @error($field)
+                                                            <li>{{ $message }}</li>
+                                                        @enderror
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+                                        <form action="{{ route('workshop.material.store', $id) }}" method="POST" enctype="multipart/form-data" id="materialForm">
                                             @csrf
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Judul Materi</label>
-                                                <input type="text" name="materi_title" class="form-control" placeholder="Contoh: Modul Workshop Hari 1" required>
+                                                <input type="text" name="materi_title" class="form-control @error('materi_title') is-invalid @enderror" value="{{ old('materi_title') }}" placeholder="Contoh: Modul Workshop Hari 1" required>
+                                                @error('materi_title')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Tipe Materi</label>
                                                 <select name="materi_type" class="form-select" id="materi_type" onchange="toggleMateriInput(this.value)">
-                                                    <option value="file">File (PDF/Gambar/Dokumen)</option>
-                                                    <option value="link">Link (YouTube/Google Drive/dll)</option>
+                                                    <option value="file" {{ old('materi_type', 'file') === 'file' ? 'selected' : '' }}>File (PDF/Gambar/Dokumen)</option>
+                                                    <option value="link" {{ old('materi_type') === 'link' ? 'selected' : '' }}>Link (YouTube/Google Drive/dll)</option>
                                                 </select>
+                                                @error('materi_type')
+                                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3" id="input_file">
                                                 <label class="form-label fw-bold">File Materi</label>
-                                                <input type="file" name="materi_file" class="form-control">
-                                                <small class="text-muted">Maksimal 20MB</small>
+                                                <input type="file" name="materi_file" id="materi_file" class="form-control @error('materi_file') is-invalid @enderror">
+                                                <small class="text-muted">Maksimal 30MB</small>
+                                                @error('materi_file')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3" id="input_link" style="display:none;">
                                                 <label class="form-label fw-bold">URL Link Materi</label>
-                                                <input type="url" name="materi_link" class="form-control" placeholder="https://youtube.com/...">
+                                                <input type="url" name="materi_link" class="form-control @error('materi_link') is-invalid @enderror" value="{{ old('materi_link') }}" placeholder="https://youtube.com/...">
+                                                @error('materi_link')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="text-end">
                                                 <button type="submit" class="btn btn-primary">
@@ -919,6 +943,35 @@ Setting Template Sertifikat
             document.getElementById('input_link').style.display = 'block';
         }
     };
+
+    toggleMateriInput(document.getElementById('materi_type').value);
+
+    const materialForm = document.getElementById('materialForm');
+    const materialFileInput = document.getElementById('materi_file');
+    const maxMaterialFileSize = 30 * 1024 * 1024;
+
+    function showMaterialFileSizePopup() {
+        alert('Ukuran file materi melebihi batas maksimal 30MB. Silakan pilih file yang lebih kecil.');
+    }
+
+    function isMaterialFileTooLarge() {
+        return materialFileInput.files.length > 0 && materialFileInput.files[0].size > maxMaterialFileSize;
+    }
+
+    materialFileInput.addEventListener('change', function() {
+        if (isMaterialFileTooLarge()) {
+            showMaterialFileSizePopup();
+            this.value = '';
+        }
+    });
+
+    materialForm.addEventListener('submit', function(event) {
+        if (document.getElementById('materi_type').value === 'file' && isMaterialFileTooLarge()) {
+            event.preventDefault();
+            showMaterialFileSizePopup();
+            materialFileInput.value = '';
+        }
+    });
 
     window.shareMaterialLink = function() {
         const input = document.getElementById('publicMaterialUrl');
